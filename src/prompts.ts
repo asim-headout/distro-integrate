@@ -1,5 +1,14 @@
 import { DOCS } from "./docs.js";
-import { edgeCaseSection, optional, sharedPreamble, tddSection } from "./prompt-utils.js";
+import {
+  edgeCaseSection,
+  implementationGate,
+  optional,
+  planningOnlySection,
+  prerequisiteGate,
+  sharedPreamble,
+  continuitySection,
+  tddSection,
+} from "./prompt-utils.js";
 import type { PromptDefinition, PromptMessageResult } from "./types.js";
 
 const commonArgs = [
@@ -16,6 +25,16 @@ const commonArgs = [
   {
     name: "architecture",
     description: "Wrapper/client package, direct server calls, monorepo, generated client, or unknown.",
+    required: false,
+  },
+  {
+    name: "integration_state",
+    description: "Current known integration state or resume summary from a previous session.",
+    required: false,
+  },
+  {
+    name: "completed_steps",
+    description: "Comma-separated completed steps, for example planning, setup, discovery, inventory.",
     required: false,
   },
 ] as const;
@@ -45,12 +64,16 @@ ${optional(args.goals, "Clarify integration goals with the user.")}
 Constraints:
 ${optional(args.constraints, "Unknown. Ask only when the repo and docs cannot answer safely.")}
 
+${planningOnlySection()}
+
+${continuitySection()}
+
 Create an implementation plan that:
 - Classifies the current integration shape: wrapper, direct server calls, generated client, serverless functions, or monorepo package.
 - Identifies which Headout v2 docs and OpenAPI sections are relevant.
 - Splits work into discovery, product detail, inventory/pricing, booking, post-booking, webhooks, and observability.
 - Calls out security boundaries and where the Headout API key must live.
-- Defines a TDD strategy and sandbox validation strategy.
+- Defines a testing strategy using the repo's existing setup, plus sandbox validation strategy.
 - Lists data model changes and migration risks.
 - Produces a short sequence of implementation steps with acceptance criteria.
 
@@ -80,7 +103,18 @@ ${edgeCaseSection()}`,
 Discovery scope:
 ${optional(args.scope, "Implement only the discovery flow requested by the user.")}
 
-Implement Headout discovery with TDD.
+Implement Headout discovery using the repo's existing test workflow.
+
+${continuitySection()}
+
+${prerequisiteGate("implement_headout_discovery", [
+  "partner mode selected or explicitly deferred",
+  "server-side auth boundary identified",
+  "base URL and environment strategy decided",
+  "repo stack and package/test workflow identified, or absence confirmed",
+])}
+
+${implementationGate()}
 
 Relevant docs:
 - Products list: ${DOCS.apiPartnerV2.products}
@@ -115,7 +149,19 @@ ${tddSection()}`,
 Checkout shape:
 ${optional(args.checkout_shape, "Inspect the repo and infer before changing code.")}
 
-Implement Headout inventory and pricing with TDD.
+Implement Headout inventory and pricing using the repo's existing test workflow.
+
+${continuitySection()}
+
+${prerequisiteGate("implement_headout_inventory_and_pricing", [
+  "plan exists",
+  "Headout server-side client or request boundary exists",
+  "discovery/product or variant selection flow exists or is stubbed",
+  "currency strategy decided",
+  "test workflow confirmed, or absence confirmed",
+])}
+
+${implementationGate()}
 
 Relevant docs:
 - Inventory: ${DOCS.apiPartnerV2.inventory}
@@ -137,7 +183,7 @@ ${edgeCaseSection()}`,
   {
     name: "implement_headout_booking_tdd",
     description:
-      "Implement create/capture/get booking flow with TDD, sandbox safety, and reconciliation.",
+      "Implement create/capture/get booking flow with existing tests, sandbox safety, and reconciliation.",
     arguments: [
       ...commonArgs,
       {
@@ -158,7 +204,19 @@ ${optional(args.order_model, "Inspect existing order/booking models first.")}
 Sandbox policy:
 ${optional(args.sandbox_policy, "Do not create live sandbox bookings unless the user explicitly approves.")}
 
-Implement Headout booking with TDD.
+Implement Headout booking using the repo's existing test workflow.
+
+${continuitySection()}
+
+${prerequisiteGate("implement_headout_booking_tdd", [
+  "plan exists",
+  "server-side Headout auth/client boundary exists",
+  "inventory and current pricing flow exists or is intentionally mocked",
+  "checkout/order model is known",
+  "sandbox policy is confirmed",
+])}
+
+${implementationGate()}
 
 Relevant docs:
 - Create booking: ${DOCS.apiPartnerV2.bookingCreate}
@@ -199,7 +257,19 @@ ${edgeCaseSection()}`,
 Seatmap mode:
 ${optional(args.seatmap_mode, "Ask whether iframe or custom seat selection is required.")}
 
-Implement Headout seatmap support with TDD.
+Implement Headout seatmap support using the repo's existing test workflow.
+
+${continuitySection()}
+
+${prerequisiteGate("implement_headout_seatmap", [
+  "plan exists",
+  "seatmap mode selected: iframe, custom, or both",
+  "product/variant discovery exists",
+  "server-side Headout auth/client boundary exists",
+  "booking integration knows how to pass inventorySeatIds",
+])}
+
+${implementationGate()}
 
 Relevant docs:
 - Seatmap iframe: ${DOCS.apiPartnerV2.seatmapIframe}
@@ -235,7 +305,19 @@ ${tddSection()}`,
 Webhook runtime:
 ${optional(args.webhook_runtime, "Inspect the app's existing webhook/controller pattern.")}
 
-Implement Headout webhooks with TDD.
+Implement Headout webhooks using the repo's existing test workflow.
+
+${continuitySection()}
+
+${prerequisiteGate("implement_headout_webhooks", [
+  "plan exists",
+  "booking persistence model is known",
+  "webhook runtime and public endpoint strategy are known",
+  "idempotency storage strategy is known",
+  "logging/observability pattern is identified",
+])}
+
+${implementationGate()}
 
 Relevant docs:
 - Webhooks: ${DOCS.apiPartnerV2.webhooks}
@@ -271,6 +353,14 @@ ${optional(args.implemented_flows, "Ask the user or inspect the repo.")}
 
 Create a practical test plan.
 
+${continuitySection()}
+
+${prerequisiteGate("generate_headout_test_plan", [
+  "target flows are known",
+  "test workflow is identified, or absence confirmed",
+  "sandbox policy is known or explicitly deferred",
+])}
+
 The plan must include:
 - Unit tests for request builders, mappers, validators, and error translation.
 - Contract tests using mocked Headout v2 responses.
@@ -300,11 +390,13 @@ ${optional(args.review_scope, "Review the Headout integration surface.")}
 
 Review the implementation. Lead with findings ordered by severity.
 
+${continuitySection()}
+
 Check for:
 - API key exposure to client/browser code.
 - v1 usage when v2 should be used.
 - Incorrect base URL or missing sandbox separation.
-- Missing TDD coverage for pricing, pax, inventory, booking lifecycle, and webhooks.
+- Missing coverage in an existing test setup for pricing, pax, inventory, booking lifecycle, and webhooks.
 - Duplicate booking risk after network failures.
 - Incorrect price amount/currency propagation.
 - Assuming only ADULT pax or one price type.
@@ -344,6 +436,8 @@ Endpoint or flow:
 ${optional(args.endpoint, "Unknown. Infer from logs/code if available.")}
 
 Debug safely.
+
+${continuitySection()}
 
 Process:
 - Ask the user to redact Headout-Auth, customer PII, voucher data, and payment details.

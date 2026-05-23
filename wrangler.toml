@@ -1,0 +1,6 @@
+name = "headout-partners-mcp"
+main = "src/worker.ts"
+compatibility_date = "2026-05-23"
+
+[observability]
+enabled = true

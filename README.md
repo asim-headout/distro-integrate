@@ -7,8 +7,12 @@ The server gives an AI assistant Headout-specific integration workflows instead 
 ## What It Provides
 
 - Prompt templates for planning, implementation, testing, review, and debugging.
+- A prompt-catalog resource at `headout://prompt-catalog` for clients that discover resources before prompts.
+- Opt-in guide resources for details that should not bloat every prompt:
+  `headout://guides/tdd-contract`, `headout://guides/edge-cases`, and
+  `headout://guides/sequencing`.
 - Headout API v2-first guidance with links to `llms.txt` and OpenAPI specs.
-- TDD-by-default instructions unless the user explicitly opts out.
+- Existing-test-first instructions: use tests when the repo already has them, but never add test setup unless the user explicitly asks.
 - Sandbox-safe guidance for live validation.
 - Security guidance to keep `Headout-Auth` server-side.
 - Local opt-in telemetry metadata for improving prompt DX.
@@ -25,19 +29,73 @@ The server gives an AI assistant Headout-specific integration workflows instead 
 - `review_headout_integration`
 - `debug_headout_integration`
 
+## Discovery DX
+
+Some MCP clients and agents look for tools or resources before they surface prompts. This server handles that explicitly:
+
+- `prompts/list` returns the real product surface.
+- `resources/list` returns `headout://prompt-catalog`.
+- `resources/read` for `headout://prompt-catalog` explains that the MCP is prompt-first and lists available prompts.
+- `tools/list` returns an empty list.
+
+The server also sends initialization instructions telling clients to use `prompts/list` first.
+
+Implementation prompts are intentionally short control prompts. They enforce
+sequencing and the repo's existing test workflow, then point agents to guide
+resources only when deeper detail is needed.
+
 ## Development
 
 ```bash
 pnpm install
 pnpm test
+pnpm typecheck
 pnpm build
 ```
 
-Run locally:
+Run local stdio MCP:
 
 ```bash
 pnpm dev
 ```
+
+Run local Cloudflare Worker:
+
+```bash
+pnpm worker:dev
+```
+
+## Cloudflare Deployment
+
+This repo deploys a remote Streamable HTTP MCP server to Cloudflare Workers.
+
+Worker config:
+
+- Worker name: `headout-partners-mcp`
+- MCP endpoint: `/mcp`
+- Health endpoint: `/health`
+- Catalog endpoint: `/catalog`
+- Access model: public POC
+
+Validate the Worker bundle:
+
+```bash
+pnpm exec wrangler deploy --dry-run --outdir /private/tmp/headout-partners-mcp-worker
+```
+
+Deploy manually:
+
+```bash
+pnpm worker:deploy
+```
+
+After deploy, point remote MCP clients at:
+
+```text
+https://headout-partners-mcp.<your-subdomain>.workers.dev/mcp
+```
+
+Prompt/resource updates are shipped by redeploying the Worker. Partners using the remote MCP URL do not reinstall anything.
 
 ## Client Configuration
 
@@ -117,6 +175,6 @@ Remote telemetry is intentionally not implemented in this POC. Add it only after
 
 - The MCP should behave like a Headout integration architect, not a docs search bot.
 - Prompts should adapt to the partner repo instead of imposing a framework.
-- Tests should come first by default.
+- Use the repo's existing test workflow when available; never add test setup unless the user explicitly asks.
 - Sandbox calls should be explicit, credential-gated, and non-destructive unless approved.
 - Code guidance should favor maintainable files, typed boundaries, existing conventions, and clear ownership.

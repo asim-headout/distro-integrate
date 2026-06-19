@@ -51,7 +51,6 @@ before they start booking.
 | Flow / page | Skill | Path |
 |---|---|---|
 | Homepage | `page-home` | `skills/page-home/SKILL.md` |
-| Search results | `page-search` | `skills/page-search/SKILL.md` |
 | City landing | `page-city` | `skills/page-city/SKILL.md` |
 | Category listing | `page-category` | `skills/page-category/SKILL.md` |
 | Subcategory listing | `page-subcategory` | `skills/page-subcategory/SKILL.md` |
@@ -60,8 +59,6 @@ before they start booking.
 | All experiences in a city | `page-tours-by-city` | `skills/page-tours-by-city/SKILL.md` |
 | Places to visit | `page-places-to-visit` | `skills/page-places-to-visit/SKILL.md` |
 | Experience / product detail (PDP) | `page-tour` | `skills/page-tour/SKILL.md` |
-| Availability "Select" (PDP-embedded) | `page-select` | `skills/page-select/SKILL.md` |
-| Profile / account | `page-profile` | `skills/page-profile/SKILL.md` |
 
 ### Booking flow (`book-*`)
 
@@ -71,8 +68,8 @@ experience. Each carries the selection forward in the URL and drives a strict CT
 | Flow / page | Skill | Path |
 |---|---|---|
 | Select — date, option/variant, time | `book-select` | `skills/book-select/SKILL.md` |
-| Checkout — pax count, guest details, promo, when-to-pay | `book-checkout` | `skills/book-checkout/SKILL.md` |
-| Payment — method, gateway handoff, 3DS/verify, retry | `book-payment` | `skills/book-payment/SKILL.md` |
+| Checkout — pax count, guest details | `book-checkout` | `skills/book-checkout/SKILL.md` |
+| Payment — method, partner gateway handoff, create/capture, retry | `book-payment` | `skills/book-payment/SKILL.md` |
 
 ### Account & post-booking flow (`account-*`)
 

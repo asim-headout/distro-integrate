@@ -14,12 +14,11 @@ Build the "Places to Visit in {city}" page — a lightweight directory of the cu
 3. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Page-level guards
-- Resolve the city context first (by slug/id). Unresolved city → 404 (not a partial shell).
-- If the slug doesn't match the city's canonical slug for the active language → 301 redirect to canonical.
+- Resolve the city context first (by `code`). Unresolved city → 404 (not a partial shell). (The cities feed has no `urlSlug`, so there is no canonical-slug redirect.)
 - Emit SEO metadata: title, description, canonical, hreflang.
 
 ## Data sources (map to your endpoints)
-- **City detail:** `displayName`, canonical `urlSlug` per language. Drives the header + redirects.
+- **City detail:** `code`, `name`. Drives the header.
 - **Collections by city:** a server-ordered list of the city's collections; each resolves to a card (title, image, link). The order is editorial/server-ranked.
 
 ## Canonical section order (top → bottom)
@@ -55,13 +54,13 @@ Apply unless the partner design system overrides:
 - **Color:** neutral surfaces, one primary accent for links/CTAs (partner brand), muted grey secondary text; WCAG AA contrast.
 
 ## Field mappings & fallbacks
-- **Header:** "Places to visit in {city}" using the city `displayName`.
+- **Header:** "Places to visit in {city}" using the city `name`.
 - **Collection card:** title + image; link to the collection page.
 - **Loading:** a page-level loader sized to the grid.
 
 ## Acceptance checks
 - [ ] API contract confirmed (via MCP if available) and mapped to the partner's feed.
-- [ ] City resolved first; unknown → 404; non-canonical slug → 301 redirect.
+- [ ] City resolved first; unknown → 404.
 - [ ] Sections render in canonical order; header + single collection grid, no filter/sort/pagination.
 - [ ] List preserves server order (no client re-sort); capped at the fixed maximum.
 - [ ] UI primitives map to the partner design system OR are built into `ui-components/` per the visual language.

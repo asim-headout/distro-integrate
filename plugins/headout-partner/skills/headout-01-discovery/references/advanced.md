@@ -9,10 +9,10 @@ Relevant docs:
 
 Advanced implementation cases:
 
-- Search results and category pages share filter state.
-- City, collection, category, and subcategory URLs need stable slugs.
+- Category and subcategory pages share filter/pagination state.
+- Collection, category, and subcategory URLs need stable slugs (the cities feed has no `urlSlug`, so city pages key off `code`).
 - Catalog sync requires pagination, incremental updates, and unknown future fields.
-- Product detail pages may include nullable media, reviews, pricing, canonical URLs, and `localeSpecificUrls`.
+- Product detail pages may include nullable media, the aggregate `reviewsSummary` (no individual reviews list), pricing, canonical URLs, and `localeSpecificUrls`.
 
 Test cases:
 

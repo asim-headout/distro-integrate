@@ -15,7 +15,7 @@ partner's BFF / data boundary; the browser never sees `Headout-Auth` or raw resp
   relevant `categoryId` / `collectionId` / `subCategoryId` filters through from the request.
 - Paginate with `nextUrl`, `prevUrl`, `nextOffset`, `total`; never assume a single page.
 - Map tolerantly: preserve unknown/future fields rather than dropping them; treat optional media,
-  pricing, reviews, and `localeSpecificUrls` as nullable.
+  pricing, the aggregate `reviewsSummary`, and `localeSpecificUrls` as nullable.
 
 ## BFF shape (what to expose to the FE)
 - Return mapped, partner-safe view objects (e.g. product card: `id`, `name`, `image`, lead price,

@@ -1,6 +1,6 @@
 # Product Selection — Backend Reference
 
-Server-side fetch + mapping that feeds `page-tour` (detail) and `page-select` (date/time/variant).
+Server-side fetch + mapping that feeds `page-tour` (detail) and `book-select` (date/time/variant booking step).
 Keep `Headout-Auth` and raw calls server-side.
 
 ## Endpoints
@@ -17,10 +17,11 @@ Keep `Headout-Auth` and raw calls server-side.
 - Re-validate price/availability before checkout if the selection can go stale.
 
 ## BFF shape (what to expose to the FE)
-- Expose availability (dates/slots) and a live price-breakdown endpoint the `page-select` step calls
-  on selection — base / discounts / taxes & fees / total + currency. Return mapped objects, not raw
-  Headout JSON, and never the auth header.
+- Expose availability (dates/slots) and per-variant pricing (selling `price` + strike `originalPrice`)
+  the `book-select` / `book-checkout` steps call on selection. **Headout inventory returns no itemized
+  base/tax/fee breakdown**, so derive the total (sum across selected pax types) and any "{n}% off" from
+  `price` vs `originalPrice`. Return mapped objects, not raw Headout JSON, and never the auth header.
 
 ## Cross-check
-`page-tour` / `page-select` own section order, derivation, and conditional render. This file owns the
+`page-tour` / `book-select` own section order, derivation, and conditional render. This file owns the
 fetch/mapping/pricing contract. Disagreement on a field → stale-fact call-out.

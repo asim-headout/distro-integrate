@@ -39,7 +39,7 @@ $ARGUMENTS
 ## References (load only what's needed)
 - **Business flow:** [../../references/business-flow.md](../../references/business-flow.md)
 - **Backend — API facts:** [../../references/headout-api.md](../../references/headout-api.md)
-- **Frontend — page recipe library:** invocable `page-*` skills (e.g. [../page-home/SKILL.md](../page-home/SKILL.md), [../page-city/SKILL.md](../page-city/SKILL.md), [../page-tour/SKILL.md](../page-tour/SKILL.md), [../page-select/SKILL.md](../page-select/SKILL.md)). Self-contained, branding-neutral page specs.
+- **Frontend — page recipe library:** invocable `page-*` and `book-*` skills (e.g. [../page-home/SKILL.md](../page-home/SKILL.md), [../page-city/SKILL.md](../page-city/SKILL.md), [../page-tour/SKILL.md](../page-tour/SKILL.md), [../book-select/SKILL.md](../book-select/SKILL.md)). Self-contained, branding-neutral page specs.
 - **Competitor migration (Archetype C):** [../../references/competitor-adapters.md](../../references/competitor-adapters.md)
 - **Sequencing:** [../../references/sequencing.md](../../references/sequencing.md)
 - **Testing contract:** [../../references/existing-test-contract.md](../../references/existing-test-contract.md)

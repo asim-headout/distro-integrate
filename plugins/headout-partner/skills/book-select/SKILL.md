@@ -15,15 +15,17 @@ Build the **Select** step of the booking flow — `/book/{id}/select`. The guest
 4. **Assemble** in canonical order, wiring the **CTA state machine** exactly.
 
 ## Page-level guards
-- Resolve the product/tour-group by id first. Unresolved → 404 (not a partial shell); render a loader until the core product + calendar resolve.
+- Resolve the product/tour-group by id first; validate the id is numeric. Unresolved/invalid → 404 (not a partial shell); render a loader until the core product + calendar resolve.
+- **No inventory on any date → the experience is unavailable:** do not render the select shell; render an "unavailable / email me when available" state instead.
 - **Source of truth = URL query** (`date`, `tourId`/option, `variantId`, `time`); hydrate selection state from the URL on load and reflect every selection back into the URL so the step is shareable/restorable.
+- **Validate every selection in the URL** (date, option/variant, time). If a param is invalid but recoverable (e.g. an invalid date but a valid variant) → auto-correct to the first available value; if unrecoverable → surface an error and reset to the first valid step. **Changing the variant resets** the time (and any quantity) selection.
 - This step is **not indexable** — it is behind a booking intent. Emit no SEO body.
 
 ## Data sources (map to your endpoints)
 - **Product / tour-group detail:** name (for breadcrumb + summary), flow type / selection mode, cancellation policy, open-dated flag.
-- **Calendar + pricing by date range:** per-day min price and availability for the date strip; fetched for a window around the selected date and re-fetched when the date changes.
-- **Options/variants:** ordered list; each has name, descriptors (duration, meeting point, language), `listingPrice`/strike price + discount %, inventory/availability, `tours[]` (a **combo** when `tours.length > 1`), and `closestAvailableDate` when sold out.
-- **Time slots / inventory:** available start times for the chosen date+variant.
+- **Calendar + pricing by date range:** per-day min price and availability for the date strip; fetched for a window around the selected date and re-fetched when the date changes. **Dates sorted chronologically;** no-availability dates render **disabled, not removed**. **Default date = the first available date** when none is in the URL.
+- **Options/variants:** list; each has name, descriptors (duration, meeting point, language), price + strike price (selling price vs the pre-discount price — derive the "{n}% off" from the two; do not expect a separate discount-% field), inventory/availability, `tours[]` (a **combo** when `tours.length > 1`). **Apply a fixed ordering:** (1) language match first (variant whose language matches the active language), (2) available before unavailable, (3) has a discount/offer before none, (4) price ascending, (5) start time ascending. **Default selection:** a **single-variant** product auto-selects its only variant (hide the selector); a **multi-variant** product has **no default** — the guest must pick one.
+- **Time slots / inventory:** available start times for the chosen date+variant, ordered by start time ascending; a single slot auto-fills.
 - **Seatmap / zones (only for seated/zoned products):** seat or zone geometry + per-seat/zone price & availability.
 
 ## Canonical section order (top → bottom, left column)
@@ -35,7 +37,7 @@ Build the **Select** step of the booking flow — `/book/{id}/select`. The guest
 6. **Sticky summary/booking card** (right column) — product banner, the running selection (date/time/variant rows), price, and the **state-driven primary CTA**.
 
 ## Selection modes (the middle section branches — pick ONE)
-- **Normal (default/canonical):** a list/carousel of **option cards**. Each card: title, descriptors, `from {price}` (+ strike-through & "{n}% off" for deals), inclusions bullets, and a button: **"Select"** → **"Selected"** (tick) when chosen; **"Sold out"** (disabled) with a "Next available on {date}" link when unavailable. Horizontal scroll uses prev/next arrows.
+- **Normal (default/canonical):** a list/carousel of **option cards**. Each card: title, descriptors, `from {price}` (+ strike-through & "{n}% off" derived from the strike vs selling price), inclusions bullets, and a button: **"Select"** → **"Selected"** (tick) when chosen; **"Sold out"** (disabled) when unavailable — the inventory feed returns no next-available date, so show no "next available" link. Horizontal scroll uses prev/next arrows.
 - **Single variant:** no "Select your option" heading and no card list — render one expanded option block and **auto-select it on mount** (inclusions/exclusions list with a "Read more" modal past ~5 items).
 - **Combo:** an option whose `tours.length > 1`; show a **"Combo deal"** badge + strike/discount. Selecting a combo routes into a **per-sub-tour** select sequence (each sub-tour gets its own date/time).
 - **Seatmap (seat-by-seat, e.g. theatre):** an interactive **seat map** (SVG) where the guest picks individual seats; breadcrumb step 2 reads **"Select seats"**; proceeds to a seatmap-specific checkout. The date strip still drives which performance/showing is mapped.
@@ -61,7 +63,7 @@ The option **card** button has its own two states ("Select" ↔ "Selected"); sel
 - **Filter/language selector:** only for filter-property/guided-tour products; the option list is gated until a value is picked.
 - **"Select your option" heading + card list:** only when there is **more than one** variant; a single variant renders the expanded single-option block instead.
 - **Time section:** hidden until an option is selected (or a price fetch is in progress → show a shimmer). A single available slot renders as an auto-selected read-only row, not a dropdown.
-- **Sold-out option card:** render only when a `closestAvailableDate` exists (so a "Next available on {date}" link can be shown); otherwise omit the card.
+- **Sold-out option:** render the card disabled; do **not** show a "next available" date (the inventory feed does not provide one).
 - **Loading:** skeletons sized to the final date strip / option cards / time picker during initial load and on date-change re-fetch.
 
 ## UI components to build
@@ -90,7 +92,9 @@ Apply unless the partner design system overrides:
 - [ ] URL is the source of truth: date/option/variant/time hydrate from query and every selection writes back to the URL.
 - [ ] Sections render in canonical order; the correct **selection mode** body renders (normal / single / combo / seatmap / svg-zone / iframe / open-dated).
 - [ ] **CTA state machine** matches exactly: "Select an option" → "Select time" → "Next"; the first two scroll/highlight (no nav), only "Next" navigates to checkout (or seatmap-checkout). Card button toggles "Select" ↔ "Selected"; time shows "Select a time slot to continue" until chosen.
+- [ ] Numeric-id guard; no-inventory experience → unavailable/email-me state (no select shell); URL selections validated and auto-corrected/reset; variant change resets time.
+- [ ] Dates sorted chronologically (no-availability disabled, not removed); default date = first available; variants follow the fixed ordering (language → availability → discount → price → start time); single-variant auto-selects, multi-variant requires a pick.
 - [ ] Date strip hidden for open-dated; option heading/list only for >1 variant; time section appears only after an option is selected; single slot auto-selects.
-- [ ] Sold-out cards show "Next available on {date}" (and are omitted when no closest date); skeletons on load and date-change re-fetch.
+- [ ] Sold-out options render disabled (no next-available link); skeletons on load and date-change re-fetch.
 - [ ] UI primitives map to the partner design system OR are built into `ui-components/` per the visual language; summary card/date strip/option card are reusable across checkout/payment.
 - [ ] No operator/brand blocks (Promise, Trustpilot, "Supplied by", cashback, BNPL descriptor); rendering uses the partner's brand and content.

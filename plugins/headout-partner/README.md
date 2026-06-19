@@ -9,6 +9,7 @@ the partner user journey, not by internal engineering ownership.
 /headout-partner:headout-02-product-selection
 /headout-partner:page-tour
 /headout-partner:book-select
+/headout-partner:account-confirmation
 ```
 
 ## How a journey skill is shaped
@@ -72,6 +73,22 @@ experience. Each carries the selection forward in the URL and drives a strict CT
 | Select — date, option/variant, time | `book-select` | `skills/book-select/SKILL.md` |
 | Checkout — pax count, guest details, promo, when-to-pay | `book-checkout` | `skills/book-checkout/SKILL.md` |
 | Payment — method, gateway handoff, 3DS/verify, retry | `book-payment` | `skills/book-payment/SKILL.md` |
+
+### Account & post-booking flow (`account-*`)
+
+The own-your-booking journey: what a guest reaches after paying — their confirmation, voucher/ticket,
+self-service management, and the logged-in account area (profile, settings, saved cards, sign-in). Each
+is behind a booking or a session, so none are indexable.
+
+| Flow / page | Skill | Path |
+|---|---|---|
+| Confirmation — status, ticket/QR, live prepare-countdown | `account-confirmation` | `skills/account-confirmation/SKILL.md` |
+| Manage booking — review, plan-your-visit, cancel/reschedule | `account-manage-booking` | `skills/account-manage-booking/SKILL.md` |
+| Voucher / ticket — redemption code, details, embed mode | `account-voucher` | `skills/account-voucher/SKILL.md` |
+| Profile hub — bookings list, credits, account menu | `account-profile` | `skills/account-profile/SKILL.md` |
+| Account settings — preferences + delete-account flow | `account-settings` | `skills/account-settings/SKILL.md` |
+| Saved cards — tokenized card list + delete | `account-saved-cards` | `skills/account-saved-cards/SKILL.md` |
+| Sign in — email magic-link + social login | `account-auth` | `skills/account-auth/SKILL.md` |
 
 ## Support skills
 

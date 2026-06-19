@@ -16,6 +16,12 @@ server-side.
 - Be resilient to **out-of-order** delivery and **status regression** — never let a stale event
   overwrite a more advanced status.
 - Handle unknown status and missing-booking gracefully (log + reconcile, don't crash the handler).
+- Resolve persistence/migration ownership before coding. If this repo owns migrations, add the
+  minimal event/status storage in the existing migration style; if another repo/service owns it,
+  produce a schema handoff and keep this repo within its boundary.
+- Persist event metadata for dedupe/reconciliation: event id when available, otherwise
+  `bookingId + status + eventTimestamp`, received timestamp, processed timestamp, processing result,
+  and redacted error metadata.
 
 ## Cancellation / reschedule
 - Their immediate responses are **async acknowledgements, not final state**. Mark a pending state and
@@ -27,4 +33,6 @@ server-side.
 
 ## Cross-check
 Webhook ingestion is backend-centric; any servicing UI follows the partner design system (a UI page
-recipe is a planned follow-up). Event-shape disagreement with a reference → stale-fact call-out.
+recipe is a planned follow-up). Event-shape or persistence ownership disagreement with a reference →
+stale-fact call-out. See
+[../../../references/persistence-and-migrations.md](../../../references/persistence-and-migrations.md).

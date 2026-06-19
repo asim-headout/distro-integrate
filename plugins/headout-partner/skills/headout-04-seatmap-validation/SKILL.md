@@ -24,12 +24,14 @@ explicitly requested.
 - Emit no analytics/tracking.
 
 ## Steps
-1. Confirm mode: iframe, custom, or both.
+1. Confirm mode: iframe, full custom UI, section-based/no-seat-level UI, or a combination.
 2. Resolve the seatmap API contract (Backend reference + headout-api.md) before coding.
-3. Use **iframe mode** for Headout-hosted seat selection; use **custom mode** only when the partner must render seats + validation themselves.
-4. Validate selected seats server-side before booking.
-5. Preserve validated `inventorySeatIds` and returned prices into booking.
-6. End with a context checkpoint and next skill recommendation.
+3. Use a slot-first flow: fetch seatmap availability, let the customer choose date/show slot, then render iframe/custom/section selection for that slot.
+4. Use **iframe mode** for Headout-hosted seat selection; use **full custom mode** only when the partner must render seats + validation themselves; use **section-based mode** when the customer chooses a section and the backend assigns available seats.
+5. Validate selected seats server-side before booking.
+6. Preserve `variantId`, `inventoryId`, validated `inventorySeatIds`/seat codes, and returned validated prices into booking.
+7. If the partner asks to recreate a specific Headout seatmap UI and no recipe/reference exists, ask for the visual reference instead of inventing the layout.
+8. End with a context checkpoint and next skill recommendation.
 
 User context:
 
@@ -42,7 +44,7 @@ $ARGUMENTS
 - **Advanced pass:** only then handle `SEAT_UNAVAILABLE`, `SEAT_NOT_FOUND`, `ADJACENCY_RULE_VIOLATION`, the 20-seat ceiling, and 200-with-validation-error responses (Advanced reference).
 
 ## References (load only what's needed)
-- **Frontend — look & structure:** iframe embed needs little FE; for custom render, reuse the partner design system and `ui-components/`. *(No dedicated seatmap page recipe.)*
+- **Frontend — look & structure:** iframe embed needs little FE; for full custom or section-based render, reuse the partner design system and `ui-components/`. *(No dedicated seatmap page recipe; ask for a visual reference if exact Headout fidelity is required.)*
 - **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
 - **Advanced — edge cases:** [references/advanced.md](references/advanced.md)
 - **Testing contract:** [../../references/existing-test-contract.md](../../references/existing-test-contract.md)

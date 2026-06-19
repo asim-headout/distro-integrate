@@ -9,13 +9,17 @@ Use this when implementing, reviewing, or generating tests.
 - Exactly one primary customer when customer details are required.
 - Customer fields such as `NAME`, `EMAIL`, `PHONE`, and `CUSTOM_*`.
 - Booking-level `variantInputFields` such as pickup or transportation choices.
+- Dynamic input-field metadata: `level`, `dataType`, `required`, options, min/max, and location enum variants.
 - Inventory availability: `LIMITED`, `UNLIMITED`, `CLOSED`.
+- Sentinel high `remaining` values such as `1000` or `9999` should render as unlimited/no visible count.
 - Currency consistency from inventory fetch through booking.
 - Stale price rejection and price revalidation before checkout.
-- `originalPrice`, `netPrice`, `headoutSellingPrice`, and customer-facing price differences.
+- `headoutSellingPrice` for customer display, `originalPrice` for strike-through comparison, and `netPrice` only for internal reconciliation.
+- Protocol-relative image URLs (`//cdn...`) must be normalized before rendering.
 - Pagination via `nextUrl`, `prevUrl`, `nextOffset`, and `total`.
 - Local datetime values that may not include timezone offsets.
 - Booking statuses: `UNCAPTURED`, `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, `CAPTURE_TIMEDOUT`.
+- Create booking returns `UNCAPTURED`; capture/update to `PENDING` only after partner PSP success.
 - Webhooks do not send `UNCAPTURED`.
 - Cancellation and reschedule requests are async acknowledgements, not final states.
 - Seatmap validation can return HTTP 200 with business-level errors.

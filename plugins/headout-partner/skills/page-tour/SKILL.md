@@ -8,10 +8,15 @@ disable-model-invocation: true
 
 Build the product detail page for an experiences & tickets marketplace — the page for one bookable activity, reached from a collection or a city page. This file is the **single source of truth**: page structure, the data each section needs, how to order/derive raw API data, when to show/hide each section, the components to build, and the visual language. The **booking flow is the core**; everything else frames the decision to book. Render under **your own brand and content**. Build only the sections listed here; emit no analytics/tracking.
 
+Default to a separate product detail page. If the partner asks to collapse product detail into the
+home, city, or listing page, stop and ask for the intended information architecture before merging
+the experiences.
+
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "product get details highlights inclusions exclusions cancellation policy variants media start location operating schedules" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'product|variant|cancellation|media' /" })` and read the spec). Otherwise map each field below to your endpoints. Any field you cannot fulfil → apply the empty-state rule (omit its section).
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
-3. **Assemble** in the canonical order, applying the ordering and conditional rules.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize protocol-relative media URLs; customer-facing prices come from selling price fields, not `netPrice`; optional cancellation pills are derived from policy data.
+3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
+4. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Data sources (map to your endpoints)
 - **Product details** (main render object, from product get): `name`, `shortSummary`/`summaryHtml`, `highlights`/`highlightsHtml`, `inclusions`/`inclusionsHtml`, `exclusions`/`exclusionsHtml`, `faqHtml`, `additionalInfo`, `ticketDeliveryInfoHtml`, `variants[]` (each with pricing, `inputFields`, duration, `inventoryType`, `pax`, `tags`), `media[]` (each `{ url, type: IMAGE | VIDEO | PDF }`), `cancellationPolicy{cancellable, cancellableUpToInMinutes}`, `reschedulePolicy{reschedulable, reschedulableUpToInMinutes}`, `startLocation`/`endLocation` (coordinates + address), `reviewsSummary{averageRating, ratingsCount}`, `operatingSchedules` (under `pois`).
@@ -37,7 +42,7 @@ Build the product detail page for an experiences & tickets marketplace — the p
 15. Meeting point / location (from `startLocation`/`endLocation`)
 16. Additional info ("Know before you go")
 17. Lazy feeds: top attractions, things-to-do
-- A **persistent booking widget** (sticky bottom bar on mobile, side rail on desktop) sits alongside this content. It contains **exactly three things**: the lead price (`from {amount}`), a single **date-selection control** ("Select a date"), and a **"Check availability" CTA**. Nothing else. The CTA hands off to the booking flow (a separate page/app) — it does **not** select pax, variants, or time slots on this page.
+- A **persistent booking widget** (sticky bottom bar on mobile, side rail on desktop) sits alongside this content. It contains **exactly three things**: the lead price (`from {headoutSellingPrice}` / mapped selling price), a single **date-selection control** ("Select a date"), and a **"Check availability" CTA**. Nothing else. The CTA hands off to the booking flow (a separate page/app) — it does **not** select pax, variants, or time slots on this page.
 - A **sticky section-anchor nav** (a horizontal tab bar of in-page links: Highlights, Inclusions, Exclusions, Cancellation policy, "Your experience"/summary, "Know before you go"/additional-info, My tickets, Location, …) appears once the page scrolls past the title/gallery. It lists **only the sections that actually rendered** (skip anchors for omitted sections), in canonical order, and highlights the active section on scroll.
 
 ## Desktop grid structure (STRICT — do not alter)
@@ -131,7 +136,7 @@ Roles: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**, **Ra
 
 **Step B — otherwise build them into the shared `ui-components/` folder** (reused by every page; reuse anything already built):
 - **RatingWidget:** `★ value (count)` summary from `reviewsSummary`; static (no link to a reviews section, since there is none).
-- **Gallery:** multi-media layout = one large hero on the left + a 2×2 grid of four thumbnails on the right, with a "View all images" button overlaid on the last thumbnail (opens a lightbox); single-media fallback when fewer images. The hero column and the thumbnail block are equal height.
+- **Gallery:** multi-media layout = one large normalized hero image on the left + a 2×2 grid of four normalized thumbnails on the right, with a "View all images" button overlaid on the last thumbnail (opens a lightbox); single-media fallback when fewer images. The hero column and the thumbnail block are equal height.
 - **SectionNav:** a horizontal, sticky anchor-tab bar listing one link per rendered content section (in canonical order); clicking scrolls to that section and the active section is highlighted on scroll. Renders only when ≥ 2 anchorable sections exist. No counts/badges, no operator branding.
 - **VariantSelector:** selectable list of variants/combos; selecting reveals a continue CTA.
 - **InfoSection:** a titled section rendering rich-text/bulleted content (highlights/inclusions/exclusions/summary/additional-info).
@@ -139,7 +144,7 @@ Roles: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**, **Ra
 - **TimingsPanel:** opening-hours layout (day → hours rows) with "open today / tomorrow / weekday / date / closed" states.
 - **TicketDeliveryPanel:** how tickets are delivered (`ticketDeliveryInfoHtml`).
 - **LocationMap:** map with a marker, OR a plain address copy block when only an address (no coordinates) is present.
-- **BookingWidget:** lead price (`from {amount}`) + a single date-selection control ("Select a date", which may open a date calendar) + a "Check availability" CTA that routes to the booking flow. **Exactly these three elements — no pax/guest counter, no quantity stepper, no time-slot picker, no variant/ticket-type selector.** Collapses to a sticky bottom bar on mobile; falls back to an "email me when available" alert when there's no inventory.
+- **BookingWidget:** lead price (`from {headoutSellingPrice}` / mapped selling price) + a single date-selection control ("Select a date", which may open a date calendar) + a "Check availability" CTA that routes to the booking flow. **Exactly these three elements — no pax/guest counter, no quantity stepper, no time-slot picker, no variant/ticket-type selector.** Collapses to a sticky bottom bar on mobile; falls back to an "email me when available" alert when there's no inventory.
 - Reuse **Breadcrumb, Carousel, ProductCard, CollectionCard, FaqAccordion, Box/Text/Icon/Image, SkeletonLoader** from earlier recipes.
 
 Keep these in `ui-components/`. Preserve any `data-qa-marker`/`data-testid` hooks you add.
@@ -162,6 +167,7 @@ Apply unless the partner design system overrides:
 
 ## Acceptance checks
 - [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds.
+- [ ] Protocol-relative media URLs normalized before rendering; no `netPrice` is displayed to customers.
 - [ ] Numeric-id guard; unknown → 404; geo-restricted → not-available state; missing core object → loader (no partial shell).
 - [ ] Sections render in canonical order, including the summary dual-position rule.
 - [ ] Cancellation-policy text derived from `cancellationPolicy`/`reschedulePolicy` (not read from a field); minutes converted to hours/days.

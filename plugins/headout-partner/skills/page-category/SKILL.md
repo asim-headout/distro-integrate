@@ -10,8 +10,9 @@ Build a category listing page — a themed list of experiences for one top-level
 
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "products by city and category, subcategories, collections by city, categories" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'category|product|collection|subcategory' /" })` and read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
-3. **Assemble** in the canonical order, applying the ordering and conditional rules.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize images; ProductCard uses customer selling price (`headoutSellingPrice`), never `netPrice`, and derives optional cancellation pills from policy data.
+3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
+4. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Page-level guards
 - Resolve the category by id/slug **and** resolve the city context (by `code`) first. Unknown category or unresolved city → 404 (not a partial shell).
@@ -71,7 +72,7 @@ Apply unless the partner design system overrides:
 
 ## Field mappings & fallbacks
 - **Header:** category `name`.
-- **Product card:** name, image, lead price (`from {amount}`), rating.
+- **Product card:** name, normalized image, lead price (`from {headoutSellingPrice}` / mapped selling price), rating, optional `originalPrice` strike-through, optional derived cancellation pill.
 - **Collection card:** title + image; link to the collection.
 - **Loading:** skeletons sized to the final card/grid.
 

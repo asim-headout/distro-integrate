@@ -57,7 +57,8 @@ After installing, invoke a journey skill explicitly:
   language). These are explicitly invocable and are linked from the relevant journey step.
 - **Support skills:** test plan, review, debug, and context checkpoint.
 - **Shared + per-step references** so context loads progressively (frontend recipe / backend API
-  mapping / advanced edge cases / competitor adapters).
+  mapping / persistence and migrations / advanced edge cases / UI data contract / competitor
+  adapters).
 
 ## How a skill is shaped
 

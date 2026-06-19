@@ -25,13 +25,14 @@ status/servicing UI follows the partner's design system.
 - Emit no analytics/tracking.
 
 ## Steps
-1. Inspect booking persistence, public route/controller/function patterns, idempotency storage, logging, and tests.
+1. Inspect booking persistence, DB/migration ownership, public route/controller/function patterns, idempotency storage, logging, and tests.
 2. Resolve the webhook + cancel/reschedule API contract (Backend reference + headout-api.md) before coding.
-3. Implement webhook handling using existing runtime conventions.
-4. Handle `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, and `CAPTURE_TIMEDOUT`; do not expect `UNCAPTURED` in webhooks.
-5. Add cancellation and reschedule only if requested or needed by the integration scope (treat their immediate responses as async acknowledgements, not final state).
-6. Make status processing idempotent and resilient to retries and out-of-order delivery; persist enough event metadata for reconciliation without storing PII-heavy payloads.
-7. End with a context checkpoint and next skill recommendation.
+3. Resolve persistence changes (Persistence reference) before coding: event dedupe storage, local status fields, migration ownership, and whether schema changes belong in this repo or another repo/service.
+4. Implement webhook handling using existing runtime conventions.
+5. Handle `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, and `CAPTURE_TIMEDOUT`; do not expect `UNCAPTURED` in webhooks.
+6. Add cancellation and reschedule only if requested or needed by the integration scope (treat their immediate responses as async acknowledgements, not final state).
+7. Make status processing idempotent and resilient to retries and out-of-order delivery; persist enough event metadata for reconciliation without storing PII-heavy payloads.
+8. End with a context checkpoint and next skill recommendation.
 
 User context:
 
@@ -46,6 +47,7 @@ $ARGUMENTS
 ## References (load only what's needed)
 - **Frontend — look & structure:** *(booking-management UI page recipe — planned follow-up; until then reuse the partner design system and `ui-components/`)*
 - **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
+- **Persistence and migrations:** [../../references/persistence-and-migrations.md](../../references/persistence-and-migrations.md)
 - **Advanced — edge cases:** [references/advanced.md](references/advanced.md)
 - **Testing contract:** [../../references/existing-test-contract.md](../../references/existing-test-contract.md)
 - **Context checkpoint:** [../../references/context-checkpoint.md](../../references/context-checkpoint.md)

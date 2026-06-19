@@ -10,8 +10,9 @@ Build the "Places to Visit in {city}" page — a lightweight directory of the cu
 
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "collections by city, city detail, places to visit" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'collection|city' /" })` and read the spec). Otherwise map the feed below to your endpoint.
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the collection card is shared with the home/city recipes — reuse it).
-3. **Assemble** in the canonical order, applying the ordering and conditional rules.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize collection images and preserve server/editorial order; do not fill with random collections.
+3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the collection card is shared with the home/city recipes — reuse it).
+4. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Page-level guards
 - Resolve the city context first (by `code`). Unresolved city → 404 (not a partial shell). (The cities feed has no `urlSlug`, so there is no canonical-slug redirect.)

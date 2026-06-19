@@ -7,10 +7,11 @@ argument-hint: "[payment system, order model, sandbox policy]"
 # Headout 05 — Payment & Booking
 
 ## Outcome (what "done" looks like — FE/BE agnostic)
-The partner's own payment completes, then a Headout booking is created (`UNCAPTURED`) and captured
-(updated to `PENDING`) server-side from current inventory pricing + validated inputs, with the Headout
-`bookingId` and partner `partnerReferenceId` persisted and reconciled. This step is **backend-centric**
-— the partner owns payment (and therefore Merchant-of-Record); Headout is the booking engine.
+The partner confirms the cart against current inventory, creates a Headout booking in `UNCAPTURED`
+state, completes payment on the partner PSP, then captures the Headout booking by updating it to
+`PENDING` with `partnerReferenceId`. The Headout `bookingId` and partner `partnerReferenceId` are
+persisted and reconciled. This step is **backend-centric** — the partner owns payment (and therefore
+Merchant-of-Record); Headout is the booking engine.
 
 ## Ground rules (apply on every step)
 - **Security / gate-keeping:** `Headout-Auth` and all raw Headout calls stay server-side. The browser
@@ -25,13 +26,15 @@ The partner's own payment completes, then a Headout booking is created (`UNCAPTU
 - Emit no analytics/tracking.
 
 ## Steps
-1. Inspect payment, checkout, order persistence, error model, logging, and tests.
+1. Inspect payment, checkout, order persistence, DB/migration ownership, error model, logging, and tests.
 2. Resolve the booking API contract (Backend reference + headout-api.md) before coding.
-3. Build booking payloads from current inventory pricing and validated inputs.
-4. Create Headout bookings in `UNCAPTURED` state and capture by updating status to `PENDING`.
-5. Store Headout `bookingId` and partner `partnerReferenceId`.
-6. On uncertain failures, prefer lookup/reconciliation over duplicate booking creation.
-7. End with a context checkpoint and next skill recommendation.
+3. Resolve persistence changes (Persistence reference) before coding: reuse existing order/payment models, add migrations only if this repo owns them or the developer approves, or produce a schema handoff if migrations live elsewhere.
+4. Build booking payloads from current inventory pricing and validated inputs.
+5. Create Headout bookings in `UNCAPTURED` state to obtain `bookingId`.
+6. Complete partner PSP payment; only after PSP success, capture by updating Headout status to `PENDING` with `partnerReferenceId`.
+7. Store Headout `bookingId`, partner `partnerReferenceId`, payment/capture state, and idempotency metadata.
+8. On uncertain failures, prefer lookup/reconciliation over duplicate booking creation. If create/payment/capture ordering differs between docs, references, or live responses, STOP and surface the contradiction.
+9. End with a context checkpoint and next skill recommendation.
 
 User context:
 
@@ -40,12 +43,13 @@ $ARGUMENTS
 ```
 
 ## Verification gate
-- **Basic pass first:** one happy-path booking creates and captures in sandbox (with approval), `bookingId` + `partnerReferenceId` persist, and `customersDetails.count` matches `customers.length` with exactly one primary customer. Get this green before hardening.
+- **Basic pass first:** one happy-path booking creates and captures in sandbox (with approval), `bookingId` + `partnerReferenceId` + payment/capture state persist, and `customersDetails.count` matches `customers.length` with exactly one primary customer. Get this green before hardening.
 - **Advanced pass:** only then handle duplicate submission, timeout during create/capture, and the full status lifecycle (Advanced reference).
 
 ## References (load only what's needed)
 - **Frontend — look & structure:** minimal — payment UI is the partner's own; this step is server-side.
 - **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
+- **Persistence and migrations:** [../../references/persistence-and-migrations.md](../../references/persistence-and-migrations.md)
 - **Advanced — edge cases:** [references/advanced.md](references/advanced.md), [../../references/edge-cases.md](../../references/edge-cases.md)
 - **Testing contract:** [../../references/existing-test-contract.md](../../references/existing-test-contract.md)
 - **Context checkpoint:** [../../references/context-checkpoint.md](../../references/context-checkpoint.md)

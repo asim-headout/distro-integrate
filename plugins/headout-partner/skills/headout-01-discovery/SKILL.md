@@ -29,8 +29,9 @@ accounts**, so there is no search-results or profile/account surface in this flo
 2. Resolve the API contract for the surface (Backend reference + headout-api.md) before coding.
 3. Build the frontend to the matching **page recipe** (see References) — it is the source of truth for section order, derivation, conditional rules, components, and visual language.
 4. Wire the backend: server-side fetch + map Headout discovery responses into the shape the FE consumes via the partner's data boundary / BFF.
-5. Preserve explicit `currencyCode`, `languageCode`, `cityCode`, `categoryId`, `collectionId`, and `subCategoryId` propagation; support pagination and nullable fields.
-6. End with a context checkpoint and next skill recommendation.
+5. Apply the shared UI data contract: normalize protocol-relative image URLs, preserve editorial order, render customer-facing prices from selling price fields only, and omit unsupported sections instead of inventing data.
+6. Preserve explicit `currencyCode`, `languageCode`, `cityCode`, `categoryId`, `collectionId`, and `subCategoryId` propagation; support pagination and nullable fields.
+7. End with a context checkpoint and next skill recommendation.
 
 User context:
 
@@ -44,6 +45,7 @@ $ARGUMENTS
 
 ## References (load only what's needed)
 - **Frontend — look & structure (page recipes):** [../page-home/SKILL.md](../page-home/SKILL.md), [../page-city/SKILL.md](../page-city/SKILL.md), [../page-collection/SKILL.md](../page-collection/SKILL.md), [../page-collections-index/SKILL.md](../page-collections-index/SKILL.md), [../page-category/SKILL.md](../page-category/SKILL.md), [../page-subcategory/SKILL.md](../page-subcategory/SKILL.md), [../page-places-to-visit/SKILL.md](../page-places-to-visit/SKILL.md), [../page-tours-by-city/SKILL.md](../page-tours-by-city/SKILL.md)
+- **Shared UI/data contract:** [../../references/ui-data-contract.md](../../references/ui-data-contract.md)
 - **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
 - **Advanced — edge cases:** [references/advanced.md](references/advanced.md)
 - **Testing contract:** [../../references/existing-test-contract.md](../../references/existing-test-contract.md)

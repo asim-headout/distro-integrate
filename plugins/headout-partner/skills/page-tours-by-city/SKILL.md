@@ -10,8 +10,9 @@ Build the "All experiences in {city}" page — the complete product catalog for 
 
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "products by city, collections by city" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'product|collection|city' /" })` and read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (most are shared with the category page — reuse them).
-3. **Assemble** in the canonical order, applying the ordering and conditional rules.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize images; ProductCard uses customer selling price (`headoutSellingPrice`), never `netPrice`, and derives optional cancellation pills from policy data.
+3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (most are shared with the category page — reuse them).
+4. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Page-level guards
 - Resolve the city context first (by `code`). Unresolved city → 404 (not a partial shell). (The cities feed has no `urlSlug`, so there is no canonical-slug redirect.)
@@ -61,7 +62,7 @@ Apply unless the partner design system overrides:
 
 ## Field mappings & fallbacks
 - **Header:** "All experiences in {city}" using the city `name`.
-- **Product card:** name, image, lead price (`from {amount}`), rating.
+- **Product card:** name, normalized image, lead price (`from {headoutSellingPrice}` / mapped selling price), rating, optional `originalPrice` strike-through, optional derived cancellation pill.
 - **Collection card:** title + image; link to the collection.
 - **Count:** total products for the city (e.g. "{n} experiences"), from the product list `total`.
 - **Loading:** skeletons sized to the final card/grid.

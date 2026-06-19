@@ -11,13 +11,19 @@ Server-side sourcing + validation of checkout fields. Keep `Headout-Auth` and ra
 - Source required fields **live** from current API responses — never hardcode one product's fields:
   - Customer fields: `NAME`, `EMAIL`, `PHONE`, and `CUSTOM_*`.
   - Booking-level `variantInputFields` (pickup, transportation, product-specific choices).
+- Preserve each field's metadata: `id`, label/name, `level` (`BOOKING`, `PRIMARY_CUSTOMER`,
+  `ALL_CUSTOMER`, etc.), `dataType`, `required`, options/allowed values, helper/description text,
+  validation constraints (`min`, `max`, length/range), and any location/pickup enum variants.
+- Unknown future `dataType`, `level`, or location enum values are stale-fact call-outs: stop and ask
+  instead of rendering a generic text input or dropping the field.
 - Enforce: `customersDetails.count` aligns with selected pax and the `customers` array length;
   exactly one primary customer when required.
 - Validate server-side before constructing the booking payload — do not trust client validation alone.
 
 ## BFF shape (what to expose to the FE)
-- Return field **metadata** (key, type, required, options/label) for the FE to render dynamically.
-  Send only safe metadata to the browser; keep raw responses + auth server-side.
+- Return field **metadata** (key/id, type/dataType, level, required, options/label, min/max, and
+  location/pickup variants) for the FE to render dynamically. Send only safe metadata to the browser;
+  keep raw responses + auth server-side.
 - Persist entered values + variant input fields through payment into the booking step.
 
 ## Cross-check

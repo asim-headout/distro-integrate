@@ -23,12 +23,13 @@ migrations from this skill.**
 - Emit no analytics/tracking.
 
 ## Steps
-1. Inspect enough repo structure to identify stack, package manager, API boundaries, env handling, logging, UI framework, and existing tests.
+1. Inspect enough repo structure to identify stack, package manager, API boundaries, env handling, logging, UI framework, persistence/migration ownership, and existing tests.
 2. Classify partner mode: API partner, affiliate, or unknown.
 3. Classify architecture: direct server calls, API wrapper, generated client, monorepo package, serverless, or mixed.
-4. Map the business flow to journey steps: discovery → product selection → checkout inputs → seatmap (if needed) → payment booking → booking management.
-5. For each frontend surface, note which **page recipe** applies (see the FE recipe library below) so later steps build to a consistent spec.
-6. Produce a step-by-step plan with acceptance criteria and the next recommended skill.
+4. Classify persistence: local DB/migrations in this repo, external order service, migrations in another repo, stateless, or unknown. If DB ownership is unclear and booking/payment/webhooks are in scope, ask the developer early whether to add migrations here, produce a schema handoff, or skip DB changes.
+5. Map the business flow to journey steps: discovery → product selection → checkout inputs → seatmap (if needed) → payment booking → booking management.
+6. For each frontend surface, note which **page recipe** and shared UI/data rules apply (see the FE recipe library below) so later steps build to a consistent spec.
+7. Produce a step-by-step plan with acceptance criteria, including persistence/migration acceptance criteria where relevant, and the next recommended skill.
 
 User context:
 
@@ -39,6 +40,8 @@ $ARGUMENTS
 ## References (load only what's needed)
 - **Business flow:** [../../references/business-flow.md](../../references/business-flow.md)
 - **Backend — API facts:** [../../references/headout-api.md](../../references/headout-api.md)
+- **Persistence and migrations:** [../../references/persistence-and-migrations.md](../../references/persistence-and-migrations.md)
+- **Shared UI/data contract:** [../../references/ui-data-contract.md](../../references/ui-data-contract.md)
 - **Frontend — page recipe library:** invocable `page-*` and `book-*` skills (e.g. [../page-home/SKILL.md](../page-home/SKILL.md), [../page-city/SKILL.md](../page-city/SKILL.md), [../page-tour/SKILL.md](../page-tour/SKILL.md), [../book-select/SKILL.md](../book-select/SKILL.md)). Self-contained, branding-neutral page specs.
 - **Competitor migration (Archetype C):** [../../references/competitor-adapters.md](../../references/competitor-adapters.md)
 - **Sequencing:** [../../references/sequencing.md](../../references/sequencing.md)

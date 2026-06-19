@@ -12,6 +12,8 @@ Relevant docs:
 Advanced cases:
 
 - Partner payment remains owned by the partner system.
+- Create Headout booking first in `UNCAPTURED`; capture/update to `PENDING` only after partner PSP
+  success is confirmed.
 - `customersDetails.count` must match `customers.length`.
 - Exactly one primary customer when required.
 - Required customer fields and `variantInputFields` must match selected product/inventory.
@@ -25,4 +27,5 @@ Test cases:
 - Required customer or variant input field missing.
 - Duplicate submission.
 - Timeout during create/capture.
+- PSP success uncertain before capture.
 - `UNCAPTURED`, `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, `CAPTURE_TIMEDOUT`.

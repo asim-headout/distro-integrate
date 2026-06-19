@@ -12,9 +12,10 @@ Build the **Checkout** step of the booking flow — `/book/{id}/checkout`. The g
 
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "pax/person types and pricing, booking create customersDetails inputFields, lead guest required fields, cancellation policy" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
-2. **Confirm the carried-over selection.** date/option/variant/time must hydrate from the URL; if any is missing, route back to `/book/{id}/select` rather than rendering a partial checkout.
-3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the **summary card, date/selection rows, option card, Button, Breadcrumb, SkeletonLoader** are shared with Select/Payment — reuse them).
-4. **Assemble** in canonical order, wiring the **CTA state machine** exactly.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): display selling price only; normalize product/banner image URLs.
+3. **Confirm the carried-over selection.** date/option/variant/time must hydrate from the URL; if any is missing, route back to `/book/{id}/select` rather than rendering a partial checkout.
+4. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the **summary card, date/selection rows, option card, Button, Breadcrumb, SkeletonLoader** are shared with Select/Payment — reuse them).
+5. **Assemble** in canonical order, wiring the **CTA state machine** exactly.
 
 ## Page-level guards
 - Resolve the product/tour-group + the carried selection first. Missing date/variant/time → redirect to the Select step (not a partial shell); render a loader until product + pricing resolve.
@@ -24,13 +25,13 @@ Build the **Checkout** step of the booking flow — `/book/{id}/checkout`. The g
 
 ## Data sources (map to your endpoints)
 - **Product / tour-group + carried selection:** name, banner image, cancellation policy, the chosen date/variant/time (for the summary rows).
-- **Pax / person types + pricing:** the variant's `pax` / person types + the chosen inventory's per-person pricing (`persons`/`groups` price + `originalPrice`). Each row has a label, an age descriptor, a per-unit price, and min/max constraints; recompute the total when counts change. Typical types: **Adult** (e.g. 16+), **Child** (e.g. 3–15), **Infant** (e.g. up to 2, often free). The total you compute here is the `price` you pass to booking-create for validation.
-- **Required guest fields:** the variant's `inputFields` (per booking and per guest) — e.g. NAME, EMAIL, PHONE — drive the lead-guest form.
+- **Pax / person types + pricing:** the variant's `pax` / person types + the chosen inventory's per-person selling pricing (`persons`/`groups` `headoutSellingPrice` / mapped selling price + `originalPrice`). Each row has a label, an age descriptor, a per-unit selling price, and min/max constraints; recompute the total when counts change. Typical types: **Adult** (e.g. 16+), **Child** (e.g. 3–15), **Infant** (e.g. up to 2, often free). The total you compute here is the customer-facing `price` you pass to booking-create for validation.
+- **Required guest and booking fields:** the variant's `inputFields` (per booking and per guest) drive the form. Preserve `level`, `dataType`, `required`, labels, options, helper text, min/max constraints, and location/pickup enum variants.
 
 ## Canonical section order (top → bottom, left column)
 1. Step breadcrumb in the header (`1. {product} › 2. Tickets › 3. Confirm & pay`; checkout is **step 3**).
 2. **Guest count** ("How many guests?") — a **pax stepper** row per guest type (label + age descriptor + price; a `−` / count / `+` control). A min/max-clamped stepper; total recomputes live.
-3. **Lead guest details** form — Full name ("Must match ID"), Phone (country-code selector + number), Email ("We'll send your tickets here"), Confirm email. Inline validation per field. (Fields come from the variant's `inputFields`.)
+3. **Lead guest / required details** form — render fields from the variant's `inputFields` metadata. Typical fields include Full name ("Must match ID"), Phone (country-code selector + number), Email ("We'll send your tickets here"), Confirm email, pickup/location choices, or product-specific custom fields. Inline validation per field.
 4. **Sticky order-summary card** (right column) — product banner, selection rows (date/time/variant with an **edit** affordance routing back to Select), pax breakdown, **Total payable**, the cancellation-policy line, and the **state-driven primary CTA**.
 
 ## Pax-stepper rules (STRICT)
@@ -40,11 +41,11 @@ Build the **Checkout** step of the booking flow — `/book/{id}/checkout`. The g
 - Each change **writes back to the URL** as `pax.{type}=N` and **re-fetches/recomputes** the total (show a shimmer on the total while pricing is in flight).
 - If a price fetch fails, keep the last good total and surface a non-blocking retry — never let the CTA charge a stale/zero amount.
 
-## Lead-guest form contract (STRICT)
-- **Full name** — required; helper "Must match ID".
-- **Phone** — required; a **country-code selector + national number** (use the design system's phone input); validate the combined number.
-- **Email** — required; helper "We'll send your tickets here"; format-validated.
-- **Confirm email** — required; must equal Email (inline "emails don't match" error).
+## Dynamic input-fields form contract (STRICT)
+- Render fields from safe metadata, not from hardcoded assumptions. Use `level` to decide whether a field is collected once for the booking, once for the primary customer, or for every customer.
+- Map `dataType` to the correct control: text/email/phone inputs, select/radio controls for options, number/date controls when specified, and location/pickup controls for location enum variants. If the field type or enum is unknown, stop and ask instead of flattening to a text input.
+- Enforce `required`, `min`, `max`, length/range, and option constraints in the UI and again server-side.
+- For standard lead fields: Full name is required when `NAME` is required; Phone uses a country-code selector + national number when `PHONE` is required; Email is format-validated when `EMAIL` is required; Confirm email may be added as partner-side UX and must match Email.
 - Validate on blur and on submit; the CTA's submit path must short-circuit to the **first invalid field** (scroll + focus) before any navigation.
 
 ## CTA state machine (STRICT — the heart of this page)
@@ -64,7 +65,7 @@ Show the live **{total}** on/next to the CTA. Never navigate to payment until at
 - **Loading:** skeletons sized to the final pax rows / form / summary during initial load; a shimmer on the **total** during pax re-fetch.
 
 ## UI components to build
-Roles: **Box, Text, Icon, Image, Button**, **Breadcrumb/StepHeader**, **PaxStepper** (label + descriptor + price + `−`/count/`+`), **GuestDetailsForm** (TextInput, **PhoneInput**, email/confirm-email with inline errors), **OrderSummaryCard** (banner + selection rows with edit affordances + pax breakdown + total + cancellation line + state CTA), **CancellationPolicyLine**, **SkeletonLoader**.
+Roles: **Box, Text, Icon, Image, Button**, **Breadcrumb/StepHeader**, **PaxStepper** (label + descriptor + price + `−`/count/`+`), **DynamicInputFieldsForm** (TextInput, **PhoneInput**, Select/Radio, Location/Pickup controls, email/confirm-email with inline errors), **OrderSummaryCard** (banner + selection rows with edit affordances + pax breakdown + total + cancellation line + state CTA), **CancellationPolicyLine**, **SkeletonLoader**.
 
 **Step A — reuse an existing design system first.** Search the partner repo for one (`design-system/`, `ui/`, `components/ui/`, an exported `Box`/`Text`/`Button`/`Input`, a `panda.config.*`/`tailwind.config.*`/theme-tokens file). If found, **map each role to the partner's component and tokens — build no new primitives.** This repo's own stack: `@headout/eevee` (Box, Text, Button, Icon, Link, Radio, **RadioGroup**, SkeletonLoader, Breadcrumb) + `@headout/aer` (**Input**, **PhoneInput**, FormElement) for the form + `@headout/onix` icons (Calendar, Clock, Ticket, Location, Tag, Pencil/Edit, Plus, Minus) + `@headout/pixie` (`css`/`cx`, Panda) + `@headout/espeon` (Conditional, Tooltip). Map to those if you are inside it.
 
@@ -90,7 +91,7 @@ Apply unless the partner design system overrides:
 - [ ] Carried selection (date/option/variant/time) hydrates from the URL; missing selection routes back to Select, not a partial shell.
 - [ ] URL is the source of truth for pax: `pax.{type}=N` hydrates on load and every stepper change writes back and recomputes the total (shimmer while in flight).
 - [ ] Pax steppers clamp to min/max (and group max); free/infant types count toward group size but add 0; single fixed-pax renders a read-only row.
-- [ ] Lead-guest form enforces Full name / Phone / Email / Confirm-email with inline validation; submit short-circuits to the first invalid field (no navigation).
+- [ ] Dynamic input-fields form renders from metadata (`level`, `dataType`, `required`, options, min/max, location enum variants); submit short-circuits to the first invalid field (no navigation).
 - [ ] **CTA state machine** matches exactly: "Add guests" → "Confirm & pay"/"Confirm at {total}"; only the valid state navigates to `/book/{id}/payment`; live total shown on/near the CTA.
 - [ ] No promo-code section and no "select when to pay" section are built (Headout exposes neither); summary shows total payable + the cancellation line; edit affordances route back to Select.
 - [ ] UI primitives map to the partner design system OR are built into `ui-components/` per the visual language; summary card/selection rows/Button reusable across Select/Payment.

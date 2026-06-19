@@ -10,8 +10,9 @@ Build the browse-all-collections directory — the page reached from a "View all
 
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "collections list, visual sitemap, collections by filter" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'collection|sitemap' /" })` and read the spec). Otherwise map the feed below to your endpoint.
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
-3. **Assemble** in the canonical order, applying the ordering and conditional rules.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize collection images and preserve server/editorial order before any explicit alphabetical filter view.
+3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
+4. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Page-level guards
 - The page has a default view (all/top collections) and an optional **filter** segment in the URL (alphabetical range).

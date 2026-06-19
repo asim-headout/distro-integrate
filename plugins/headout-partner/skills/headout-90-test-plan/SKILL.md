@@ -14,9 +14,10 @@ Basic path:
 2. Do not add test infrastructure unless the user explicitly asks.
 3. Cover unit tests for request builders, mappers, validators, and error translation.
 4. Cover contract tests with mocked Headout v2 responses.
-5. Gate sandbox smoke tests behind env vars and explicit permission.
-6. Include launch-readiness, rollback, and reconciliation checks.
-7. End with a context checkpoint.
+5. Cover persistence tests when booking/payment/webhooks are in scope: migrations/model shape, idempotency keys, duplicate submit, duplicate webhook, out-of-order status, and reconciliation.
+6. Gate sandbox smoke tests behind env vars and explicit permission.
+7. Include launch-readiness, rollback, and reconciliation checks.
+8. End with a context checkpoint.
 
 User context:
 
@@ -28,5 +29,6 @@ Advanced references, load only if needed:
 
 - API facts: [../../references/headout-api.md](../../references/headout-api.md)
 - Existing-test contract: [../../references/existing-test-contract.md](../../references/existing-test-contract.md)
+- Persistence and migrations: [../../references/persistence-and-migrations.md](../../references/persistence-and-migrations.md)
 - Edge cases: [../../references/edge-cases.md](../../references/edge-cases.md)
 - Context checkpoint: [../../references/context-checkpoint.md](../../references/context-checkpoint.md)

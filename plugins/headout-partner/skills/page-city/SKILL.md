@@ -10,8 +10,9 @@ Build the destination landing page for an experiences & tickets marketplace — 
 
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields before coding (`search_headout_api_docs({ query: "city detail, product list by city, product list by category, collections by city, categories" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'city|product|collections|categories' /" })` and read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (see "UI components to build").
-3. **Assemble** in the canonical order, applying the ordering and conditional rules.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize images; ProductCard uses customer selling price (`headoutSellingPrice`), never `netPrice`, and derives optional cancellation pills from policy data.
+3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (see "UI components to build").
+4. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Page-level guards
 - The route resolves a city by `code`. Fetch the **city detail** first; if the city is unknown → render a 404 (not a partial shell).
@@ -80,7 +81,7 @@ Apply these unless the partner design system overrides them:
 
 ## Field mappings & fallbacks
 - **Hero:** city `name` over the city `image`.
-- **Product card:** name, image, lead price (`from {amount}`), rating.
+- **Product card:** name, normalized image, lead price (`from {headoutSellingPrice}` / mapped selling price), rating, optional `originalPrice` strike-through, optional derived cancellation pill. Never show `netPrice` to customers.
 - **Collection card:** title + image; link to the collection page.
 - **Icon/label:** prefer an API-provided icon/label; fall back to your own asset when absent.
 - **Loading:** show skeletons sized to the final card per section.

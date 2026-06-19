@@ -10,11 +10,12 @@ server-to-server; `Headout-Auth` never reaches the client.
 - Cancel / reschedule: see per-endpoint doc pages in headout-api.md
 
 ## Flow
-1. Partner payment completes in the partner's own system (partner is Merchant-of-Record).
-2. Build the booking payload from **current inventory pricing** + validated inputs.
-3. Create the booking (`UNCAPTURED`), then capture by updating status to `PENDING` with the partner's
+1. Reconfirm current inventory pricing + validated inputs immediately before submit.
+2. Create the Headout booking (`UNCAPTURED`) to obtain `bookingId`.
+3. Complete payment in the partner's own PSP/system (partner is Merchant-of-Record).
+4. After PSP success, capture the Headout booking by updating status to `PENDING` with the partner's
    `partnerReferenceId`.
-4. Persist the Headout `bookingId` ↔ `partnerReferenceId` mapping.
+5. Get/poll the booking as needed and persist the Headout `bookingId` ↔ `partnerReferenceId` mapping.
 
 ## Server-side rules
 - `customersDetails.count` must equal `customers.length`; exactly one primary customer when required;
@@ -23,9 +24,17 @@ server-to-server; `Headout-Auth` never reaches the client.
   failure during create/capture, **GET/lookup first** and reconcile before retrying — never blindly
   re-create.
 - `UNCAPTURED` can expire to `CAPTURE_TIMEDOUT` after ~1 hour; handle that as a recoverable state.
-- Persist enough metadata to reconcile partner order status with Headout status; log `bookingId`,
+- Never update Headout to `PENDING` before partner payment success. If PSP success is uncertain, do
+  not capture; reconcile the PSP/order state first.
+- Resolve persistence/migration ownership before coding. If this repo owns schema changes, add the
+  minimal migration in the repo's existing style; if another repo/service owns persistence, produce a
+  schema handoff and keep this repo inside its boundary.
+- Persist enough metadata to reconcile partner order status with Headout status: local order id,
+  `bookingId`, `partnerReferenceId`, PSP/payment reference, payment status, capture status, Headout
+  status, selected inventory/variant/date/time/currency, and idempotency key. Log `bookingId`,
   `partnerReferenceId`, status, and a correlation id — never PII-heavy payloads.
 
 ## Cross-check
-This step is backend-centric (no page recipe). Status/semantics disagreement with a reference →
-stale-fact call-out.
+This step is backend-centric (no page recipe). Status/semantics or persistence ownership
+disagreement with a reference → stale-fact call-out. See
+[../../../references/persistence-and-migrations.md](../../../references/persistence-and-migrations.md).

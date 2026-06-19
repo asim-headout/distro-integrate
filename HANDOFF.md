@@ -38,6 +38,9 @@ See `AGENTS.md` for the skill-authoring rules and the recipe→step mapping. In 
   just for line count).
 - Typed request/response boundaries where the stack supports it; centralize auth/header/base-URL and
   endpoint construction.
+- For payment, booking, and webhook work, inspect persistence/migration ownership early. Add schema
+  changes only in the repo's existing migration style and only when this repo owns them or the
+  developer approves; otherwise produce a schema handoff.
 - Map Headout errors into the partner's existing error model.
 - Do not log API keys, customer PII, full request bodies, or voucher/ticket data. Use structured logs
   around endpoint, status, `bookingId`, `partnerReferenceId`, and correlation/request id.
@@ -53,8 +56,8 @@ rejection; price across multiple pax types; currency consistency fetch→booking
 `total`); local datetimes without offsets; null/empty optional fields.
 
 Booking lifecycle: `UNCAPTURED` → `PENDING` → `COMPLETED`/`CANCELLED`/`FAILED`/`CAPTURE_TIMEDOUT`.
-Create returns `UNCAPTURED`; capture by updating to `PENDING` with `partnerReferenceId`; `UNCAPTURED`
-can expire to `CAPTURE_TIMEDOUT` after ~1h; cancellation/reschedule responses are async
+Create returns `UNCAPTURED`; after partner PSP success, capture by updating to `PENDING` with
+`partnerReferenceId`; `UNCAPTURED` can expire to `CAPTURE_TIMEDOUT` after ~1h; cancellation/reschedule responses are async
 acknowledgements, not final state; webhooks never send `UNCAPTURED`.
 
 Seatmap: `SEATMAP` vs `NORMAL` selection type; iframe vs custom; validation can return HTTP 200 with

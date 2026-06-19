@@ -96,7 +96,8 @@ Every completed step ends with a compact-ready context checkpoint.
 ## Shared references
 
 `references/`: `business-flow.md`, `headout-api.md`, `sequencing.md`, `existing-test-contract.md`,
-`context-checkpoint.md`, `edge-cases.md`, `competitor-adapters.md` (Archetype-C switchers).
+`context-checkpoint.md`, `edge-cases.md`, `ui-data-contract.md`,
+`persistence-and-migrations.md`, `competitor-adapters.md` (Archetype-C switchers).
 
 ## Local testing
 

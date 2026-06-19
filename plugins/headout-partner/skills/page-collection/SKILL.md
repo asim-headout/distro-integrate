@@ -10,8 +10,9 @@ Build a collection landing page — a curated, themed list of experiences around
 
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "collections list, products by collection, categories by city" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'collection|product|categories' /" })` and read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
-3. **Assemble** in the canonical order, applying the ordering and conditional rules.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize images; product cards use customer selling price (`headoutSellingPrice`), never `netPrice`, and derive optional cancellation pills from policy data.
+3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
+4. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Page-level guards
 - Resolve the collection by id/slug. Fetch **collection basic info first** (it drives the city context and which loader runs).
@@ -49,7 +50,7 @@ Roles: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**, **Co
 
 **Step B — otherwise build them into the shared `ui-components/` folder** (reused by every page; reuse anything already built):
 - **CollectionMasthead:** full-bleed hero media with the collection title and a truncated description with a "read more" toggle (bottom sheet on mobile).
-- **HorizontalProductCard:** wide card — image left, content right: title, rating (`★ value (count)` when present), lead price (`from {amount}`). Whole card (or a "Check availability" CTA on mobile) links to the product page.
+- **HorizontalProductCard:** wide card — normalized image left, content right: title, rating (`★ value (count)` when present), lead price (`from {headoutSellingPrice}` / mapped selling price), optional `originalPrice` strike-through, optional derived cancellation pill. Whole card (or a "Check availability" CTA on mobile) links to the product page.
 - **FloatingCTA:** sticky button that scrolls to the product list when it's off-screen.
 - Reuse **Breadcrumb, Carousel, CategoryGrid, Box/Text/Icon/Image, SkeletonLoader** from earlier recipes.
 
@@ -66,7 +67,7 @@ Apply unless the partner design system overrides:
 
 ## Field mappings & fallbacks
 - **Header:** `name` + `content.subtext`; hero media from `heroImage` (fall back to `cardImage`).
-- **Product card:** name, image, lead price (`from {amount}`), rating (from the product's `reviewsSummary` when present).
+- **Product card:** name, normalized image, lead price (`from {headoutSellingPrice}` / mapped selling price), rating (from the product's `reviewsSummary` when present), optional derived cancellation pill.
 - **Icon/label:** prefer an API-provided icon/label; fall back to your own asset when absent.
 - **Loading:** skeletons sized to the final card/section.
 

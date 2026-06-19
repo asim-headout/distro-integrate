@@ -10,8 +10,9 @@ Build the storefront landing page for an experiences & tickets marketplace: a he
 
 ## How to use this skill
 1. **Resolve the API contract.** If an API-docs MCP server is configured, query it to confirm exact field names before coding (`search_headout_api_docs({ query: "cities list, collections list, categories" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'cities|collections|categories' /" })` and read the spec). Otherwise map each feed below to your own endpoints. Any feed you cannot fulfil → omit its section.
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build the components into a shared `ui-components/` folder (see "UI components to build").
-3. **Assemble** in the canonical order, applying the ordering and conditional rules.
+2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize protocol-relative image URLs, preserve server/editorial order, and do not fill empty rails with random cities or collections.
+3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build the components into a shared `ui-components/` folder (see "UI components to build").
+4. **Assemble** in the canonical order, applying the ordering and conditional rules.
 
 ## Data sources (map to your endpoints)
 The discovery feeds below are "site-wide" (not scoped to one city). **Note:** the Headout product list is **scoped to a `cityCode` (required) and exposes no editorial "top picks" tag**, so there is **no site-wide recommended-products feed** — that is why this page has no product carousel. Use city pages for product feeds.
@@ -36,7 +37,7 @@ The discovery feeds below are "site-wide" (not scoped to one city). **Note:** th
 ## Conditional render rules
 - **Hero search:** always shown. Use a full search experience on desktop and a compact search entry on mobile (behavior parity; style is yours). **The Headout partner API provides no search endpoint** — wire this input to the partner's own search backend, or omit the search entry if there is none.
 - **Recently viewed:** render only if local history is non-empty; never server-render it.
-- **Top destinations:** show a loading skeleton while the cities feed is loading AND the list is empty; else render. "View all" links to your cities index.
+- **Top destinations:** show a loading skeleton while the cities feed is loading AND the list is empty; else render. "View all" links to your cities index. If the repo has no cities-index route, add one only when it fits existing routing; otherwise ask instead of choosing random extra cities.
 - **Top things to do (collections):** render the section **only if** the collection list length `> 0`. Show carousel navigation arrows + "View all" **only if** length `> 6`; below 6, render the row with no chevrons/view-all.
 - **Browse by theme:** render only if at least one category/subcategory exists; else omit.
 - **Lazy mount:** sections 3–5 mount on scroll-into-view with a reserved placeholder height (prevents layout shift). Sections 2, 3, 4, 5 are client-rendered.
@@ -49,7 +50,7 @@ The page needs these component roles: **Box** (layout), **Text** (typography), *
 
 **Step B — otherwise build them into a shared `ui-components/` folder** (reused by every page). Build each as a small, typed, presentational component with these anatomies:
 - **Box / Text / Icon:** layout primitive, a typography primitive that takes a `variant` (heading/label/body) + `color`, and an icon wrapper that renders an inline SVG. All visual values come from the design tokens below.
-- **Image:** responsive image with a blurred/low-res placeholder, lazy loading, and an aspect-ratio prop.
+- **Image:** responsive image with a blurred/low-res placeholder, lazy loading, an aspect-ratio prop, and `https:` normalization for protocol-relative Headout URLs.
 - **Carousel:** horizontal scroller that snaps to cards and lets the next card "peek". Optional left/right nav arrows (shown per the `> 6` rule). Keyboard + drag scrollable.
 - **CityCard / CollectionCard:** image with rounded corners + title (+ subtitle for city, e.g. country). Whole card is a link.
 - **CategoryGrid:** a list of category headings, each with its subcategory links beneath.
@@ -78,6 +79,7 @@ Apply these unless the partner design system overrides them:
 - [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds.
 - [ ] Sections render in canonical order; only the five sections above are built.
 - [ ] Feed order preserved (no re-sort); caps applied (cities 30 / collections 50).
+- [ ] Top destinations has a deterministic cities-index / "View all" path when available; no random city filler.
 - [ ] Collections section hidden when empty; arrows/view-all only when `> 6`.
 - [ ] Categories grouped parent→child; empty feeds omit their section.
 - [ ] UI primitives either map to the partner design system OR are built into `ui-components/` following the visual language.

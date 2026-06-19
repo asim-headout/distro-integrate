@@ -7,7 +7,7 @@ Use this as the default implementation order:
 3. Product selection: product detail page, tour/variant/date/pax selection, inventory, and checkout entry.
 4. Checkout inputs: customer/passenger fields and variant input fields returned by Headout responses.
 5. Seatmap validation, only when the product uses seatmap inventory or the partner asks for seat selection.
-6. Payment and booking: partner payment handoff, Headout booking create/capture/get, and reconciliation.
+6. Payment and booking: Headout booking create (`UNCAPTURED`), partner payment confirmation, Headout capture/update to `PENDING`, get/poll, and reconciliation.
 7. Booking management: webhooks, cancellation, reschedule, and post-booking status updates.
 8. Test, review, or debug as cross-cutting support steps.
 

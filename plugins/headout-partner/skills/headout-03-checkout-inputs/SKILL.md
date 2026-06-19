@@ -26,7 +26,7 @@ product.
 ## Steps
 1. Inspect existing checkout, form validation, cart/order state, and payment handoff.
 2. Source field requirements from current Headout API responses (Backend reference); do not hardcode a single product's fields.
-3. Build the frontend form. *(No dedicated page recipe yet — follow the partner's design system and the field metadata; a checkout-inputs page recipe is a planned follow-up.)*
+3. Build the frontend form from safe field metadata, including `level`, `dataType`, `required`, labels, options, min/max constraints, and location/pickup enum variants. *(No dedicated page recipe yet — follow the partner's design system and the field metadata; a checkout-inputs page recipe is a planned follow-up.)*
 4. Render only safe field metadata on the frontend; keep raw API calls server-side.
 5. Preserve customer/passenger fields, primary customer rules, pax counts, and variant input fields through payment and booking.
 6. Validate before constructing the booking payload.
@@ -43,7 +43,7 @@ $ARGUMENTS
 - **Advanced pass:** only then handle unknown future field types, pax-count changes after entry, and variant-input persistence (Advanced reference).
 
 ## References (load only what's needed)
-- **Frontend — look & structure:** *(checkout-inputs page recipe — planned follow-up; until then reuse the partner design system and `ui-components/` from earlier recipes)*
+- **Frontend — look & structure:** *(checkout-inputs page recipe — planned follow-up; until then reuse the partner design system, dynamic field metadata, and `ui-components/` from earlier recipes)*
 - **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
 - **Advanced — edge cases:** [references/advanced.md](references/advanced.md), [../../references/edge-cases.md](../../references/edge-cases.md)
 - **Context checkpoint:** [../../references/context-checkpoint.md](../../references/context-checkpoint.md)

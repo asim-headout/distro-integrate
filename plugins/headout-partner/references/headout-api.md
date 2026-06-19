@@ -28,3 +28,19 @@ Core endpoint groups:
 - Post-booking: cancellation and reschedule endpoints
 - Webhooks: `/api/public/v2/webhooks`
 - Seatmap: availability, inventory, validation, SVG, and iframe endpoints
+
+Per-endpoint doc pages (api-partner v2):
+
+- Before you start: https://partner.headout.com/docs/api-partner/v2/before-you-get-started.md
+- Products list: https://partner.headout.com/docs/api-partner/v2/products/list.md
+- Product get: https://partner.headout.com/docs/api-partner/v2/products/get.md
+- Inventory list-by-tour: https://partner.headout.com/docs/api-partner/v2/inventory/list-by-tour.md
+- Booking create: https://partner.headout.com/docs/api-partner/v2/bookings/create.md
+- Booking capture (update): https://partner.headout.com/docs/api-partner/v2/bookings/update.md
+- Booking get: https://partner.headout.com/docs/api-partner/v2/bookings/get.md
+- Booking cancel: https://partner.headout.com/docs/api-partner/v2/bookings/cancel.md
+- Booking reschedule: https://partner.headout.com/docs/api-partner/v2/bookings/reschedule.md
+- Webhooks create: https://partner.headout.com/docs/api-partner/v2/webhooks/create.md
+- Seatmap inventory: https://partner.headout.com/docs/api-partner/v2/seatmap/inventory.md
+- Seatmap validate: https://partner.headout.com/docs/api-partner/v2/seatmap/validate.md
+- Seatmap iframe: https://partner.headout.com/docs/api-partner/v2/seatmap/iframe.md

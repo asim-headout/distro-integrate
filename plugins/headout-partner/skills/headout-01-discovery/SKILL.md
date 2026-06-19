@@ -4,17 +4,31 @@ description: Step 01 of the Headout partner flow. Use for discovery surfaces: ho
 argument-hint: "[home/search/city/collection/category/product discovery scope]"
 ---
 
-# Headout 01 Discovery
+# Headout 01 — Discovery
 
-Implement the discovery step using the partner repo's existing backend/frontend conventions.
+## Outcome (what "done" looks like — FE/BE agnostic)
+The requested discovery surface (home, search, city, collection, category/subcategory tree, product
+list, or product detail) renders the partner's catalog, with correct currency/language/geo
+propagation and pagination — backed server-side by Headout v2 discovery APIs, displayed under the
+partner's own brand.
 
-Basic path:
+## Ground rules (apply on every step)
+- **Security / gate-keeping:** `Headout-Auth` and all raw Headout calls stay server-side. The browser
+  only ever sees safe field metadata — never the key, never raw API responses.
+- **Non-breaking:** preserve the partner's existing routes, design system, types, and conventions.
+  Add, don't replace. Don't introduce a new client/SDK abstraction unless the repo already has one.
+- **Stale-fact call-out:** the API facts in references are a snapshot. If a live response contradicts
+  a reference (missing field, new status, changed shape) → STOP and surface it to the partner. Never
+  silently code around it or guess field names.
+- **Sandbox-safe:** never call production for tests; gate sandbox calls behind credentials.
+- Emit no analytics/tracking.
 
+## Steps
 1. Inspect existing catalog, search, routing, data-fetching, caching, and test patterns.
-2. Keep `Headout-Auth` server-side; frontend should use partner-safe APIs or existing data access boundaries.
-3. Implement only the requested discovery surface: home, search results, city, collection, category tree, product list, or product detail.
-4. Preserve explicit `currencyCode`, `languageCode`, `cityCode`, `categoryId`, `collectionId`, and `subCategoryId` propagation.
-5. Support pagination and nullable Headout fields.
+2. Resolve the API contract for the surface (Backend reference + headout-api.md) before coding.
+3. Build the frontend to the matching **page recipe** (see References) — it is the source of truth for section order, derivation, conditional rules, components, and visual language.
+4. Wire the backend: server-side fetch + map Headout discovery responses into the shape the FE consumes via the partner's data boundary / BFF.
+5. Preserve explicit `currencyCode`, `languageCode`, `cityCode`, `categoryId`, `collectionId`, and `subCategoryId` propagation; support pagination and nullable fields.
 6. End with a context checkpoint and next skill recommendation.
 
 User context:
@@ -23,9 +37,13 @@ User context:
 $ARGUMENTS
 ```
 
-Advanced references, load only if needed:
+## Verification gate
+- **Basic pass first:** the surface fetches, maps, and renders one happy path (correct currency/language, pagination works, empty/nullable fields handled). Get this green before hardening.
+- **Advanced pass:** only then handle the edge cases in the Advanced reference.
 
-- Discovery details: [references/advanced.md](references/advanced.md)
-- API facts: [../../references/headout-api.md](../../references/headout-api.md)
-- Testing contract: [../../references/existing-test-contract.md](../../references/existing-test-contract.md)
-- Context checkpoint: [../../references/context-checkpoint.md](../../references/context-checkpoint.md)
+## References (load only what's needed)
+- **Frontend — look & structure (page recipes):** [../page-home/SKILL.md](../page-home/SKILL.md), [../page-search/SKILL.md](../page-search/SKILL.md), [../page-city/SKILL.md](../page-city/SKILL.md), [../page-collection/SKILL.md](../page-collection/SKILL.md), [../page-collections-index/SKILL.md](../page-collections-index/SKILL.md), [../page-category/SKILL.md](../page-category/SKILL.md), [../page-subcategory/SKILL.md](../page-subcategory/SKILL.md), [../page-places-to-visit/SKILL.md](../page-places-to-visit/SKILL.md), [../page-tours-by-city/SKILL.md](../page-tours-by-city/SKILL.md), [../page-profile/SKILL.md](../page-profile/SKILL.md)
+- **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
+- **Advanced — edge cases:** [references/advanced.md](references/advanced.md)
+- **Testing contract:** [../../references/existing-test-contract.md](../../references/existing-test-contract.md)
+- **Context checkpoint:** [../../references/context-checkpoint.md](../../references/context-checkpoint.md)

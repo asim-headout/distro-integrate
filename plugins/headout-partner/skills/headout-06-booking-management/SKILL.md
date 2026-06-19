@@ -4,18 +4,33 @@ description: Step 06 of the Headout partner flow. Use for post-booking managemen
 argument-hint: "[webhook, cancellation, reschedule, or post-booking scope]"
 ---
 
-# Headout 06 Booking Management
+# Headout 06 — Booking Management
 
-Implement post-booking management after booking persistence exists.
+## Outcome (what "done" looks like — FE/BE agnostic)
+Post-booking lifecycle is handled: booking-status webhooks are ingested idempotently and resiliently
+(retries, out-of-order delivery), cancellation/reschedule are wired where in scope, and local booking
+state stays reconciled with Headout. Webhook ingestion is **backend-centric**; any customer-facing
+status/servicing UI follows the partner's design system.
 
-Basic path:
+## Ground rules (apply on every step)
+- **Security / gate-keeping:** `Headout-Auth` and all raw Headout calls stay server-side. The browser
+  only ever sees safe field metadata — never the key, never raw API responses.
+- **Non-breaking:** preserve the partner's existing routes, persistence, error, and logging
+  conventions. Add, don't replace. Don't introduce a new client/SDK abstraction unless the repo
+  already has one.
+- **Stale-fact call-out:** the API facts in references are a snapshot. If a live response/webhook
+  contradicts a reference (new status, changed event shape) → STOP and surface it to the partner.
+  Never silently code around it or guess field names.
+- **Sandbox-safe:** never call production for tests; gate sandbox calls behind credentials.
+- Emit no analytics/tracking.
 
+## Steps
 1. Inspect booking persistence, public route/controller/function patterns, idempotency storage, logging, and tests.
-2. Implement webhook handling using existing runtime conventions.
-3. Handle `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, and `CAPTURE_TIMEDOUT`; do not expect `UNCAPTURED` in webhooks.
-4. Add cancellation and reschedule only if requested or needed by the integration scope.
-5. Make status processing idempotent and resilient to retries and out-of-order delivery.
-6. Persist enough event metadata for reconciliation without storing PII-heavy payloads.
+2. Resolve the webhook + cancel/reschedule API contract (Backend reference + headout-api.md) before coding.
+3. Implement webhook handling using existing runtime conventions.
+4. Handle `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, and `CAPTURE_TIMEDOUT`; do not expect `UNCAPTURED` in webhooks.
+5. Add cancellation and reschedule only if requested or needed by the integration scope (treat their immediate responses as async acknowledgements, not final state).
+6. Make status processing idempotent and resilient to retries and out-of-order delivery; persist enough event metadata for reconciliation without storing PII-heavy payloads.
 7. End with a context checkpoint and next skill recommendation.
 
 User context:
@@ -24,9 +39,13 @@ User context:
 $ARGUMENTS
 ```
 
-Advanced references, load only if needed:
+## Verification gate
+- **Basic pass first:** a webhook event updates local booking state, the handler is idempotent (a duplicate event is a no-op) and returns 2xx after successful processing. Get this green before hardening.
+- **Advanced pass:** only then handle out-of-order updates, status regression, unknown status, missing booking, and cancellation/reschedule acknowledgement-vs-final-state (Advanced reference).
 
-- Booking management details: [references/advanced.md](references/advanced.md)
-- API facts: [../../references/headout-api.md](../../references/headout-api.md)
-- Existing-test contract: [../../references/existing-test-contract.md](../../references/existing-test-contract.md)
-- Context checkpoint: [../../references/context-checkpoint.md](../../references/context-checkpoint.md)
+## References (load only what's needed)
+- **Frontend — look & structure:** *(booking-management UI page recipe — planned follow-up; until then reuse the partner design system and `ui-components/`)*
+- **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
+- **Advanced — edge cases:** [references/advanced.md](references/advanced.md)
+- **Testing contract:** [../../references/existing-test-contract.md](../../references/existing-test-contract.md)
+- **Context checkpoint:** [../../references/context-checkpoint.md](../../references/context-checkpoint.md)

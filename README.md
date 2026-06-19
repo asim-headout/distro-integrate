@@ -1,211 +1,77 @@
-# distro-mcp-server
+# Headout Partner Integration Plugin
 
-Prompt-only MCP server for partners integrating Headout APIs.
+A Claude Code plugin that helps partners build a **partner-built (native) Headout integration** —
+the AI-Assisted Builder Kit for the Tier-3 path. Partners point a coding agent at it; Claude loads
+only the skill relevant to the current task and generates compliant integration code in their own
+stack (Next.js, Rails, Django, Laravel, Spring, serverless, monorepo, etc.).
 
-The server gives an AI assistant Headout-specific integration workflows instead of making API calls for the user. It is designed for partners using any stack: Next.js, Rails, Django, Laravel, Spring, serverless functions, generated clients, monorepos, direct endpoint calls, or an API wrapper around Headout.
+This repo is **plugin-only**. The plugin lives at [`plugins/headout-partner`](plugins/headout-partner).
 
-## What It Provides
+## What it provides
 
-- Prompt templates for planning, implementation, testing, review, and debugging.
-- A prompt-catalog resource at `headout://prompt-catalog` for clients that discover resources before prompts.
-- Opt-in guide resources for details that should not bloat every prompt:
-  `headout://guides/tdd-contract`, `headout://guides/edge-cases`, and
-  `headout://guides/sequencing`.
-- Headout API v2-first guidance with links to `llms.txt` and OpenAPI specs.
-- Existing-test-first instructions: use tests when the repo already has them, but never add test setup unless the user explicitly asks.
-- Sandbox-safe guidance for live validation.
-- Security guidance to keep `Headout-Auth` server-side.
-- Local opt-in telemetry metadata for improving prompt DX.
+- **Journey skills** (`headout-00`…`headout-06`) ordered by the partner user journey: plan →
+  discovery → product selection → checkout inputs → seatmap (if needed) → payment/booking →
+  booking management.
+- **A frontend page-recipe library** (`page-*` skills): self-contained, branding-neutral specs for
+  each storefront page (section order, data derivation, conditional rules, components, visual
+  language). These are explicitly invocable and are linked from the relevant journey step.
+- **Support skills:** test plan, review, debug, and context checkpoint.
+- **Shared + per-step references** so context loads progressively (frontend recipe / backend API
+  mapping / advanced edge cases / competitor adapters).
 
-## Prompts
+## How a skill is shaped
 
-- `plan_headout_integration`
-- `implement_headout_discovery`
-- `implement_headout_inventory_and_pricing`
-- `implement_headout_booking_tdd`
-- `implement_headout_seatmap`
-- `implement_headout_webhooks`
-- `generate_headout_test_plan`
-- `review_headout_integration`
-- `debug_headout_integration`
+Each journey skill is a thin **outcome spine** with four layers hung off it:
 
-## Discovery DX
+1. **Outcome** — what "done" looks like, FE/BE-agnostic.
+2. **Ground rules** — security/gate-keeping (auth stays server-side), non-breaking changes,
+   stale-fact call-out (stop and ask the partner if a live response contradicts a reference), no
+   analytics.
+3. **Steps** — inspect repo → resolve API contract → build FE to the page recipe → wire the BE →
+   harden edge cases → checkpoint.
+4. **References** — FE (page recipe), BE (`backend.md` + `headout-api.md`), advanced edge cases.
 
-Some MCP clients and agents look for tools or resources before they surface prompts. This server handles that explicitly:
+Frontend and backend are **branches inside the journey skill**, not a parallel skill hierarchy. The
+page recipes carry `disable-model-invocation: true` so they never auto-fire alongside a journey skill.
 
-- `prompts/list` returns the real product surface.
-- `resources/list` returns `headout://prompt-catalog`.
-- `resources/read` for `headout://prompt-catalog` explains that the MCP is prompt-first and lists available prompts.
-- `tools/list` returns an empty list.
+## Skills
 
-The server also sends initialization instructions telling clients to use `prompts/list` first.
+Journey:
 
-Implementation prompts are intentionally short control prompts. They enforce
-sequencing and the repo's existing test workflow, then point agents to guide
-resources only when deeper detail is needed.
+- `headout-00-plan`, `headout-01-discovery`, `headout-02-product-selection`,
+  `headout-03-checkout-inputs`, `headout-04-seatmap-validation`, `headout-05-payment-booking`,
+  `headout-06-booking-management`
 
-## Development
+Frontend page recipes:
 
-```bash
-pnpm install
-pnpm test
-pnpm typecheck
-pnpm build
-```
+- `page-home`, `page-search`, `page-city`, `page-collection`, `page-collections-index`,
+  `page-category`, `page-subcategory`, `page-places-to-visit`, `page-tours-by-city`, `page-profile`,
+  `page-tour` (product detail), `page-select` (date/time/variant)
 
-## Claude Code Plugin
+Support:
 
-This repo also includes a Claude Code plugin at `plugins/headout-partner`.
-It packages Headout partner workflows as `headout-*` Agent Skills ordered by
-the partner user journey. Partners install one plugin while Claude loads only
-the skill relevant to the current task.
+- `headout-90-test-plan`, `headout-91-review`, `headout-92-debug`, `headout-99-context-checkpoint`
 
-The current skill files are a starting structure, not the final taxonomy. Keep
-future additions aligned to the business flow: discovery, product selection,
-checkout inputs, optional seatmap validation, payment/booking, and post-booking
-management. Dedicated frontend skills should plug into the same journey rather
-than forming a separate competing hierarchy.
-
-Run it locally with:
+## Local testing
 
 ```bash
 claude --plugin-dir ./plugins/headout-partner
 ```
 
-Example explicit invocations:
+Inside Claude Code, run `/reload-plugins` after editing plugin files, then test with an explicit
+invocation, e.g. `/headout-partner:headout-02-product-selection` or `/headout-partner:page-tour`.
 
-```text
-/headout-partner:headout-01-discovery
-/headout-partner:headout-03-checkout-inputs
-/headout-partner:headout-05-payment-booking
-```
-
-Each skill keeps the basic workflow in `SKILL.md` and links to advanced
-references only when deeper context is needed. Completed steps should end with
-a compact-ready checkpoint so the next step can continue with minimal context.
-
-Run local stdio MCP:
-
-```bash
-pnpm dev
-```
-
-Run local Cloudflare Worker:
-
-```bash
-pnpm worker:dev
-```
-
-## Cloudflare Deployment
-
-This repo deploys a remote Streamable HTTP MCP server to Cloudflare Workers.
-
-Worker config:
-
-- Worker name: `headout-partners-mcp`
-- MCP endpoint: `/mcp`
-- Health endpoint: `/health`
-- Catalog endpoint: `/catalog`
-- Access model: public POC
-
-Validate the Worker bundle:
-
-```bash
-pnpm exec wrangler deploy --dry-run --outdir /private/tmp/headout-partners-mcp-worker
-```
-
-Deploy manually:
-
-```bash
-pnpm worker:deploy
-```
-
-After deploy, point remote MCP clients at:
-
-```text
-https://headout-partners-mcp.<your-subdomain>.workers.dev/mcp
-```
-
-Prompt/resource updates are shipped by redeploying the Worker. Partners using the remote MCP URL do not reinstall anything.
-
-## Client Configuration
-
-After building, point an MCP client at the compiled stdio server:
-
-```json
-{
-  "mcpServers": {
-    "headout-distro": {
-      "command": "node",
-      "args": ["/absolute/path/to/distro-integrate/dist/index.js"],
-      "env": {
-        "HEADOUT_MCP_TELEMETRY": "local"
-      }
-    }
-  }
-}
-```
-
-For development, you can run via `pnpm`:
-
-```json
-{
-  "mcpServers": {
-    "headout-distro-dev": {
-      "command": "pnpm",
-      "args": ["dev"],
-      "cwd": "/absolute/path/to/distro-integrate",
-      "env": {
-        "HEADOUT_MCP_TELEMETRY": "local"
-      }
-    }
-  }
-}
-```
-
-## Telemetry
-
-Telemetry is intentionally minimal. The server records prompt invocation metadata only:
-
-- prompt name
-- argument keys
-- timestamp
-- MCP server version
-
-It does not record argument values, customer data, source code, request payloads, API keys, or errors.
-
-Modes:
-
-```bash
-HEADOUT_MCP_TELEMETRY=local
-HEADOUT_MCP_TELEMETRY=off
-```
-
-Local telemetry defaults to:
-
-```text
-.headout-mcp/events.jsonl
-```
-
-Override it with:
-
-```bash
-HEADOUT_MCP_TELEMETRY_FILE=/path/to/events.jsonl
-```
-
-Remote telemetry is intentionally not implemented in this POC. Add it only after defining partner consent, retention, redaction, and data-processing rules.
-
-## Headout Docs
+## Headout docs
 
 - LLM docs index: https://partner.headout.com/docs/llms.txt
 - OpenAPI v2: https://partner.headout.com/docs/specs/openapi-v2.yaml
 - API Partner OpenAPI v2: https://partner.headout.com/docs/specs/openapi-v2-api-partner.yaml
 - Affiliate OpenAPI v2: https://partner.headout.com/docs/specs/openapi-v2-affiliate.yaml
 
-## DX Principles
+## DX principles
 
-- The MCP should behave like a Headout integration architect, not a docs search bot.
-- Prompts should adapt to the partner repo instead of imposing a framework.
-- Use the repo's existing test workflow when available; never add test setup unless the user explicitly asks.
-- Sandbox calls should be explicit, credential-gated, and non-destructive unless approved.
-- Code guidance should favor maintainable files, typed boundaries, existing conventions, and clear ownership.
+- Behave like a Headout integration architect, not a docs search bot.
+- Adapt to the partner repo instead of imposing a framework; preserve existing conventions.
+- Use the repo's existing test workflow; never add test setup unless the user explicitly asks.
+- Keep `Headout-Auth` server-side; sandbox calls are explicit, credential-gated, and non-destructive
+  unless approved.

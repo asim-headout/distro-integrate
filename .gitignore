@@ -1,5 +1,3 @@
-node_modules
-dist
-.headout-mcp
 .env
 *.log
+.DS_Store

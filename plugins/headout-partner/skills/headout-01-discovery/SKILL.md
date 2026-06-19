@@ -1,6 +1,6 @@
 ---
 name: headout-01-discovery
-description: Step 01 of the Headout partner flow. Use for discovery surfaces: home page, city pages, collections, categories, subcategories, catalog pages, product list APIs, product detail lookup, and pagination.
+description: "Step 01 of the Headout partner flow. Use for discovery surfaces: home page, city pages, collections, categories, subcategories, catalog pages, product list APIs, product detail lookup, and pagination."
 argument-hint: "[home/city/collection/category/product discovery scope]"
 ---
 

@@ -6,6 +6,46 @@ only the skill relevant to the current task and generates compliant integration 
 stack (Next.js, Rails, Django, Laravel, Spring, serverless, monorepo, etc.).
 
 This repo is **plugin-only**. The plugin lives at [`plugins/headout-partner`](plugins/headout-partner).
+It is also a Claude Code marketplace root via [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json).
+
+## Install
+
+For one session from a local checkout:
+
+```bash
+claude --plugin-dir ./plugins/headout-partner
+```
+
+To install it from this local checkout:
+
+```bash
+claude plugin marketplace add "$(pwd)" --scope user
+claude plugin install headout-partner@headout-partner-marketplace --scope user
+```
+
+To install it from GitHub:
+
+```bash
+claude plugin marketplace add https://github.com/asim-headout/distro-integrate --scope user
+claude plugin install headout-partner@headout-partner-marketplace --scope user
+```
+
+Use `--scope project` instead of `--scope user` when the plugin should be available only in the
+current partner repo.
+
+Validate before publishing or sharing:
+
+```bash
+claude plugin validate --strict plugins/headout-partner
+claude plugin validate --strict .claude-plugin/marketplace.json
+```
+
+After installing, invoke a journey skill explicitly:
+
+```text
+/headout-partner:headout-00-plan
+/headout-partner:headout-01-discovery
+```
 
 ## What it provides
 
@@ -44,15 +84,20 @@ Journey:
 
 Frontend page recipes:
 
-- `page-home`, `page-search`, `page-city`, `page-collection`, `page-collections-index`,
-  `page-category`, `page-subcategory`, `page-places-to-visit`, `page-tours-by-city`, `page-profile`,
-  `page-tour` (product detail), `page-select` (date/time/variant)
+- `page-home`, `page-city`, `page-collection`, `page-collections-index`, `page-category`,
+  `page-subcategory`, `page-places-to-visit`, `page-tours-by-city`, `page-tour` (product detail)
+
+Booking and account page recipes:
+
+- `book-select`, `book-checkout`, `book-payment`
+- `account-confirmation`, `account-manage-booking`, `account-voucher`, `account-profile`,
+  `account-settings`, `account-saved-cards`, `account-auth`
 
 Support:
 
 - `headout-90-test-plan`, `headout-91-review`, `headout-92-debug`, `headout-99-context-checkpoint`
 
-## Local testing
+## Local Development
 
 ```bash
 claude --plugin-dir ./plugins/headout-partner

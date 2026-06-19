@@ -1,6 +1,6 @@
 ---
 name: headout-90-test-plan
-description: Support skill for the Headout partner flow. Use to generate a test plan across completed steps: discovery, product selection, checkout inputs, seatmap, payment booking, booking management, negative cases, sandbox smoke tests, and launch readiness.
+description: "Support skill for the Headout partner flow. Use to generate a test plan across completed steps: discovery, product selection, checkout inputs, seatmap, payment booking, booking management, negative cases, sandbox smoke tests, and launch readiness."
 argument-hint: "[completed or planned steps]"
 ---
 

@@ -105,3 +105,26 @@ claude --plugin-dir ./plugins/headout-partner
 ```
 
 Run `/reload-plugins` after editing plugin files, then test with an explicit invocation.
+
+## Distribution
+
+From the repository root, install through the bundled marketplace:
+
+```bash
+claude plugin marketplace add "$(pwd)" --scope user
+claude plugin install headout-partner@headout-partner-marketplace --scope user
+```
+
+Or from GitHub:
+
+```bash
+claude plugin marketplace add https://github.com/asim-headout/distro-integrate --scope user
+claude plugin install headout-partner@headout-partner-marketplace --scope user
+```
+
+Validate before sharing:
+
+```bash
+claude plugin validate --strict plugins/headout-partner
+claude plugin validate --strict .claude-plugin/marketplace.json
+```

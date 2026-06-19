@@ -87,6 +87,7 @@ Roles: **Box, Text, Icon, Image, Button**, **Breadcrumb/StepHeader**, **DateStri
 **Step A — reuse an existing design system first.** Search the partner repo for one (`design-system/`, `ui/`, `components/ui/`, an exported `Box`/`Text`/`Button`, a `panda.config.*`/`tailwind.config.*`/theme-tokens file). If found, **map each role to the partner's component and tokens — build no new primitives.** This repo's own stack: `@headout/eevee` (Box, Text, Button, Icon, Link, **DateStrip**, **Breadcrumb**, Radio, SkeletonLoader) + `@headout/onix` icons (Calendar, Clock, Ticket, Location, ChevronRight) + `@headout/pixie` (`css`/`cx`, Panda) + `@headout/espeon` (Conditional, Tooltip). Map to those if you are inside it.
 
 **Step B — otherwise build into the shared `ui-components/` folder** per the visual language. Reuse the **SummaryCard, DateStrip, OptionCard, Button, Breadcrumb, SkeletonLoader** across checkout/payment. Keep `data-qa-marker`/`data-testid` hooks you add.
+- **Calendar (CalendarModal):** use the **`ui-calendar`** skill (`/ui-calendar`) for the pixel-exact spec — dual-month grid (3.75rem × 3.75rem date cells, desktop), purple selected state, green min-price pill, grey unavailable dates, open/close animation. Build into `ui-components/Calendar/` once; wire as the CalendarModal opened by the "More dates" button on the DateStrip.
 
 ## Visual language (so output is consistent)
 Apply unless the partner design system overrides:

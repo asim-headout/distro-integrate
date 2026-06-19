@@ -122,6 +122,7 @@ reuse everywhere.
 | Component | Skill | Path |
 |---|---|---|
 | Product / experience card (image carousel, hover lift, price block, grid) | `ui-product-card` | `skills/ui-product-card/SKILL.md` |
+| Date-picker calendar (dual-month, price labels, purple selected, green min-price) | `ui-calendar` | `skills/ui-calendar/SKILL.md` |
 
 ## Support skills
 

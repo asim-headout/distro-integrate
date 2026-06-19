@@ -73,12 +73,12 @@ Show the live **{total}** on/next to the CTA. Never navigate to payment until at
 ## UI components to build
 Roles: **Box, Text, Icon, Image, Button**, **Breadcrumb/StepHeader**, **PaxStepper** (label + descriptor + price + `−`/count/`+`), **DynamicInputFieldsForm** (TextInput, **PhoneInput**, Select/Radio, Location/Pickup controls, email/confirm-email with inline errors), **OrderSummaryCard** (banner + selection rows with edit affordances + pax breakdown + total + cancellation line + state CTA), **CancellationPolicyLine**, **SkeletonLoader**.
 
-**Step A — reuse an existing design system first.** Search the partner repo for one (`design-system/`, `ui/`, `components/ui/`, an exported `Box`/`Text`/`Button`/`Input`, a `panda.config.*`/`tailwind.config.*`/theme-tokens file). If found, **map each role to the partner's component and tokens — build no new primitives.** This repo's own stack: `@headout/eevee` (Box, Text, Button, Icon, Link, Radio, **RadioGroup**, SkeletonLoader, Breadcrumb) + `@headout/aer` (**Input**, **PhoneInput**, FormElement) for the form + `@headout/onix` icons (Calendar, Clock, Ticket, Location, Tag, Pencil/Edit, Plus, Minus) + `@headout/pixie` (`css`/`cx`, Panda) + `@headout/espeon` (Conditional, Tooltip). Map to those if you are inside it.
+**Step A — reuse an existing design system first.** Search the partner repo for one (`design-system/`, `ui/`, `components/ui/`, an exported `Box`/`Text`/`Button`/`Input`, a `panda.config.*`/`tailwind.config.*`/theme-tokens file). If found, **map each role to the partner's component and tokens — build no new primitives.** Use the partner's form inputs / phone-input component for the lead-guest form.
 
 **Step B — otherwise build into the shared `ui-components/` folder** per the visual language. Reuse the **OrderSummaryCard (≡ Select's SummaryCard), selection rows, Button, Breadcrumb, SkeletonLoader** across Select/Payment. Keep `data-qa-marker`/`data-testid` hooks you add.
 
 ## Visual language (so output is consistent)
-Apply unless the partner design system overrides:
+The partner's design system wins; the values below are only a fallback when none exists:
 - **Shell:** centered ~75rem max width; **form left, sticky summary card right** (~24rem, sticky offset ~6rem). Mobile: single column with the summary collapsed into a sticky bottom bar carrying the same total + state CTA.
 - **Spacing scale:** 4 / 8 / 12 / 16 / 24 / 32 / 48 px. **Radius:** cards/inputs ~12px; the stepper `−`/`+` buttons ~999px or ~8px.
 - **Type:** section titles ("How many guests?", "Lead guest details") ~20–24px; field labels ~14px; price/total emphasis ~16–18px. One sans-serif family.

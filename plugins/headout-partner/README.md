@@ -18,8 +18,9 @@ the partner user journey, not by internal engineering ownership.
 Each `headout-0X` skill is a thin **outcome spine**:
 
 1. **Outcome** — what "done" looks like, FE/BE-agnostic.
-2. **Ground rules** — auth stays server-side; non-breaking changes; stale-fact call-out (stop and ask
-   the partner if a live response contradicts a reference); no analytics.
+2. **Ground rules** — auth stays server-side; **default to the Headout sandbox for all development**
+   (move to production only at the partner's go-live); non-breaking changes; stale-fact call-out (stop
+   and ask the partner if a live response contradicts a reference); no analytics.
 3. **Steps** — inspect repo → ask the planning/preflight questions when needed → resolve API
    contract → build FE to the page recipe → wire the BE → harden edge cases → checkpoint.
 4. **References** — frontend (page recipe), backend (`references/backend.md` + `headout-api.md`),
@@ -55,7 +56,7 @@ identity, auth dependency, test commands, and rollout boundary.
 ## Journey skills
 
 - `headout-00-plan`: classify stack, scope, architecture, map the journey, plan.
-- `headout-01-discovery`: home, search, city, collections, categories, product list/detail.
+- `headout-01-discovery`: home, city, collections, categories, product list/detail.
 - `headout-02-product-selection`: product page, variant/date/pax selection, inventory, pricing.
 - `headout-03-checkout-inputs`: customer/passenger + variant input fields, validation.
 - `headout-04-seatmap-validation`: iframe or custom seatmap selection + validation.
@@ -71,8 +72,9 @@ share a `ui-components/` library across pages.
 
 ### Storefront / discovery flow (`page-*`)
 
-The browse-and-find journey: landing, search, and the listing/detail pages a guest moves through
-before they start booking.
+The browse-and-find journey: landing and the listing/detail pages a guest moves through
+before they start booking. (The Headout partner API has no search endpoint, so there is no
+search-results recipe — wire any search to the partner's own backend.)
 
 | Flow / page | Skill | Path |
 |---|---|---|
@@ -85,7 +87,6 @@ before they start booking.
 | All experiences in a city | `page-tours-by-city` | `skills/page-tours-by-city/SKILL.md` |
 | Places to visit | `page-places-to-visit` | `skills/page-places-to-visit/SKILL.md` |
 | Experience / product detail (PDP) | `page-tour` | `skills/page-tour/SKILL.md` |
-| Search results | `page-search` | `skills/page-search/SKILL.md` |
 
 ### Booking flow (`book-*`)
 
@@ -101,28 +102,28 @@ experience. Each carries the selection forward in the URL and drives a strict CT
 ### Account & post-booking flow (`account-*`)
 
 The own-your-booking journey: what a guest reaches after paying — their confirmation, voucher/ticket,
-self-service management, and the logged-in account area (profile, settings, saved cards, sign-in). Each
-is behind a booking or a session, so none are indexable.
+and self-service management of a booking. These are backed by the Headout booking endpoints (booking
+GET + cancel/reschedule); access is server-side via the partner's BFF (the partner maps its own
+user/session → `bookingId`). **Login, profile, saved cards, and account settings are the partner's
+own systems — Headout exposes none of them, so this plugin ships no recipes for them.** Each page is
+behind a booking, so none are indexable.
 
 | Flow / page | Skill | Path |
 |---|---|---|
-| Confirmation — status, ticket/QR, live prepare-countdown | `account-confirmation` | `skills/account-confirmation/SKILL.md` |
-| Manage booking — review, plan-your-visit, cancel/reschedule | `account-manage-booking` | `skills/account-manage-booking/SKILL.md` |
-| Voucher / ticket — redemption code, details, embed mode | `account-voucher` | `skills/account-voucher/SKILL.md` |
-| Profile hub — bookings list, credits, account menu | `account-profile` | `skills/account-profile/SKILL.md` |
-| Account settings — preferences + delete-account flow | `account-settings` | `skills/account-settings/SKILL.md` |
-| Saved cards — tokenized card list + delete | `account-saved-cards` | `skills/account-saved-cards/SKILL.md` |
-| Sign in — email magic-link + social login | `account-auth` | `skills/account-auth/SKILL.md` |
+| Confirmation — status, ticket/QR (`tickets[]`/`voucherUrl`), booking details | `account-confirmation` | `skills/account-confirmation/SKILL.md` |
+| Manage booking — review, cancel/reschedule | `account-manage-booking` | `skills/account-manage-booking/SKILL.md` |
+| Voucher / ticket — voucher PDF + QR/barcode, details, embed mode | `account-voucher` | `skills/account-voucher/SKILL.md` |
 
 ### Shared UI components (`ui-*`)
 
-Pixel-exact component specs used across multiple page recipes. Build once into `ui-components/` and
-reuse everywhere.
+**Optional fallback references.** Reuse the partner's design system and components first — these
+skills only describe the structure/behavior (and approximate, overridable fallback values) for when
+the partner has no equivalent. They do not override the partner's tokens, dimensions, or libraries.
 
 | Component | Skill | Path |
 |---|---|---|
-| Product / experience card (image carousel, hover lift, price block, grid) | `ui-product-card` | `skills/ui-product-card/SKILL.md` |
-| Date-picker calendar (dual-month, price labels, purple selected, green min-price) | `ui-calendar` | `skills/ui-calendar/SKILL.md` |
+| Product / experience card (image carousel, hover, price block, grid) | `ui-product-card` | `skills/ui-product-card/SKILL.md` |
+| Date-picker calendar (dual-month, price labels, selected/min-price states) | `ui-calendar` | `skills/ui-calendar/SKILL.md` |
 
 ## Support skills
 

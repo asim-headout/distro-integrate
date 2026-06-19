@@ -30,7 +30,7 @@ Merchant-of-Record); Headout is the booking engine.
   stack, relevant routes/data boundaries, intended edit scope, assumptions, and existing
   issues/dummy code observed but left untouched. Ask only questions that block a safe integration
   decision; otherwise state assumptions and proceed.
-- **Sandbox-safe:** never call production for tests; gate sandbox booking smoke tests behind
+- **Sandbox-first:** default to the sandbox (sandbox endpoints + the partner's sandbox `Headout-Auth`) for all development; never call production while building — moving to production is the partner's explicit go-live decision. Gate sandbox booking smoke tests behind
   credentials **and** explicit user approval; do not create sandbox bookings unless allowed.
 - Emit no analytics/tracking.
 

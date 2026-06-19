@@ -62,7 +62,7 @@ The page needs these component roles: **Box** (layout), **Text** (typography), *
 - **CategoryGrid:** a list of category headings, each with its subcategory links beneath.
 - **SearchInput:** prominent rounded input with a search icon and placeholder; submitting routes to the partner's own search (the Headout partner API exposes no search endpoint).
 - **SkeletonLoader:** shimmer placeholder sized to the final card so layout does not jump.
-- **ProductCard:** use the **`ui-product-card`** skill (`/ui-product-card`) for the pixel-exact spec — `17.625rem` / `17rem` fixed width, `radius.8` (8px) image corners, 3px hover lift, image carousel with dots + arrows on hover, L1 badge (top-left, 4px radius), and price block. Build into `ui-components/ProductCard/` once; reuse on every listing page.
+- **ProductCard:** build the product card with the partner's design system (component roles above). `ui-product-card` (`/ui-product-card`) is an **optional fallback reference** for its structure/behavior when the partner has no card component — it does not impose Headout dimensions or tokens. If building fresh, keep it in `ui-components/ProductCard/` and reuse across listing pages.
 
 Always keep these in `ui-components/` so other pages reuse them. Preserve any `data-qa-marker`/`data-testid` hooks you add for QA.
 

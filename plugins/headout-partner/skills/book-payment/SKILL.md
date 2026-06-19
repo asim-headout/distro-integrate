@@ -88,12 +88,12 @@ Always show the live **{total}** on the CTA. Never submit until a method is sele
 ## UI components to build
 Roles: **Box, Text, Icon, Image, Button**, **Breadcrumb/StepHeader**, **PaymentMethodList** (RadioGroup of methods + brand marks), **SavedCardList** (radio rows: brand + last4 + expiry + optional CVV — partner-accounts only), **NewCardForm** (PSP hosted-fields wrapper — number/expiry/CVC/name), **WalletButton** (Apple/Google Pay/PayPal/Revolut), **LocalMethodSelector** (bank/plan, optional), **OrderSummaryCard** (≡ Checkout's, banner + selection rows + pax + total + cancellation line + state CTA), **ProcessingState** / **VerificationPoll**, **RetryPanel** (failure reason + "Try again"), **SkeletonLoader**.
 
-**Step A — reuse an existing design system first.** Search the partner repo for one (`design-system/`, `ui/`, `components/ui/`, an exported `Box`/`Text`/`Button`/`Radio`, a `panda.config.*`/`tailwind.config.*`/theme-tokens file). If found, **map each role to the partner's component and tokens — build no new primitives.** This repo's own stack: `@headout/eevee` (Box, Text, Button, Icon, Link, **Radio**, **RadioGroup**, SkeletonLoader, Breadcrumb) + `@headout/aer` (Input/FormElement for any non-PCI fields) + `@headout/onix` icons (Card, Lock, Check, ChevronRight, brand marks) + `@headout/pixie` (`css`/`cx`, Panda) + `@headout/espeon` (Conditional, Tooltip). The actual card fields come from the **partner PSP's** hosted-fields/SDK, not from your own inputs. Map to those if you are inside it.
+**Step A — reuse an existing design system first.** Search the partner repo for one (`design-system/`, `ui/`, `components/ui/`, an exported `Box`/`Text`/`Button`/`Radio`, a `panda.config.*`/`tailwind.config.*`/theme-tokens file). If found, **map each role to the partner's component and tokens — build no new primitives.** The card fields must come from the **partner PSP's** hosted-fields/SDK, never from your own inputs.
 
 **Step B — otherwise build into the shared `ui-components/` folder** per the visual language. Reuse the **OrderSummaryCard, Button, Breadcrumb, SkeletonLoader** across Select/Checkout. Keep `data-qa-marker`/`data-testid` hooks you add. Never build your own raw PAN/CVV inputs — always wrap the PSP's hosted fields.
 
 ## Visual language (so output is consistent)
-Apply unless the partner design system overrides:
+The partner's design system wins; the values below are only a fallback when none exists:
 - **Shell:** centered ~75rem max width; **method/form left, sticky summary card right** (~24rem, sticky offset ~6rem). Mobile: single column with the summary collapsed into a sticky bottom bar carrying the total + state CTA.
 - **Spacing scale:** 4 / 8 / 12 / 16 / 24 / 32 / 48 px. **Radius:** cards/inputs ~12px; method rows ~12px.
 - **Type:** section title ("Select your payment method") ~20–24px; method labels ~16px; field labels ~14px; total emphasis ~16–18px. One sans-serif family.

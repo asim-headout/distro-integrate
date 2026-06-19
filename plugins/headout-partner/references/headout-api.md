@@ -15,8 +15,7 @@ Use these as the primary Headout documentation entrypoints:
 Default facts:
 
 - Default to Headout API v2 unless the user explicitly asks for v1.
-- Production server: `https://www.headout.com`
-- Sandbox server: `https://sandbox.api.dev-headout.com`
+- **For development, default to the sandbox.** Use the sandbox server `https://sandbox.api.dev-headout.com` with the partner's **sandbox** `Headout-Auth` key for all building and testing. Switch to the production server `https://www.headout.com` (and the production key) **only when the partner is ready to go live** — that cutover is the partner's decision, not a build step.
 - Authentication uses the `Headout-Auth` header.
 - Keep `Headout-Auth` strictly server-side. Never expose it to browser bundles, public environment variables, logs, or client telemetry.
 - Store the real auth value only in the partner repo's approved server-side secret location, such as

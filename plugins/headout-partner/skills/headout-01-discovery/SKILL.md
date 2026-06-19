@@ -21,7 +21,7 @@ accounts**, so there is no search-results or profile/account surface in this flo
 - **Stale-fact call-out:** the API facts in references are a snapshot. If a live response contradicts
   a reference (missing field, new status, changed shape) → STOP and surface it to the partner. Never
   silently code around it or guess field names.
-- **Sandbox-safe:** never call production for tests; gate sandbox calls behind credentials.
+- **Sandbox-first:** default to the Headout **sandbox** (sandbox endpoints + the partner's sandbox `Headout-Auth`) for all development and testing; never call production while building. Moving to production is the partner's explicit go-live decision.
 - Emit no analytics/tracking.
 
 ## Steps

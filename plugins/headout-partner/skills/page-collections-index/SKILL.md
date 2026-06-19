@@ -59,7 +59,7 @@ Roles: **Box, Text, Icon, Image**, **SectionHeader** (h1), **FilterTabs** (link 
 Keep these in `ui-components/`. Preserve any `data-qa-marker`/`data-testid` hooks you add.
 
 ## Visual language (so output is consistent)
-Apply unless the partner design system overrides:
+The partner's design system wins; the values below are only a fallback when none exists:
 - **Spacing scale:** 4 / 8 / 12 / 16 / 24 / 32 / 48 px.
 - **Radius:** cards ~12px; tabs ~999px.
 - **Type hierarchy:** page title = ~24–28px desktop / ~20px mobile; card titles ~16px. One sans-serif family.

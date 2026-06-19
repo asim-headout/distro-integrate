@@ -1,89 +1,82 @@
 ---
 name: account-manage-booking
-description: Build the post-booking "Manage your booking" page for an experiences/tickets storefront — the self-service page reached at /manage-booking/{bookingId} (or via a guest lookup link with an email + secure ref) where a guest reviews a single booking, reads plan-your-visit info (pickup/meeting point, validity, redemption, what to carry), sets or edits a pickup location, and takes self-service actions (cancel, reschedule, contact support) when the booking's policy windows allow. Self-contained spec — access modes (authed vs guest-lookup link), section order, the action-eligibility rules, the pickup-location editor, conditional-render rules, UI components, and a visual language so output is consistent. Reuses the partner's design system if one exists. Branding-neutral and portable.
+description: Build the post-booking "Manage your booking" page for an experiences/tickets storefront — the self-service page reached at /manage-booking/{bookingId} where a guest reviews a single booking, sees its status and cancellation policy, and takes self-service actions (cancel, reschedule, contact support) when the booking's policy allows. Self-contained spec — section order, the action-eligibility rules (derived from the product's cancellation/reschedule policy), conditional-render rules, UI components, and a visual language so output is consistent. Reuses the partner's design system if one exists. Branding-neutral and portable.
 disable-model-invocation: true
 ---
 
 # Page Recipe: Manage Your Booking
 
 Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
-Build the **Manage booking** page — `/manage-booking/{bookingId}`. A guest reaches it from a confirmation/email link or their bookings list, and uses it to **review one booking, understand how to use it, and act on it** (cancel / reschedule / edit pickup / get help). The page is a **single-column detail shell** under the site header: a booking hero, the visit details, plan-your-visit content, and a manage-actions area. Access is either **authenticated** (the booking belongs to the logged-in user) or via a **guest-lookup link** that carries an email + a secure booking reference in the URL. This file is the **single source of truth**: access modes, section order, the action-eligibility rules, the pickup-location editor, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
+Build the **Manage booking** page — `/manage-booking/{bookingId}`. A guest reaches it from a confirmation/email link or their bookings list, and uses it to **review one booking, understand its policy, and act on it** (cancel / reschedule / get help). The page is a **single-column detail shell** under the site header: a booking hero, the visit details, the cancellation policy, and a manage-actions area. This file is the **single source of truth**: section order, the action-eligibility rules, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: booking detail by id, manage booking, cancellation/reschedule eligibility, update pickup location, refund summary.
+   1. Resolve the Headout API docs (the configured API-docs MCP server, or `https://partner.headout.com/docs/llms.txt`) and find the **booking GET**, **booking cancel**, **booking reschedule**, and **product GET** sections.
    2. Read the linked spec sections to get exact response field paths.
-   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
-   
+   3. List the exact field paths you will use (e.g. `booking.status`, `product.cancellationPolicy.cancellableUpToInMinutes`).
+
    **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
-2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the booking/experience card, status badge, and accordion are reused by confirmation and voucher — build them shared).
-3. **Assemble** in canonical order, wiring the **access modes** and **action-eligibility rules** exactly.
+2. **Decide UI primitives.** Reuse the partner's design system first; otherwise build into the shared `ui-components/` folder (the booking/experience card and status badge are reused by confirmation and voucher — build them shared).
+3. **Assemble** in canonical order, wiring the **action-eligibility rules** exactly.
 
 ## Page-level guards
-- **Access modes:** read identity from the URL — `bookingId` for an authed user, **or** an `email` + `secureBookingId` pair for a guest-lookup link. If neither resolves (no logged-in user **and** no guest-lookup pair) → route the guest to the **help/support** page rather than rendering an empty shell.
-- Resolve the booking detail before rendering the body; show a loader until it resolves; unresolved id → support/help.
+- **Access is server-side via the partner's BFF:** the partner authorizes the request against its **own** user/session and resolves the `bookingId` (there is no public guest-lookup-by-email endpoint in the Headout API). If the request isn't authorized or the booking doesn't resolve → route the guest to the partner's **help/support**, not an empty shell.
+- Resolve the booking detail (and the product for policy/name/image) before rendering the body; show a loader until they resolve.
 - This page is **behind a booking** — **not indexable**; emit no SEO body.
 - On a small viewport, show a back/title bar ("Booking details") that becomes opaque on scroll.
+- Do not expose `Headout-Auth` or raw booking JSON to the browser.
 
 ## Data sources (map to your endpoints)
-- **Booking detail by id (or by email + secure ref):** product name + image, booking reference, date/time, guest count, seat/variant, meeting/pickup point, status.
-- **Plan-your-visit content:** redemption instructions, validity, what to carry, how-to-reach, cancellation policy — typically rich text/HTML blocks per booking.
-- **Action eligibility:** per-booking flags/windows for whether **cancel** and **reschedule** are allowed (often time-bounded relative to the experience date) and the resulting refund terms.
-- **Pickup location (only for transfer/pickup products):** current pickup point + the ability to set/update it; an editable address/location field.
-- **Refund / payment summary:** amount paid, refundable amount, refund status (when a cancellation has been requested).
+- **Booking GET (by `bookingId`):** `bookingId`, `partnerReferenceId`, `variantId`, `status`, `startDateTime`, `customersDetails` (count), `seatInfo`, `price`.
+- **Product GET:** product `name` + image; variant name for `variantId`; `cancellationPolicy` (`cancellable`, `cancellableUpToInMinutes`) and `reschedulePolicy` (`reschedulable`, `reschedulableUpToInMinutes`) — these **derive** the action eligibility and the policy copy.
+- **Booking cancel / reschedule:** action endpoints. Their immediate response is an **async acknowledgement, not final state** — reflect a pending state and confirm the outcome via a later booking GET or a webhook.
+- **Not in the booking API** (so these are NOT built): plan-your-visit content (redemption/validity/what-to-carry/how-to-reach), pickup/meeting point + a pickup editor, refund amount/status, and per-booking eligibility flags. Derive eligibility from the product policy + `startDateTime`; refunds are the partner/PSP's own concern.
 
 ## Canonical section order (top → bottom)
 1. **Header / back bar** (mobile: title "Booking details", transparent → opaque on scroll).
 2. **Booking hero / experience card** — product image, product name, booking reference, and a **status badge**.
-3. **Visit summary** — date, time, guests, seat/variant, meeting/pickup point as icon rows.
-4. **Pickup-location editor** — *(transfer/pickup products only)* the current pickup point with an edit affordance that opens a location field and saves it.
-5. **Plan your visit** — a stack of **accordions** for redemption / validity / what to carry / how to reach / cancellation policy (rendered from the content blocks).
-6. **Manage actions** — buttons for **Cancel booking**, **Reschedule**, **Contact support**; each gated by its eligibility rule.
-7. **Refund / payment summary** — shown once a cancellation is in progress or completed.
+3. **Visit summary** — date, time, guests, seat/variant as icon rows.
+4. **Cancellation policy** — the derived cancellation/reschedule copy (from the product policy).
+5. **Manage actions** — buttons for **Cancel booking**, **Reschedule**, **Contact support**; each gated by its eligibility rule.
 
 ## Ordering & derivation of raw data
-- **Action gating:** render **Cancel** / **Reschedule** as active only when their eligibility flag/window is true; otherwise present them disabled with a short reason ("Cancellation window has passed") or omit them and surface **Contact support** as the fallback action.
-- **Status badge:** derive a single status label + treatment from the booking status (e.g. confirmed / cancelled / refunded / pending).
-- **Pickup editor:** only render when the product is a transfer/pickup type that exposes an editable pickup; persist the chosen location via the update endpoint and reflect it back into the summary.
-- **Plan-your-visit:** order the accordions as redemption → validity → what to carry → how to reach → policy; omit any block with no content.
-- **Refund summary:** derive refundable amount + refund status; show only after a cancellation request exists.
+- **Action gating:** compute eligibility from the product policy and `startDateTime` — **Cancel** active only when `cancellationPolicy.cancellable` and now is before (`startDateTime − cancellableUpToInMinutes`); **Reschedule** active only when `reschedulePolicy.reschedulable` and within its window. Otherwise present the button disabled with a short reason ("Cancellation window has passed") or omit it and surface **Contact support** as the fallback.
+- **Cancel / reschedule are async:** on action, show a pending state; do not assume success from the immediate response — confirm via booking GET/webhook.
+- **Status badge:** derive a single status label + treatment from the booking `status` (confirmed / pending / cancelled / failed).
+- **Cancellation-policy copy is DERIVED** (not a field) from `cancellationPolicy` + `reschedulePolicy` (convert `*UpToInMinutes` to hours/days), same logic as the product page.
+- **Seat vs variant:** show seats when `seatInfo` exists; else the variant name.
 
 ## Conditional render rules
-- **Guest-lookup vs authed:** the body is identical; only the identity source differs. No login prompt when a valid guest-lookup pair is present.
-- **Pickup editor:** transfer/pickup products only.
 - **Cancel / Reschedule buttons:** only when eligible; otherwise disabled-with-reason or replaced by Contact support.
-- **Refund summary:** only when a cancellation has been initiated/completed.
-- **Loading:** skeletons sized to the hero card + accordions during initial load.
+- **Cancellation policy:** always derivable (text is derived, never blank).
+- **Contact support:** always available as a fallback (a partner-provided link/affordance).
+- **Loading:** skeletons sized to the hero card + sections during initial load.
 
 ## UI components to build
-Roles: **Box, Text, Icon, Image, Button/Link**, **HeaderBar** (mobile back/title, scroll-aware), **ExperienceCard** (image + name + reference + status badge), **StatusBadge**, **InfoRow** (icon + value), **PickupLocationField** (display + edit + save), **Accordion** (plan-your-visit blocks; renders rich-text content safely), **ActionButton** (active / disabled-with-reason), **RefundSummary** (amount + status rows), **SkeletonLoader**.
+Roles: **Box, Text, Icon, Image, Button/Link**, **HeaderBar** (mobile back/title, scroll-aware), **ExperienceCard** (image + name + reference + status badge), **StatusBadge**, **InfoRow** (icon + value), **CancellationPolicyPanel** (derived copy), **ActionButton** (active / disabled-with-reason), **SkeletonLoader**.
 
-**Step A — reuse an existing design system first.** Search the partner repo for one (a `design-system/` or `ui/` folder, an exported Box/Text/Button, a Panda/Tailwind/theme-tokens file). If found, **map each role to the partner's component and tokens — build no new primitives.**
+**Step A — reuse the partner's design system first.** Search the partner repo for one (a `design-system/` or `ui/` folder, an exported Box/Text/Button, a Panda/Tailwind/theme-tokens file). If found, **map each role to the partner's component and tokens — build no new primitives.**
 
-**Step B — otherwise build into the shared `ui-components/` folder** per the visual language. The **ExperienceCard, StatusBadge, InfoRow, Accordion, Button** are reused by confirmation and voucher — build them shared. Keep any `data-qa-marker`/`data-testid` hooks you add; preserve literal class hooks that external rich-text content targets.
+**Step B — otherwise build into the shared `ui-components/` folder** per the visual language. The **ExperienceCard, StatusBadge, InfoRow, CancellationPolicyPanel, Button** are reused by confirmation and voucher — build them shared. Keep any `data-qa-marker`/`data-testid` hooks you add.
 
 ## Visual language (so output is consistent)
-Apply unless the partner design system overrides:
-- **Shell:** centered single column, content max width ~55rem. Mobile: full-width with a sticky title bar.
-- **Spacing scale:** 4 / 8 / 12 / 16 / 24 / 32 / 48 px. **Radius:** cards/accordions ~12–20px; status pill ~999px.
-- **Type:** product name ~18px medium; section/accordion titles ~16–18px medium; body/info rows ~14–15px; muted secondary grey.
-- **Plan-your-visit rich text:** constrain width (~55rem), comfortable line-height (~1.5), styled headings/lists/links consistent with the partner's body typography.
-- **Color:** neutral surfaces; one primary brand accent for primary actions/links; destructive treatment for Cancel; status badge tinted by state; WCAG AA contrast.
+The partner's design system wins; the values below are only a fallback when none exists.
+- **Shell:** centered single column. Mobile: full-width with a sticky title bar.
+- **Spacing/radius:** a consistent spacing scale; cards rounded; status pill pill-shaped.
+- **Type:** product name prominent/medium; section titles medium; body/info rows regular; muted secondary grey.
+- **Color:** neutral surfaces; one primary brand accent for primary actions/links; a destructive treatment for Cancel; status badge tinted by state; WCAG AA contrast.
 
 ## Field mappings & fallbacks
-- `bookingId`/secure ref → reference row; missing → omit.
+- `bookingId`/`partnerReferenceId` → reference row; missing → omit.
 - `status` → StatusBadge label + treatment.
-- `date`/`time`/`guests`/`seat|variant`/`pickup` → InfoRows; omit any missing.
-- plan-your-visit blocks → accordions; empty block → omit.
-- cancel/reschedule eligibility → active vs disabled-with-reason vs Contact-support fallback.
-- refund amount/status → RefundSummary; absent → omit.
+- `startDateTime` → date + time rows; `customersDetails.count` → guests; `seatInfo`/variant → seat/variant row; omit any missing.
+- product policy → derived cancellation-policy copy + Cancel/Reschedule eligibility.
 
 ## Acceptance checks
-- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
-- [ ] **Access modes** correct: authed via `bookingId` OR guest-lookup via `email` + secure ref; neither resolvable → route to help/support (no empty shell); loader until detail resolves; not indexable.
-- [ ] Sections render in canonical order: hero/experience card → visit summary → pickup editor (transfer only) → plan-your-visit accordions → manage actions → refund summary.
-- [ ] **Action gating** correct: Cancel/Reschedule active only when eligible, else disabled-with-reason or replaced by Contact support; refund summary appears only after a cancellation exists.
-- [ ] Pickup-location editor renders only for transfer/pickup products and persists the chosen location back into the summary.
-- [ ] Plan-your-visit accordions render the content blocks in order and omit empty ones; rich text is width-constrained and styled.
-- [ ] UI primitives map to the partner design system OR are built into `ui-components/` per the visual language; ExperienceCard/StatusBadge/Accordion reusable across confirmation and voucher.
+- [ ] API contract confirmed: booking GET + cancel/reschedule + product GET fields resolved and exact paths listed before any mapper was written; any unfulfillable feed disabled.
+- [ ] **Access is server-side** via the partner's own session → `bookingId` (no guest-lookup-by-email); unauthorized/unresolved → help/support (no empty shell); loader until detail resolves; not indexable.
+- [ ] Sections render in canonical order: hero/experience card → visit summary → cancellation policy → manage actions. No plan-your-visit accordions, pickup editor, meeting-point row, or refund summary (not in the booking API).
+- [ ] **Action gating** correct: Cancel/Reschedule active only when the derived policy/window allows, else disabled-with-reason or replaced by Contact support; cancel/reschedule treated as async (confirm via GET/webhook).
+- [ ] Cancellation-policy copy derived from the product policy (not read from the booking).
+- [ ] UI primitives map to the partner design system OR are built into `ui-components/`; ExperienceCard/StatusBadge reusable across confirmation and voucher.
 - [ ] No internal/operator branding; rendering uses the partner's brand and content.

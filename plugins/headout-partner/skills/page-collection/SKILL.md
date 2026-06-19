@@ -63,7 +63,7 @@ Roles: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**, **Co
 Keep these in `ui-components/`. Preserve any `data-qa-marker`/`data-testid` hooks you add.
 
 ## Visual language (so output is consistent)
-Apply unless the partner design system overrides:
+The partner's design system wins; the values below are only a fallback when none exists:
 - **Spacing scale:** 4 / 8 / 12 / 16 / 24 / 32 / 48 px; generous section rhythm (~48–80px desktop, ~32–48px mobile).
 - **Radius:** cards/inputs/sheets ~12px; pills ~999px.
 - **Type hierarchy:** section titles = large bold heading (~24–28px desktop / ~20px mobile); card titles = medium label (~16px); price/captions = small label (~14px). One sans-serif family.

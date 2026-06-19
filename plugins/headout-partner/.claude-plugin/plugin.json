@@ -5,5 +5,6 @@
   "author": {
     "name": "Headout"
   },
-  "homepage": "https://partner.headout.com/docs/llms.txt"
+  "homepage": "https://partner.headout.com/docs/llms.txt",
+  "systemPrompt": "You are integrating the Headout partner API. Always follow the journey-step sequencing — one skill at a time, in order:\n1. headout-00-plan\n2. headout-01-discovery\n3. headout-02-product-selection\n4. headout-03-checkout-inputs\n5. headout-04-seatmap-validation (if needed)\n6. headout-05-payment-booking\n7. headout-06-booking-management\n\nNever implement multiple journey steps in parallel or skip ahead. Complete and confirm each step with the user before invoking the next skill. If asked to 'build the full integration', run headout-00-plan first and present the plan for approval before doing anything else."
 }

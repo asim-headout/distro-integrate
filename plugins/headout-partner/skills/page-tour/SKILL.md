@@ -51,10 +51,10 @@ the experiences.
 - A **persistent booking widget** (sticky bottom bar on mobile, side rail on desktop) sits alongside this content. It contains **exactly three things**: the lead price (`from {headoutSellingPrice}` / mapped selling price), a single **date-selection control** ("Select a date"), and a **"Check availability" CTA**. Nothing else. The CTA hands off to the booking flow (a separate page/app) — it does **not** select pax, variants, or time slots on this page.
 - A **sticky section-anchor nav** (a horizontal tab bar of in-page links: Highlights, Inclusions, Exclusions, Cancellation policy, "Your experience"/summary, "Know before you go"/additional-info, My tickets, Location, …) appears once the page scrolls past the title/gallery. It lists **only the sections that actually rendered** (skip anchors for omitted sections), in canonical order, and highlights the active section on scroll.
 
-## Desktop grid structure (STRICT — do not alter)
-The desktop page is a **CSS grid with three areas** — `top`, `details`, `sidebar` — in two columns and two rows. There are **two layouts**, chosen by the same media rule as the gallery, and the choice changes *only* where the gallery and the sidebar sit. Mirror this exactly (ref: next-deimos `src/containers/desktop/productPage.tsx` `MainContent`).
+## Desktop grid structure (suggested layout)
+A common desktop layout is a **CSS grid with three areas** — `top`, `details`, `sidebar` — in two columns and two rows, with **two variants** chosen by the same media rule as the gallery (the choice changes *only* where the gallery and the sidebar sit). Use the partner's existing layout/grid conventions if they have them; the structure below is a portable suggestion, not a mandate.
 
-**Column sizing (do this, not the literal next-deimos values):** make the **content column flexible and the sidebar column a fixed ~24rem** — `grid-template-columns: minmax(0, 1fr) 24rem`. next-deimos hard-codes `49.5rem auto` because its container is always wide enough; do **not** copy that. A `minmax(0,49.5rem) auto` sidebar track will **balloon** (the full-width gallery's intrinsic image width feeds the `auto` track, starving the content column to a sliver) — pin the sidebar track instead.
+**Column sizing tip:** make the **content column flexible and the sidebar column a fixed width** (e.g. `grid-template-columns: minmax(0, 1fr) ~24rem`). Pin the sidebar track rather than leaving it `auto` — an `auto` sidebar track can balloon when a full-width gallery's intrinsic image width feeds it, starving the content column. (Exact widths follow the partner's design system.)
 
 - **`top` area** = Rating widget + Title + Gallery.
 - **`details` area** = everything else in canonical order **starting at `shortSummary`** (all content sections). Content lives **below** the gallery in the left column — **never** in the `top` area.
@@ -76,7 +76,7 @@ grid-template-areas: "top    sidebar"
 
 **Mobile:** single column, stacked `top → sidebar → details`; the booking widget collapses to a sticky bottom bar.
 
-> The most common mistake is placing the gallery inside the left content column so the booking card top-aligns beside it. For multi-media products that is **wrong** — the gallery is full-width on top and the booking card is below-right. Match `grid-template-areas` exactly.
+> A common mistake is placing the gallery inside the left content column so the booking card top-aligns beside it. For multi-media products the intended structure is the gallery full-width on top and the booking card below-right — follow the `grid-template-areas` above (adapting to the partner's layout system).
 
 ### Why a given product shows fewer sections than this list
 The canonical order is the **superset** of everything a product page *can* contain. Any individual product renders a **subset** — every section is gated by the conditional render rules, and an absent/empty field omits its section entirely (see the per-section presence table). A product with no operating-hours panel, no FAQ, or no additional-info block simply has those fields empty — that is correct behaviour, not a missing component.
@@ -151,14 +151,14 @@ Roles: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**, **Ra
 - **TicketDeliveryPanel:** how tickets are delivered (`ticketDeliveryInfoHtml`).
 - **LocationMap:** map with a marker, OR a plain address copy block when only an address (no coordinates) is present.
 - **BookingWidget:** lead price (`from {headoutSellingPrice}` / mapped selling price) + a single date-selection control ("Select a date", which may open a date calendar) + a "Check availability" CTA that routes to the booking flow. **Exactly these three elements — no pax/guest counter, no quantity stepper, no time-slot picker, no variant/ticket-type selector.** Collapses to a sticky bottom bar on mobile; falls back to an "email me when available" alert when there's no inventory.
-- **Calendar (date-selection control):** use the **`ui-calendar`** skill (`/ui-calendar`) for the pixel-exact spec — dual-month grid (3.75rem × 3.75rem date cells), purple selected state, green min-price pill, grey unavailable dates, dashed-border footnote, open/close animation. Build into `ui-components/Calendar/` once; reuse on every page that needs a date picker.
+- **Calendar (date-selection control):** build the date picker with the partner's design system; `ui-calendar` (`/ui-calendar`) is an **optional fallback reference** for its structure/behavior (dual-month grid; selected / min-price / unavailable states) when the partner has no date picker.
 - Reuse **Breadcrumb, Carousel, ProductCard, CollectionCard, FaqAccordion, Box/Text/Icon/Image, SkeletonLoader** from earlier recipes.
-- **ProductCard:** use the **`ui-product-card`** skill (`/ui-product-card`) for the pixel-exact spec — `17.625rem` / `17rem` fixed width, `radius.8` (8px) image corners, 3px hover lift, image carousel with dots + arrows on hover, L1 badge (top-left, 4px radius), and price block. Build into `ui-components/ProductCard/` once; reuse on every listing page.
+- **ProductCard:** build the product card with the partner's design system (component roles above). `ui-product-card` (`/ui-product-card`) is an **optional fallback reference** for its structure/behavior when the partner has no card component — it does not impose Headout dimensions or tokens. If building fresh, keep it in `ui-components/ProductCard/` and reuse across listing pages.
 
 Keep these in `ui-components/`. Preserve any `data-qa-marker`/`data-testid` hooks you add.
 
 ## Visual language (so output is consistent)
-Apply unless the partner design system overrides:
+The partner's design system wins; the values below are only a fallback when none exists:
 - **Spacing scale:** 4 / 8 / 12 / 16 / 24 / 32 / 48 px; generous section rhythm (~48–80px desktop, ~32–48px mobile).
 - **Radius:** cards/inputs/sheets ~12px; pills/badges ~999px.
 - **Type hierarchy:** product title = large bold heading (~28–32px desktop / ~22px mobile); section titles = ~24–28px desktop / ~20px mobile; body = ~16px; price/captions = ~14px. One sans-serif family.

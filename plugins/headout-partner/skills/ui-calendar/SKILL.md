@@ -1,150 +1,44 @@
 ---
 name: ui-calendar
-description: Pixel-exact spec for Headout's production dual-month date-picker calendar used on the experience detail page booking widget. Covers the RegularCalendar (dual-month default), DateBig date cell, price/min-price labels, selected/hover/unavailable states, month navigation, day-of-week header, open/close animation, and mobile responsive rules. Build once into `ui-components/Calendar/`; reuse on every booking flow page that needs a date picker. Branding-neutral and portable.
+description: Optional fallback reference for the date-picker calendar used on the booking widget / select step. Describes the calendar's structure, states, data contract, and behavior (dual-month grid, day-of-week header, per-date price + min-price/sold-out states, selected/unavailable states, month navigation, mobile rules). Reuse the partner's design system / date-picker first; this is only a structural fallback for when none exists, with approximate, overridable values. Branding-neutral and portable.
 disable-model-invocation: true
 ---
 
-# Component Spec: Calendar (`ui-calendar`)
+# Component Reference: Calendar (optional fallback)
 
-Build the **RegularCalendar** — Headout's dual-month date-picker, used on the experience/product detail page booking widget. This is a **fully custom component** (not a browser date input, not from espeon or eevee). The canonical implementation is in next-deimos at `src/containers/desktop/regularCalendar.tsx` + `src/containers/common/dateBig.tsx`. Build into `ui-components/Calendar/` once; reuse wherever a date picker is needed.
+A date-picker used by the booking widget / select step. **Reuse the partner's existing date-picker or design-system component first** — if the partner has a calendar, use it and ignore the measurements here. This file is a **structural/behavioral fallback** for when the partner has no equivalent; all numbers are **approximate suggestions, not mandates**, and the partner's tokens always win.
 
 ## How to use this skill
-1. **Confirm your inventory API contract.** Map each feed to the props table below (`inventoryMap`, `selectedDate`, `onDateSelected`, `hidePrice`, `currencyCode`). Any feed you cannot fulfil → omit the dependent UI (e.g. skip price labels if no inventory pricing).
-2. **Apply the shared design system.** Use `@headout/eevee` + Panda CSS (`@headout/pixie`) for all new tokens and styles. For existing implementations that use `@headout/aer` typography labels, map them using the token table at the bottom of this file.
-3. **Build into `ui-components/Calendar/`** and wire into the booking widget on the product detail page.
+1. **Reuse first.** Map the data contract below to the partner's date-picker if it has one; build fresh only if nothing fits.
+2. **Confirm your inventory API contract.** Map each feed to the props table. Any feed you cannot fulfil → omit the dependent UI (e.g. skip price labels if there is no inventory pricing).
+3. **Build into `ui-components/Calendar/`** (if building fresh) and wire it into the booking widget / select step.
 
-## Anatomy (desktop RegularCalendar)
+## Structure
+- A **calendar wrapper** (popover/panel) containing one or two month grids.
+- A **day-of-week header** row of initials.
+- Each **month**: a title (month + year) with previous/next navigation, and a grid of **date cells**.
+- An optional **footer/legend** (min-price legend, scarcity key) shown only when that data exists.
 
-```
-CalendarWrapper
-  TopBar
-    DayListContainerDualMonth
-      [firstMonth]  DayList  ← 7 × day-of-week initials
-      [secondMonth] DayList  ← same
-  [firstMonth] MonthWrapper
-    MonthTitle
-      ChevronLeft  ← previous months
-      MonthName    ← e.g. "June 2026"
-    CalendarBody
-      DateComponentsWrapper
-        DateBig × N  ← empty offset cells + date cells
-  [secondMonth] MonthWrapper
-    MonthTitle
-      MonthName    ← e.g. "July 2026"
-      ChevronRight ← next months
-    CalendarBody
-      DateComponentsWrapper
-        DateBig × N
-  FootNote  ← optional: min-price legend + scarcity key
-```
+## Date cell — states
+- **Default:** the date number; optionally a price label below it.
+- **Selected / hover:** highlighted (the partner's accent) — tinted background + accent text.
+- **Unavailable / sold-out:** muted, non-interactive (no pointer events), price hidden or "Sold out".
+- **Min-price (cheapest):** the price label emphasized (e.g. a positive/"good deal" treatment).
+- **Empty offset cells** (before the 1st of the month): inert.
 
-## Pixel-exact measurements
+## Price label below the date
+- Regular price; a **min-price** emphasis for the cheapest dates; an optional struck-through original price; a "Sold out" label for unavailable dates. Render the **selling price** (never `netPrice`); see `references/ui-data-contract.md`. Hide price labels entirely when `hidePrice` is set.
 
-### CalendarWrapper
-| Property | Value |
-|---|---|
-| background | white |
-| border-radius | `0.5rem` (8px) |
-| border | `1px solid #EBEBEB` (GREY['EB']) |
-| box-shadow | `0 0 1px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.1)` |
-| open animation | scale 0.9→1 over **200ms** `cubic-bezier(0,0,0.3,1)` |
-| close animation | scale 1→0.9 over **150ms** `cubic-bezier(0.7,0,1,1)` |
-
-### TopBar (day-of-week header row)
-| Property | Value |
-|---|---|
-| border-bottom | `1px solid` grey-6 (`GREY_DS.G6`) |
-| padding-top | `1rem` |
-| DayList first month | margin `0.75rem 1.25rem 0.75rem 2.75rem` |
-| DayList second month | margin `0.75rem 2.75rem 0.75rem 1.25rem` |
-| Day-initial text | `HEADING_XS` weight; width `3.75rem`; centered; color grey-4 (`GREY_DS.G4`) |
-
-### CalendarBody
-| Property | Value |
-|---|---|
-| width | `26.25rem` (= 7 × 3.75rem cells) |
-| padding — first month | `1.375rem 0.125rem 1.5rem 0.5rem` |
-| padding — second month | `1.375rem 2.75rem 1.5rem 0.125rem` |
-| padding — single month | `1.375rem 2.75rem 1.5rem` |
-| DateComponentsWrapper | `flex-flow: row wrap`, each cell `margin-top: 0.25rem` |
-
-### MonthTitle
-| Property | Value |
-|---|---|
-| font | `HEADING_REGULAR` weight |
-| color | grey-2 (`GREY_DS.G2`) |
-| text-transform | capitalize |
-| first-month name margin | `0 2.5rem 0 3.5625rem` |
-| second-month name margin | `0 4rem 0 2.25rem` |
-| chevron position | `position: absolute; top: 0.5rem` |
-| left chevron | `left: 1rem; transform: rotate(180deg)` |
-| right chevron | `right: 1rem` |
-
-## DateBig cell
-
-### Wrapper
-| Property | Desktop | Mobile |
-|---|---|---|
-| size | `3.75rem × 3.75rem` | `3rem × 3.625rem` |
-| cursor | pointer | pointer |
-
-### Date number
-| State | Color |
-|---|---|
-| Default | grey-2 (`GREY_DS.G2`) |
-| Unavailable | `GREY.C4` (light grey) |
-| Selected / hover | purple (`PURPS`) |
-
-- date-label top margin: `0.8125rem`; bottom margin: `0.125rem`
-- Font: `SUBHEADING_LARGE` weight
-
-### Selected / hover state
-```css
-border-radius: 0.25rem;
-background-color: PURPS_LEVEL[10];   /* light purple tint */
-.date-number, .price { color: PURPS; }
-.price.min-price { color: PURPS; background: white; }
-```
-Hover applies only at `min-width: 768px`.
-
-### Unavailable state
-```css
-pointer-events: none; cursor: auto;
-.date-number { color: GREY.C4; }
-/* all price spans hidden */
-```
-
-### Empty offset cell
-```css
-pointer-events: none; outline: none; border: none; cursor: auto;
-```
-
-## Price block below date
-
-| Variant | CSS class | Font weight | Color | Background | Notes |
-|---|---|---|---|---|---|
-| Regular price | `.price` | `MISC_TAG_REGULAR` | grey-3 (`GREY_DS.G3`) | transparent | pad `0 0.0625rem` |
-| Min price (cheapest) | `.price.min-price` | `MISC_TAG_REGULAR` | dark green (`OKAY_GREEN_DARK_TONE`) | light green (`SOOTHING_GREEN`) | `border-radius: 0.125rem; padding: 0.0625rem` |
-| Original / cut price | `.cut-price` | `UI_LABEL_SMALL_HEAVY` | grey-4 (`GREY_DS.G4`) | transparent | `text-decoration: line-through` |
-| Sold out | `.sold-out` | `MISC_TAG_REGULAR` | grey-4a (`GREY_DS.G4a`) | transparent | capitalize |
-
-- PriceWrapper: `margin-top: -0.125rem; margin-bottom: 0.8125rem`
-
-## Footer / legend
-- `border-top: 1px dashed` grey-6; padding `0.75rem 0 0`; margin `0 2.75rem 1rem`
-- Min-price legend: green swatch with label
-- Scarcity legend: `background-color: var(--colors-core-candy-100)`, `UI_LABEL_SMALL_HEAVY` font — only shown when at least one date is scarce
-
-## Month navigation
-- Dual-month: scrolls **2 months** at a time (previous = −2, next = +2)
-- Left (previous) arrow shown only on first month title; right (next) only on second
-- Right arrow hidden when already at the last available month
+## Behavior
+- **Dual-month on desktop** (navigate two months at a time); **single month per viewport on mobile** is fine.
+- **Navigation:** previous on the first month, next on the last; hide "next" once at the last available month.
+- **Accessibility:** keyboard-navigable (arrow/Tab), focus-visible, Escape closes; cells are buttons with accessible labels.
+- **Open/close** with a light transition if desired.
 
 ## Data props (map to your feeds)
-
 | Prop | Type | Description |
 |---|---|---|
-| `inventoryListsMap` | `Map<YYYY-MM, InventoryList>` | All months with their date entries |
+| `inventoryListsMap` | `Map<YYYY-MM, InventoryList>` | Months with their date entries |
 | `inventoryMap` | `Map<YYYY-MM-DD, InventoryEntry>` | Per-date: price, availability, isMinPrice, isScarce |
 | `selectedDate` | `string \| null` | Currently selected `YYYY-MM-DD` |
 | `onDateSelected` | `(date: string) => void` | Callback on date click |
@@ -152,52 +46,24 @@ pointer-events: none; outline: none; border: none; cursor: auto;
 | `currencyCode` | `string` | Active currency code |
 | `medianPrice` | `number` | Threshold used to identify min-price dates |
 
-## Calendar variants
-
+## Variants
 | Variant | When |
 |---|---|
-| `REGULAR_CALENDAR` | Default — dual-month grid |
-| `SEVEN_DAY_CALENDAR` | Rolling 7-day availability window |
-| `DATE_LIST_CALENDAR` | Short fixed list of available dates |
+| Dual-month grid | Default |
+| Rolling 7-day window | Short availability horizon |
+| Date list | A short fixed list of available dates |
 
-Default to `REGULAR_CALENDAR` unless the inventory API signals otherwise.
+Default to the dual-month grid unless the inventory signal suggests otherwise.
 
-## Build into `ui-components/Calendar/`
-
-```
-ui-components/
-  Calendar/
-    index.tsx              ← orchestrator (selects variant by inventory signal)
-    RegularCalendar.tsx    ← dual-month shell
-    DateBig.tsx            ← individual date cell
-    CalendarTypes.ts       ← InventoryEntry, CalendarProps, CalendarVariant
-    calendarUtils.ts       ← getPriceTag(), isDateUnavailable(), isMinPrice()
-    styles/
-      regularCalendar.ts
-      dateBig.ts
-```
-
-Preserve `data-qa-marker` on `CalendarWrapper` and each `DateBig` cell.
-
-## Typography token mapping (aer → eevee/Panda)
-
-| aer `TYPE_LABELS` | Role | Eevee textStyle equivalent |
-|---|---|---|
-| `HEADING_REGULAR` | Month title | `heading.regular` |
-| `HEADING_XS` | Day-of-week initials | `ui.label.small` |
-| `SUBHEADING_LARGE` | Date number | `ui.label.large` |
-| `MISC_TAG_REGULAR` | Price / sold-out | `ui.label.xsmall` |
-| `UI_LABEL_SMALL_HEAVY` | Cut-price / scarcity | `ui.label.small` (bold) |
-| `PARAGRAPH_SMALL` | Upcoming-month strip | `ui.paragraph.small` |
+## Approximate fallback values (override with the partner's tokens)
+Use only if the partner has no design system; treat as starting points:
+- Date cell ≈ 3.75rem desktop / smaller on mobile; wrapper rounded ≈ 8px; subtle border + shadow.
+- Selected ≈ accent tint + accent text, ≈ 4px radius; min-price ≈ a small positive-tinted pill.
+- Open/close transitions ≈ 150–200ms.
 
 ## Acceptance checks
-- [ ] CalendarWrapper: white bg, 8px radius, shadow, border, open/close animation.
-- [ ] Dual-month: two CalendarBody blocks side by side, each 26.25rem wide (7 × 3.75rem).
-- [ ] Day-of-week header: 7 labels per month at 3.75rem each, grey-4 color.
-- [ ] DateBig: 3.75rem × 3.75rem desktop; 3rem × 3.625rem mobile.
-- [ ] Selected / hover: purple tint bg, purple text, 4px radius.
-- [ ] Unavailable: grey text, no pointer events, price hidden.
-- [ ] Min-price pill: dark green text on light green bg, 2px radius.
-- [ ] Navigation: left arrow on first month (−2), right on second (+2); right hidden at last month.
-- [ ] Footer with dashed border-top renders when min-price or scarcity data is present.
-- [ ] `data-qa-marker` on wrapper and each date cell.
+- [ ] Reused the partner's date-picker/design-system component and tokens where they exist; built fresh only as a fallback.
+- [ ] Calendar shows day-of-week header + month grid(s); dual-month desktop / single-month mobile; navigation hides "next" at the last available month.
+- [ ] Date cells handle default / selected / unavailable / min-price states; price labels show the selling price and hide when `hidePrice`.
+- [ ] Data contract wired (`inventoryMap`/`selectedDate`/`onDateSelected`/…); keyboard-accessible.
+- [ ] No fixed Headout pixel values, color tokens, or component-library names imposed over the partner's design system.

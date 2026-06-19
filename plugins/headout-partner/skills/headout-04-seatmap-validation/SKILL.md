@@ -29,7 +29,7 @@ explicitly requested.
   stack, relevant routes/data boundaries, intended edit scope, assumptions, and existing
   issues/dummy code observed but left untouched. Ask only questions that block a safe integration
   decision; otherwise state assumptions and proceed.
-- **Sandbox-safe:** never call production for tests; gate sandbox calls behind credentials.
+- **Sandbox-first:** default to the Headout **sandbox** (sandbox endpoints + the partner's sandbox `Headout-Auth`) for all development and testing; never call production while building. Moving to production is the partner's explicit go-live decision.
 - Emit no analytics/tracking.
 
 ## Steps

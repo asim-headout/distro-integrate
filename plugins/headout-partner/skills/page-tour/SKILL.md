@@ -146,6 +146,7 @@ Roles: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**, **Ra
 - **LocationMap:** map with a marker, OR a plain address copy block when only an address (no coordinates) is present.
 - **BookingWidget:** lead price (`from {headoutSellingPrice}` / mapped selling price) + a single date-selection control ("Select a date", which may open a date calendar) + a "Check availability" CTA that routes to the booking flow. **Exactly these three elements — no pax/guest counter, no quantity stepper, no time-slot picker, no variant/ticket-type selector.** Collapses to a sticky bottom bar on mobile; falls back to an "email me when available" alert when there's no inventory.
 - Reuse **Breadcrumb, Carousel, ProductCard, CollectionCard, FaqAccordion, Box/Text/Icon/Image, SkeletonLoader** from earlier recipes.
+- **ProductCard:** use the **`ui-product-card`** skill (`/ui-product-card`) for the pixel-exact spec — `17.625rem` / `17rem` fixed width, `radius.8` (8px) image corners, 3px hover lift, image carousel with dots + arrows on hover, L1 badge (top-left, 4px radius), and price block. Build into `ui-components/ProductCard/` once; reuse on every listing page.
 
 Keep these in `ui-components/`. Preserve any `data-qa-marker`/`data-testid` hooks you add.
 

@@ -63,6 +63,7 @@ Roles used: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**,
 
 **Step B — otherwise build them into the shared `ui-components/` folder** (reused by every page). Build each as a small, typed, presentational component:
 - **Box / Text / Icon / Image / Carousel / ProductCard / CollectionCard / CategoryGrid / SearchInput / SkeletonLoader:** as in the home-page recipe (reuse them if already built).
+- **ProductCard:** use the **`ui-product-card`** skill (`/ui-product-card`) for the pixel-exact spec — `17.625rem` / `17rem` fixed width, `radius.8` (8px) image corners, 3px hover lift, image carousel with dots + arrows on hover, L1 badge (top-left, 4px radius), and price block. Build into `ui-components/ProductCard/` once; reuse on every listing page.
 - **Breadcrumb:** horizontal trail of links with separators; last item is the current page (non-link).
 - **Hero/Masthead:** full-bleed city image with the city title overlaid; supports an overlaid search entry on mobile. (The Headout partner API provides no search endpoint — wire the search entry to the partner's own search, or omit it.)
 - **SectionTabs:** a sticky horizontal tab bar; clicking a tab smooth-scrolls/anchors to its section; highlights the active section on scroll.

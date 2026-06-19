@@ -10,6 +10,7 @@ the partner user journey, not by internal engineering ownership.
 /headout-partner:page-tour
 /headout-partner:book-select
 /headout-partner:account-confirmation
+/headout-partner:ui-product-card
 ```
 
 ## How a journey skill is shaped
@@ -59,6 +60,7 @@ before they start booking.
 | All experiences in a city | `page-tours-by-city` | `skills/page-tours-by-city/SKILL.md` |
 | Places to visit | `page-places-to-visit` | `skills/page-places-to-visit/SKILL.md` |
 | Experience / product detail (PDP) | `page-tour` | `skills/page-tour/SKILL.md` |
+| Search results | `page-search` | `skills/page-search/SKILL.md` |
 
 ### Booking flow (`book-*`)
 
@@ -86,6 +88,15 @@ is behind a booking or a session, so none are indexable.
 | Account settings — preferences + delete-account flow | `account-settings` | `skills/account-settings/SKILL.md` |
 | Saved cards — tokenized card list + delete | `account-saved-cards` | `skills/account-saved-cards/SKILL.md` |
 | Sign in — email magic-link + social login | `account-auth` | `skills/account-auth/SKILL.md` |
+
+### Shared UI components (`ui-*`)
+
+Pixel-exact component specs used across multiple page recipes. Build once into `ui-components/` and
+reuse everywhere.
+
+| Component | Skill | Path |
+|---|---|---|
+| Product / experience card (image carousel, hover lift, price block, grid) | `ui-product-card` | `skills/ui-product-card/SKILL.md` |
 
 ## Support skills
 

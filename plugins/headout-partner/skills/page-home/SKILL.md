@@ -44,7 +44,7 @@ The discovery feeds below are "site-wide" (not scoped to one city). **Note:** th
 - **Empty state:** any feed that returns empty → omit that section entirely (no placeholder copy).
 
 ## UI components to build
-The page needs these component roles: **Box** (layout), **Text** (typography), **Icon**, **Image**, **Carousel** (+ nav arrows), **CityCard**, **CollectionCard**, **CategoryGrid**, **SearchInput**, **SkeletonLoader**.
+The page needs these component roles: **Box** (layout), **Text** (typography), **Icon**, **Image**, **Carousel** (+ nav arrows), **ProductCard**, **CityCard**, **CollectionCard**, **CategoryGrid**, **SearchInput**, **SkeletonLoader**.
 
 **Step A — reuse an existing design system first.** Search the partner repo for one before building: a `design-system/`, `ui/`, or `components/ui/` folder, an exported `Box`/`Text`/`Button`/`Card`, or a `panda.config.*` / `tailwind.config.*` / theme-tokens file. If found, **map each role to the partner's component and use their tokens. Do not build new primitives.**
 
@@ -56,6 +56,7 @@ The page needs these component roles: **Box** (layout), **Text** (typography), *
 - **CategoryGrid:** a list of category headings, each with its subcategory links beneath.
 - **SearchInput:** prominent rounded input with a search icon and placeholder; submitting routes to the partner's own search (the Headout partner API exposes no search endpoint).
 - **SkeletonLoader:** shimmer placeholder sized to the final card so layout does not jump.
+- **ProductCard:** use the **`ui-product-card`** skill (`/ui-product-card`) for the pixel-exact spec — `17.625rem` / `17rem` fixed width, `radius.8` (8px) image corners, 3px hover lift, image carousel with dots + arrows on hover, L1 badge (top-left, 4px radius), and price block. Build into `ui-components/ProductCard/` once; reuse on every listing page.
 
 Always keep these in `ui-components/` so other pages reuse them. Preserve any `data-qa-marker`/`data-testid` hooks you add for QA.
 

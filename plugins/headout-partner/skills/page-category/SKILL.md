@@ -57,6 +57,7 @@ Roles: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**, **Su
 - **ProductGrid:** responsive grid of product cards with a "Show more" pagination control beneath.
 - **SubcategoryFilter:** first few subcategories as pills (+ an "All" reset) + the rest in a dropdown (drawer on mobile); single-select; reflects the active selection.
 - Reuse **Breadcrumb, Carousel, ProductCard, CollectionCard, Box/Text/Icon/Image, SkeletonLoader** from earlier recipes.
+- **ProductCard:** use the **`ui-product-card`** skill (`/ui-product-card`) for the pixel-exact spec — `17.625rem` / `17rem` fixed width, `radius.8` (8px) image corners, 3px hover lift, image carousel with dots + arrows on hover, L1 badge (top-left, 4px radius), and price block. Build into `ui-components/ProductCard/` once; reuse on every listing page.
 
 Keep these in `ui-components/`. Preserve any `data-qa-marker`/`data-testid` hooks you add.
 

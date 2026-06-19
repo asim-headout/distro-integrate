@@ -50,6 +50,7 @@ Roles: **Box, Text, Icon, Image, Carousel** (+ nav arrows), **Breadcrumb**, **Su
 **Step A — reuse an existing design system first.** Search the partner repo for one: a `design-system/`, `ui/`, or `components/ui/` folder, an exported `Box`/`Text`/`Button`/`Card`, or a `panda.config.*` / `tailwind.config.*` / theme-tokens file. If found, **map each role to the partner's component and use their tokens. Do not build new primitives.**
 
 **Step B — otherwise build them into the shared `ui-components/` folder.** Reuse everything already built for the category page (**ProductGrid, SubcategoryTabs, Breadcrumb, Carousel, ProductCard, CollectionCard, Box/Text/Icon/Image, SkeletonLoader**). The only behavioral difference: **SubcategoryTabs links to sibling subcategories** rather than filtering, and there is **no SubcategoryFilter** on this page.
+- **ProductCard:** use the **`ui-product-card`** skill (`/ui-product-card`) for the pixel-exact spec — `17.625rem` / `17rem` fixed width, `radius.8` (8px) image corners, 3px hover lift, image carousel with dots + arrows on hover, L1 badge (top-left, 4px radius), and price block. Build into `ui-components/ProductCard/` once; reuse on every listing page.
 
 Keep these in `ui-components/`. Preserve any `data-qa-marker`/`data-testid` hooks you add.
 

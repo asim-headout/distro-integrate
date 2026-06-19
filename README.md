@@ -53,6 +53,37 @@ pnpm typecheck
 pnpm build
 ```
 
+## Claude Code Plugin
+
+This repo also includes a Claude Code plugin at `plugins/headout-partner`.
+It packages Headout partner workflows as `headout-*` Agent Skills ordered by
+the partner user journey. Partners install one plugin while Claude loads only
+the skill relevant to the current task.
+
+The current skill files are a starting structure, not the final taxonomy. Keep
+future additions aligned to the business flow: discovery, product selection,
+checkout inputs, optional seatmap validation, payment/booking, and post-booking
+management. Dedicated frontend skills should plug into the same journey rather
+than forming a separate competing hierarchy.
+
+Run it locally with:
+
+```bash
+claude --plugin-dir ./plugins/headout-partner
+```
+
+Example explicit invocations:
+
+```text
+/headout-partner:headout-01-discovery
+/headout-partner:headout-03-checkout-inputs
+/headout-partner:headout-05-payment-booking
+```
+
+Each skill keeps the basic workflow in `SKILL.md` and links to advanced
+references only when deeper context is needed. Completed steps should end with
+a compact-ready checkpoint so the next step can continue with minimal context.
+
 Run local stdio MCP:
 
 ```bash

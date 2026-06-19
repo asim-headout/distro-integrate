@@ -1,0 +1,9 @@
+{
+  "name": "headout-partner",
+  "description": "Headout partner integration skills ordered by business flow: discovery, product selection, checkout inputs, seatmap, payment booking, and booking management.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Headout"
+  },
+  "homepage": "https://partner.headout.com/docs/llms.txt"
+}

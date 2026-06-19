@@ -23,3 +23,14 @@ Resume-state fields to reconstruct from conversation and repo evidence:
 - Open decisions: currency, locale, sandbox policy, order model, checkout shape, and whether seatmap is required.
 
 If a user starts in the middle, reconstruct state first. If prerequisites are missing, strongly recommend planning or ask only for the missing state needed to continue safely.
+
+Execution strategy:
+
+- Default to one journey step at a time for implementation. This keeps repo changes reviewable and
+  avoids coupling discovery, checkout, payment, and webhook decisions too early.
+- Suggest a bounded batch only when the steps share the same files and have clear acceptance
+  criteria, for example product detail plus select-page wiring.
+- Suggest Claude workflows/subagents for separable read-only work: repo discovery, API-doc lookup,
+  route inventory, UI-system inventory, existing-test inventory, or independent review passes.
+- Do not run broad parallel code edits across dependent journey steps unless the user explicitly
+  chooses that execution mode.

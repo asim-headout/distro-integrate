@@ -51,5 +51,9 @@ agent mistakes across page recipes and booking steps.
 
 - If a Headout field or feed is absent, omit the dependent UI or ask the user when the decision is
   product-level. Do not infer field names, invent routes, or add Headout-branded operator blocks.
+- This omission rule applies only to the Headout-derived UI being added or mapped in the current
+  task. Do not delete, rewrite, or "clean up" existing partner dummy/stub content, placeholder
+  routes, TODOs, or unrelated UI because Headout data is absent; report those as observations unless
+  the user explicitly asks for that specific change.
 - If a live response contradicts this contract or another bundled reference, stop and surface the
   contradiction instead of guessing.

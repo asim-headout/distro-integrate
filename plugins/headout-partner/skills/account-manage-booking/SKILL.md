@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Manage Your Booking
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Manage booking** page — `/manage-booking/{bookingId}`. A guest reaches it from a confirmation/email link or their bookings list, and uses it to **review one booking, understand how to use it, and act on it** (cancel / reschedule / edit pickup / get help). The page is a **single-column detail shell** under the site header: a booking hero, the visit details, plan-your-visit content, and a manage-actions area. Access is either **authenticated** (the booking belongs to the logged-in user) or via a **guest-lookup link** that carries an email + a secure booking reference in the URL. This file is the **single source of truth**: access modes, section order, the action-eligibility rules, the pickup-location editor, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "booking detail by id, manage booking, cancellation/reschedule eligibility, update pickup location, refund summary" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: booking detail by id, manage booking, cancellation/reschedule eligibility, update pickup location, refund summary.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the booking/experience card, status badge, and accordion are reused by confirmation and voucher — build them shared).
 3. **Assemble** in canonical order, wiring the **access modes** and **action-eligibility rules** exactly.
 
@@ -73,7 +79,7 @@ Apply unless the partner design system overrides:
 - refund amount/status → RefundSummary; absent → omit.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] **Access modes** correct: authed via `bookingId` OR guest-lookup via `email` + secure ref; neither resolvable → route to help/support (no empty shell); loader until detail resolves; not indexable.
 - [ ] Sections render in canonical order: hero/experience card → visit summary → pickup editor (transfer only) → plan-your-visit accordions → manage actions → refund summary.
 - [ ] **Action gating** correct: Cancel/Reschedule active only when eligible, else disabled-with-reason or replaced by Contact support; refund summary appears only after a cancellation exists.

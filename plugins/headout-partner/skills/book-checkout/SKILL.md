@@ -6,12 +6,18 @@ disable-model-invocation: true
 
 # Page Recipe: Booking-Flow "Checkout" Step
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Checkout** step of the booking flow — `/book/{id}/checkout`. The guest arrives here from the Select step with **date + option/variant + time already chosen** (carried in the URL). Here they set **how many guests**, enter **lead-guest contact details**, review the **order summary**, and hit the primary CTA to advance to payment. The page is the same **two-column shell** as Select: a left form column and a **sticky right order-summary card** whose primary CTA text changes as the form is completed. This file is the **single source of truth**: structure, the data each section needs, the pax/guest contracts, the **CTA state machine**, conditional rules, the components to build, and the visual language. Render under **your own brand and content**. Build only what is listed here; emit no analytics/tracking.
 
 > **Scope note:** the Headout booking API has **no promo/coupon field** on booking-create and **no pay-later eligibility feed**, so this recipe builds **no promo-code section and no "select when to pay" section**. Promotions and any "book now, pay later" program are partner-side concerns handled outside this flow.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "pax/person types and pricing, booking create customersDetails inputFields, lead guest required fields, cancellation policy" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: pax/person types and pricing, booking create customersDetails inputFields, lead guest required fields, cancellation policy.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): display selling price only; normalize product/banner image URLs.
 3. **Confirm the carried-over selection.** date/option/variant/time must hydrate from the URL; if any is missing, route back to `/book/{id}/select` rather than rendering a partial checkout.
 4. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the **summary card, date/selection rows, option card, Button, Breadcrumb, SkeletonLoader** are shared with Select/Payment — reuse them).
@@ -87,7 +93,7 @@ Apply unless the partner design system overrides:
 - Keep the summary card to the canonical rows above; do not add operator-branded reassurance copy.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] Carried selection (date/option/variant/time) hydrates from the URL; missing selection routes back to Select, not a partial shell.
 - [ ] URL is the source of truth for pax: `pax.{type}=N` hydrates on load and every stepper change writes back and recomputes the total (shimmer while in flight).
 - [ ] Pax steppers clamp to min/max (and group max); free/infant types count toward group size but add 0; single fixed-pax renders a read-only row.

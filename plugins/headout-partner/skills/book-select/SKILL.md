@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Booking-Flow "Select" Step
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Select** step of the booking flow — `/book/{id}/select`. The guest lands here from a product page's "Check availability" CTA and must make up to three selections — **date → option/variant → time** — before the flow advances to checkout. The page is a **two-column shell**: a left selection column and a **sticky right summary/booking card** whose primary CTA text changes as selections are made. This file is the **single source of truth**: structure, the data each section needs, the **CTA state machine**, the selection-mode branches, conditional rules, the components to build, and the visual language. Render under **your own brand and content**. Build only what is listed here; emit no analytics/tracking.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "booking calendar pricing inventory by date, variants/options, time slots, pax types, seatmap" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: booking calendar pricing inventory by date, variants/options, time slots, pax types, seatmap.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): display `headoutSellingPrice` / mapped selling price, never `netPrice`; hide unlimited/sentinel high `remaining` counts.
 3. **Decide the selection mode** for the product (see *Selection modes*) — it determines which middle section renders.
 4. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the summary card, date strip, and option card are shared with checkout/payment — reuse them).
@@ -98,7 +104,7 @@ Apply unless the partner design system overrides:
 - Keep the option card to the canonical fields above; do not add scarcity/"X people viewing" tickers unless the partner explicitly supplies that data.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] URL is the source of truth: date/option/variant/time hydrate from query and every selection writes back to the URL.
 - [ ] Sections render in canonical order; the correct **selection mode** body renders (normal / single / combo / seatmap / svg-zone / iframe / open-dated).
 - [ ] **CTA state machine** matches exactly: "Select an option" → "Select time" → "Next"; the first two scroll/highlight (no nav), only "Next" navigates to checkout (or seatmap-checkout). Card button toggles "Select" ↔ "Selected"; time shows "Select a time slot to continue" until chosen.

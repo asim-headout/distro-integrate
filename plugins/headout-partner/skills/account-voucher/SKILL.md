@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Booking Voucher / Ticket
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Voucher** page — `/voucher/{bookingId}`. This is the document the guest **presents at the venue** to gain entry, so it must be print-friendly, scannable, and unambiguous. The page is a **single-column document shell**: a booking header, the **redemption artifact** (QR / barcode / PDF / text code), the booking details, and the instructions/location/policy/operator blocks below. It renders differently for **active**, **pending**, and **cancelled/refunded** bookings, splits into **one voucher per ticket** for multi-ticket orders, and also runs inside an **embeddable iframe**. This file is the **single source of truth**: structure, the voucher-state machine, the redemption-method branches, the multi-page split, embed mode, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "voucher / booking ticket by id, redemption method QR barcode pdf, redemption instructions, pickup location, cancellation policy, ticket list" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: voucher / booking ticket by id, redemption method QR barcode pdf, redemption instructions, pickup location, cancellation policy, ticket list.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the booking-details grid and instructions accordion are reused by confirmation/manage-booking — build them shared).
 3. **Assemble** in canonical order, wiring the **voucher-state machine** and **redemption-method branch** exactly.
 
@@ -81,7 +87,7 @@ Apply unless the partner design system overrides:
 - operator image/details → header image + operator block; absent → omit.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] Unresolved `bookingId` → 404; loader until resolved; page (and embed) emit no SEO body and are noindex; content language follows the voucher language.
 - [ ] **Voucher-state machine** correct: cancelled/refunded/uncaptured → Cancelled view; pending → Pending view; active → full body.
 - [ ] **Multi-ticket split** correct: `multiplePage` + >1 ticket → one voucher per ticket with page breaks and "page n/total"; prints one ticket per page.

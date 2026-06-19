@@ -17,10 +17,19 @@ Merchant-of-Record); Headout is the booking engine.
 - **Security / gate-keeping:** `Headout-Auth` and all raw Headout calls stay server-side. The browser
   only ever sees safe field metadata — never the key, never raw API responses.
 - **Non-breaking:** preserve the partner's existing payment, order, error, and logging conventions.
-  Add, don't replace. Don't introduce a new client/SDK abstraction unless the repo already has one.
+  Add, don't replace. Existing dummy/stub content, placeholder routes, TODOs, bugs, and rough
+  patterns are host-app context, not cleanup scope. Report better patterns or existing issues as
+  observations; do not remove, fix, rewrite, rename, reorganize, or simplify existing code unless the
+  user explicitly asks for that specific change. If existing code blocks the Headout integration,
+  stop and ask before changing it. Don't introduce a new client/SDK abstraction unless the repo
+  already has one.
 - **Stale-fact call-out:** the API facts in references are a snapshot. If a live response contradicts
   a reference (new status, changed capture semantics, changed payload shape) → STOP and surface it to
   the partner. Never silently code around it or guess field names.
+- **Preflight orientation:** after inspecting the repo and before edits, summarize the detected
+  stack, relevant routes/data boundaries, intended edit scope, assumptions, and existing
+  issues/dummy code observed but left untouched. Ask only questions that block a safe integration
+  decision; otherwise state assumptions and proceed.
 - **Sandbox-safe:** never call production for tests; gate sandbox booking smoke tests behind
   credentials **and** explicit user approval; do not create sandbox bookings unless allowed.
 - Emit no analytics/tracking.

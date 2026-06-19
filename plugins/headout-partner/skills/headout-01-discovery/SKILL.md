@@ -26,7 +26,7 @@ accounts**, so there is no search-results or profile/account surface in this flo
 
 ## Steps
 1. Inspect existing catalog, routing, data-fetching, caching, and test patterns.
-2. Resolve the API contract for the surface (Backend reference + headout-api.md) before coding.
+2. Resolve the API contract for the surface (Backend reference + headout-api.md) before coding. Fetch `https://partner.headout.com/docs/llms.txt`, identify the relevant endpoints for the surface you are building, and list exact field paths before writing any mapper code.
 3. Build the frontend to the matching **page recipe** (see References) — it is the source of truth for section order, derivation, conditional rules, components, and visual language.
 4. Wire the backend: server-side fetch + map Headout discovery responses into the shape the FE consumes via the partner's data boundary / BFF.
 5. Apply the shared UI data contract: normalize protocol-relative image URLs, preserve editorial order, render customer-facing prices from selling price fields only, and omit unsupported sections instead of inventing data.

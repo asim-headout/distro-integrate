@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Saved Cards
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Saved cards** page — `/profile/saved-cards`. A signed-in guest uses it to **see the payment cards stored on their account and remove one**. The page is a **single-column list shell** under the account shell: a header with a count, then either a **loading skeleton**, an **empty state**, or a **list of card rows** — each removable through a **confirm-delete modal**. Card data is **tokenized**: only the network, masked last-4, and expiry are ever shown; no raw PAN/CVV is stored or displayed. This file is the **single source of truth**: auth gating, section order, the render branch, the delete flow, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "saved payment methods / saved cards list, delete saved card, card network last4 expiry token" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: saved payment methods / saved cards list, delete saved card, card network last4 expiry token.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the account shell, card row, and modal are reused by profile/settings — build them shared).
 3. **Assemble** the header + render branch and wire the **delete-card confirm flow** exactly.
 
@@ -63,7 +69,7 @@ Apply unless the partner design system overrides:
 - delete success → remove row + update count (→ empty at zero); delete error → keep row + retry/close.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] **Auth gate** correct: unauthenticated → redirect; loader while user resolves; page private/not indexable.
 - [ ] **PCI** respected: only tokenized network + last-4 + expiry shown; deletion operates on the token/id; no full PAN/CVV anywhere.
 - [ ] **Render branch** correct: exactly one of loading skeleton / empty state / card list renders; no empty list without a message.

@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Account / Profile Hub
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Profile** hub — `/profile` and `/profile/{tab}`. A signed-in guest uses it to **see their bookings, view their credits/wallet, and reach account management** (settings, saved cards, reset password, sign out). The page is a **two-area shell**: an account header/menu (identity + navigation) and a **tab-driven content area** whose body switches with the URL tab. It is **auth-gated** — an unauthenticated visitor is redirected away. This file is the **single source of truth**: auth gating, the tab model, the account header, the bookings/credits bodies, empty/loading states, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "current user profile, my bookings list, account credits/wallet balance, sign out" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: current user profile, my bookings list, account credits/wallet balance, sign out.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the account header, menu, and booking-list card are reused by settings/saved-cards — build them shared).
 3. **Assemble** the header + tab area, wiring **auth gating** and the **tab model** exactly.
 
@@ -66,7 +72,7 @@ Apply unless the partner design system overrides:
 - active tab from URL → AccountMenu active item + body; unknown → bookings.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] **Auth gate** correct: unauthenticated → redirect to home (no empty shell); brand loader while user resolves; page is private/not indexable.
 - [ ] **Tab model** correct: active tab from `/profile/{tab}`; unknown tab normalized to bookings (URL replaced); menu highlights the active item.
 - [ ] Bookings list renders with explicit loading (skeleton) and empty (CTA) states; rows link into manage-booking/voucher; upcoming ordered before past.

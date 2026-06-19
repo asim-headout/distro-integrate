@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Tours-by-City (All Experiences) Page
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the "All experiences in {city}" page — the complete product catalog for one city, reached from a "See all experiences" link on the city page. The **product grid is the core**, with a result count, framed by popular attractions. It is a **city-wide list with no category/subcategory scoping and no facet filter** — just the grid + "Show more". This file is the **single source of truth**: page structure, the data each section needs, how to order/paginate the list, when to show/hide each section, the components to build, and the visual language. Render under **your own brand and content**. Build only the sections listed here; emit no analytics/tracking.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "products by city, collections by city" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'product|collection|city' /" })` and read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: products by city, collections by city.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
 2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize images; ProductCard uses customer selling price (`headoutSellingPrice`), never `netPrice`, and derives optional cancellation pills from policy data.
 3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (most are shared with the category page — reuse them).
 4. **Assemble** in the canonical order, applying the ordering and conditional rules.
@@ -69,7 +75,7 @@ Apply unless the partner design system overrides:
 - **Loading:** skeletons sized to the final card/grid.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] City resolved first; unknown → 404.
 - [ ] Sections render in canonical order; only the sections listed above are built (no facet filter, no subcategory carousel, no sort control).
 - [ ] Product list rendered in the API's default order (no sort control, no client re-sort).

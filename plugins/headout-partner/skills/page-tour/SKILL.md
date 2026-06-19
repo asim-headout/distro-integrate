@@ -6,6 +6,7 @@ disable-model-invocation: true
 
 # Page Recipe: Tour / Experience (Product) Page
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the product detail page for an experiences & tickets marketplace — the page for one bookable activity, reached from a collection or a city page. This file is the **single source of truth**: page structure, the data each section needs, how to order/derive raw API data, when to show/hide each section, the components to build, and the visual language. The **booking flow is the core**; everything else frames the decision to book. Render under **your own brand and content**. Build only the sections listed here; emit no analytics/tracking.
 
 Default to a separate product detail page. If the partner asks to collapse product detail into the
@@ -13,7 +14,12 @@ home, city, or listing page, stop and ask for the intended information architect
 the experiences.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "product get details highlights inclusions exclusions cancellation policy variants media start location operating schedules" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'product|variant|cancellation|media' /" })` and read the spec). Otherwise map each field below to your endpoints. Any field you cannot fulfil → apply the empty-state rule (omit its section).
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: product get details highlights inclusions exclusions cancellation policy variants media start location operating schedules.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each field below to your endpoints. Any field you cannot fulfil → apply the empty-state rule (omit its section).
 2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize protocol-relative media URLs; customer-facing prices come from selling price fields, not `netPrice`; optional cancellation pills are derived from policy data.
 3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
 4. **Assemble** in the canonical order, applying the ordering and conditional rules.
@@ -167,7 +173,7 @@ Apply unless the partner design system overrides:
 - **Loading:** skeletons sized to the final section/card.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] Protocol-relative media URLs normalized before rendering; no `netPrice` is displayed to customers.
 - [ ] Numeric-id guard; unknown → 404; geo-restricted → not-available state; missing core object → loader (no partial shell).
 - [ ] Sections render in canonical order, including the summary dual-position rule.

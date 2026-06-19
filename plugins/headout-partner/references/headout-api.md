@@ -19,6 +19,10 @@ Default facts:
 - Sandbox server: `https://sandbox.api.dev-headout.com`
 - Authentication uses the `Headout-Auth` header.
 - Keep `Headout-Auth` strictly server-side. Never expose it to browser bundles, public environment variables, logs, or client telemetry.
+- Store the real auth value only in the partner repo's approved server-side secret location, such as
+  `.env.local`, platform environment variables, or a secret manager. Derive the exact env var names
+  from the repo when possible; otherwise ask before introducing names. Placeholder docs are fine,
+  but never write the real `Headout-Auth` value to files.
 
 Core endpoint groups:
 

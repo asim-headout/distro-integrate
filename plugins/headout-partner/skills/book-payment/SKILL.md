@@ -6,12 +6,18 @@ disable-model-invocation: true
 
 # Page Recipe: Booking-Flow "Payment" Step
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Payment** step of the booking flow — `/book/{id}/payment`. The guest arrives from Checkout with **pax + lead-guest details + total** resolved. Here they **choose a payment method**, supply card details (or a wallet / a local method), confirm the **total**, and submit. Same **two-column shell**: method/form on the left, a **sticky order-summary card** on the right whose CTA reflects the chosen method and the total. This file is the **single source of truth**: structure, the data each section needs, the partner-owned gateway abstraction, the create→partner-payment→capture flow, the **CTA state machine**, conditional rules, the components to build, and the visual language. Render under **your own brand and content**. Build only what is listed here; emit no analytics/tracking.
 
 > **Critical — payment is PARTNER-SIDE, not a Headout API.** The Headout partner API has **no** payment-gateway, payment-methods, payment-intent, 3DS, saved-cards, or payment-verification endpoints, and **no end-user accounts**. Headout's role in payment is only: **create a booking (returns UNCAPTURED — no charge), then capture it (update to PENDING) after the partner has confirmed payment on its OWN gateway, then read its status (get).** The whole payment UI (methods, tokenization, 3DS, wallets) runs on the **partner's own PSP**. This recipe keeps that boundary clean so a partner plugs in their gateway without UI rewrites — it must not invent Headout payment endpoints.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "booking create uncaptured, booking capture update, booking get status" })`, then read the spec). The payment-method/tokenization/3DS contracts come from the **partner's PSP docs**, not Headout. Any method/feed you cannot fulfil → omit/disable it.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: booking create uncaptured, booking capture update, booking get status.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** The payment-method/tokenization/3DS contracts come from the **partner's PSP docs**, not Headout. Any method/feed you cannot fulfil → omit/disable it.
 2. **Confirm the carried-over cart.** pax + lead-guest + total must hydrate from the booking session/URL; if the cart is missing/expired, route back to `/book/{id}/checkout` rather than rendering a payment shell.
 3. **Decide the gateway model.** The list of methods **and the gateway** come from the **partner's** backend/PSP (see *Gateway abstraction*) — keep the UI gateway-agnostic.
 4. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): display the same selling-price total carried from checkout; never expose `netPrice` to the customer.
@@ -103,7 +109,7 @@ Apply unless the partner design system overrides:
 - Never store or log raw card data; never expose gateway secret keys client-side. Keep the summary card to the canonical rows.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available); Headout endpoints limited to create (UNCAPTURED) / capture (update) / get — no Headout payment/methods/saved-card/verify endpoints assumed.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; Headout endpoints limited to create (UNCAPTURED) / capture (update) / get — no Headout payment/methods/saved-card/verify endpoints assumed.
 - [ ] Carried cart (pax/lead-guest/total) hydrates; missing/expired cart routes back to Checkout, not a partial shell; total re-confirmed at render.
 - [ ] Method list + gateway are **partner-side** (no hardcoded PSP/method set); the page routes each method through a thin gateway adapter (`initPayment`/`confirm`) and never calls Headout for payment.
 - [ ] **Partner-handoff seam** documented in code: methods/gateway/credentials come from the partner (partner can plug in their own), and a full payment handoff (redirect to partner URL + resume on callback → capture) is supported without UI rewrites.

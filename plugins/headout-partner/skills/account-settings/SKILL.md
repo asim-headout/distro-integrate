@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Account Settings
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Account settings** page — `/profile/account-settings`. A signed-in guest uses it to **manage account preferences and run destructive actions**, the most important being **delete account**, which is a guarded, irreversible flow. The page is a **single-column list of settings rows** under the account shell, where the delete action opens a **modal driven by a strict state machine** (confirmation → loading → success / error). This file is the **single source of truth**: auth gating, section order, the delete-account state machine, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "current user, delete account / account closure, account preferences" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: current user, delete account / account closure, account preferences.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the account header/shell and modal are reused by profile/saved-cards — build them shared).
 3. **Assemble** the settings rows and wire the **delete-account state machine** exactly.
 
@@ -70,7 +76,7 @@ Apply unless the partner design system overrides:
 - delete request error → Error view (retry/close), account intact.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] **Auth gate** correct: unauthenticated → redirect; loader while user resolves; page private/not indexable.
 - [ ] **Delete-account state machine** correct: trigger → Confirmation → (confirm) Loading → Success/Error; request fires only on confirm; Loading is non-dismissable; Error leaves the account intact; Success routes to sign-out/delete-success.
 - [ ] Only partner-supported preference rows render; the delete row uses a destructive treatment.

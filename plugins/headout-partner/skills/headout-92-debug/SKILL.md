@@ -8,6 +8,10 @@ argument-hint: "[symptom, endpoint, step]"
 
 Debug safely. Ask the user to redact `Headout-Auth`, customer PII, voucher data, payment details, and full raw payloads before sharing logs.
 
+Role boundary: debug the requested Headout symptom narrowly. If existing partner bugs, dummy/stub
+content, TODOs, or refactor opportunities are discovered, report them as observations and leave the
+code untouched unless the user explicitly asks for that specific fix.
+
 Basic path:
 
 1. Identify the failing business-flow step.
@@ -15,7 +19,9 @@ Basic path:
 3. Compare request/response shape against Headout docs and OpenAPI v2.
 4. Check sandbox vs production configuration.
 5. Prefer narrow diagnostic tests or minimal redacted logs.
-6. Add a regression test once the root cause is identified if the repo has tests.
+6. Recommend a regression test once the root cause is identified if the repo has tests; add it only
+   when it is directly tied to the requested Headout fix and does not require restructuring test
+   setup.
 7. End with a context checkpoint.
 
 User context:

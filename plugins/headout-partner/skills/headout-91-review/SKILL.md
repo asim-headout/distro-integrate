@@ -8,12 +8,18 @@ argument-hint: "[review scope]"
 
 Review the Headout integration surface. Lead with findings ordered by severity. Include file and line references when reviewing local code.
 
+Role boundary: this is an advisory review, not a cleanup pass. Existing dummy/stub content,
+placeholder routes, TODOs, bugs, and rough patterns may be reported as findings or follow-ups, but
+must not be removed, fixed, rewritten, renamed, reorganized, or simplified unless the user explicitly
+asks for that specific code change.
+
 Basic path:
 
 1. Identify which business-flow step is being reviewed.
 2. Check auth, base URL, API v2 usage, server/client boundaries, tests, error handling, and logging.
 3. Check pricing, pax, required input fields, seatmap when present, booking lifecycle, and booking management.
-4. Avoid broad refactors in review output unless a finding requires one.
+4. Avoid broad refactors in review output unless a finding requires one; even then, recommend the
+   refactor instead of applying it unless explicitly asked.
 5. End with a context checkpoint and next recommended skill.
 
 User context:

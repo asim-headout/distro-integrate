@@ -20,12 +20,37 @@ Each `headout-0X` skill is a thin **outcome spine**:
 1. **Outcome** — what "done" looks like, FE/BE-agnostic.
 2. **Ground rules** — auth stays server-side; non-breaking changes; stale-fact call-out (stop and ask
    the partner if a live response contradicts a reference); no analytics.
-3. **Steps** — inspect repo → resolve API contract → build FE to the page recipe → wire the BE →
-   harden edge cases → checkpoint.
+3. **Steps** — inspect repo → ask the planning/preflight questions when needed → resolve API
+   contract → build FE to the page recipe → wire the BE → harden edge cases → checkpoint.
 4. **References** — frontend (page recipe), backend (`references/backend.md` + `headout-api.md`),
    advanced (`references/advanced.md`).
 
 Frontend and backend are **branches inside** the journey skill, not a parallel hierarchy.
+
+## Agent role boundary
+
+The plugin's job is to add the requested Headout integration surface while preserving the partner
+application around it. Existing partner code — including dummy/stub content, placeholder routes,
+TODOs, local conventions, known bugs, and rough patterns — is host-app context, not cleanup scope.
+
+If the agent notices a better pattern, existing bug, unused/dummy code, security issue, or refactor
+opportunity, it should report it as an observation and leave the code untouched. It must not remove,
+fix, rewrite, rename, reorganize, or simplify existing code unless the user explicitly asks for that
+specific change. If existing code blocks the Headout integration, stop and ask before changing it.
+
+## Preflight orientation
+
+Implementation skills must not jump straight into edits. After inspecting the partner repo and
+before changing files, the agent should give a short orientation: detected stack and route/data
+boundaries, the Headout step being handled, the intended edit scope, assumptions, and any existing
+issues or dummy/stub code noticed but left untouched. Ask concise questions only when the answer
+blocks a safe integration decision; otherwise state assumptions and proceed.
+
+`headout-00-plan` must ask the full planning questionnaire: experience URL prefix, DB migration
+ownership, UI setup confirmation, checkout/payment route shape, scope, partner mode, Headout
+environment, server-side env/secret setup (`Headout-Auth` and base URL), locale/currency defaults,
+execution strategy (one-by-one, bounded batch, or workflow/subagents), PSP boundary, booking
+identity, auth dependency, test commands, and rollout boundary.
 
 ## Journey skills
 
@@ -108,7 +133,8 @@ Every completed step ends with a compact-ready context checkpoint.
 
 `references/`: `business-flow.md`, `headout-api.md`, `sequencing.md`, `existing-test-contract.md`,
 `context-checkpoint.md`, `edge-cases.md`, `ui-data-contract.md`,
-`persistence-and-migrations.md`, `competitor-adapters.md` (Archetype-C switchers).
+`persistence-and-migrations.md`, `planning-questionnaire.md`, `competitor-adapters.md`
+(Archetype-C switchers).
 
 ## Local testing
 

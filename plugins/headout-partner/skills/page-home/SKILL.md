@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Home / Landing Page
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the storefront landing page for an experiences & tickets marketplace: a hero plus a set of discovery feeds (destinations, collections, categories). This file is the **single source of truth** — it tells you the page structure, the data each section needs, how to order raw API data, when to show/hide each section, the components to build, and the visual language to render them in. Render it under **your own brand and content**. Emit no marketing/brand blocks beyond the commerce sections listed here, and no analytics/tracking.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, query it to confirm exact field names before coding (`search_headout_api_docs({ query: "cities list, collections list, categories" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'cities|collections|categories' /" })` and read the spec). Otherwise map each feed below to your own endpoints. Any feed you cannot fulfil → omit its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: cities list, collections list, categories.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your own endpoints. Any feed you cannot fulfil → omit its section.
 2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize protocol-relative image URLs, preserve server/editorial order, and do not fill empty rails with random cities or collections.
 3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build the components into a shared `ui-components/` folder (see "UI components to build").
 4. **Assemble** in the canonical order, applying the ordering and conditional rules.
@@ -77,7 +83,7 @@ Apply these unless the partner design system overrides them:
 - **Loading:** show skeletons sized to the final card.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] Sections render in canonical order; only the five sections above are built.
 - [ ] Feed order preserved (no re-sort); caps applied (cities 30 / collections 50).
 - [ ] Top destinations has a deterministic cities-index / "View all" path when available; no random city filler.

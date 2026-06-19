@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Sign In / Login
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Login** surface — a sign-in **modal** (and the same content as a standalone surface) that a guest reaches whenever an action needs authentication. The default path is an **email magic-link** flow (no password): enter email → validate → send a sign-in link → "check your email". Above it sit **optional social buttons** (Google / Apple) that are shown only when the partner enables them. If the guest is **already signed in**, the surface renders nothing. This file is the **single source of truth**: surface structure, the email magic-link state machine, the config-gated social buttons, the logged-in short-circuit, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "send email login link / magic link, social login google apple, current user session" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: send email login link / magic link, social login google apple, current user session.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the modal, input, and button are reused across the account flows — build them shared).
 3. **Assemble** the surface and wire the **email magic-link state machine** + **config gating** exactly.
 
@@ -74,7 +80,7 @@ Apply unless the partner design system overrides:
 - current user present → render nothing.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] **Logged-in short-circuit** works: a signed-in user sees nothing; a return destination is preserved for after sign-in.
 - [ ] **Email magic-link state machine** correct: Idle → (valid email) Sending → Sent/Error; invalid email blocks the request with an inline error; Sent shows "check your email" with resend/change-email.
 - [ ] **Config gating** correct: Google/Apple appear only when their flags are on; divider only when both social and email render; email block hidden when disabled.

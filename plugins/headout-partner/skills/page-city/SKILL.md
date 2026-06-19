@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: City / Destination Page
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the destination landing page for an experiences & tickets marketplace — the "Things to do in {city}" page a user reaches from a destination card. This file is the **single source of truth**: page structure, the data each section needs, how to order/group raw API data, when to show/hide each section, the components to build, and the visual language. Render it under **your own brand and content**. Build only the sections listed here; emit no analytics/tracking.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields before coding (`search_headout_api_docs({ query: "city detail, product list by city, product list by category, collections by city, categories" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'city|product|collections|categories' /" })` and read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: city detail, product list by city, product list by category, collections by city, categories.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
 2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize images; ProductCard uses customer selling price (`headoutSellingPrice`), never `netPrice`, and derives optional cancellation pills from policy data.
 3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (see "UI components to build").
 4. **Assemble** in the canonical order, applying the ordering and conditional rules.
@@ -88,7 +94,7 @@ Apply these unless the partner design system overrides them:
 - **Loading:** show skeletons sized to the final card per section.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] City detail loaded first; unknown city → 404. (No canonical-slug redirect — the cities feed has no `urlSlug`.)
 - [ ] Sections render in canonical order; only the sections listed above are built.
 - [ ] Feed order preserved (no re-sort); collections/attractions capped at 15.

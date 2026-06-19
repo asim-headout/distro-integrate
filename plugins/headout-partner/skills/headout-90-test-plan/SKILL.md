@@ -8,6 +8,10 @@ argument-hint: "[completed or planned steps]"
 
 Create a practical test plan for the Headout steps already implemented or planned.
 
+Role boundary: inspect existing tests and quality gaps, but do not edit or restructure test setup
+unless the user explicitly asks. Existing broken tests, dummy fixtures, and rough patterns should be
+reported as observations or risks, not cleaned up as part of test planning.
+
 Basic path:
 
 1. Inspect existing tests and test runner first.

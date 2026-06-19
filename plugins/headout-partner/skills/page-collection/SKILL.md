@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Collection Page
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build a collection landing page — a curated, themed list of experiences around an attraction or topic (e.g. "Top things to do in {city}", "{Attraction} Tickets"), reached from a city page or a discovery card. The **product list is the core**; everything else frames it. This file is the **single source of truth**: page structure, the data each section needs, how to order/pin the product list, when to show/hide each section, the components to build, and the visual language. Render under **your own brand and content**. Build only the sections listed here; emit no analytics/tracking.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "collections list, products by collection, categories by city" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'collection|product|categories' /" })` and read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: collections list, products by collection, categories by city.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit its section.
 2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize images; product cards use customer selling price (`headoutSellingPrice`), never `netPrice`, and derive optional cancellation pills from policy data.
 3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder.
 4. **Assemble** in the canonical order, applying the ordering and conditional rules.
@@ -72,7 +78,7 @@ Apply unless the partner design system overrides:
 - **Loading:** skeletons sized to the final card/section.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] Collection basic info loaded first; non-canonical slug → 301 redirect.
 - [ ] Sections render in canonical order; only the sections listed above are built.
 - [ ] Product list rendered in the API's default order (no client re-sort, no sort dropdown); initial limit ~9 with "Show more"; highlight pinned when a valid in-collection id is passed.

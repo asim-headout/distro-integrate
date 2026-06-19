@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Booking Confirmation
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the **Confirmation** page — `/confirmation/{purchaseId}`. The guest lands here straight after a successful payment and needs three things fast: reassurance the booking went through, a clear **status** (are my tickets ready, or still being prepared?), and a **ticket summary card** they can act on. The page is a **hero-banner shell**: a full-bleed product image with a dark/gradient overlay, and a centered **booking card** (or a horizontal row of cards for a multi-booking/combo order) floating over it. Status updates **live** while the page is open. This file is the **single source of truth**: structure, the status state machine, polling, card anatomy, conditional rules, the components to build, and the visual language. Render under **your own brand and content**.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "booking itinerary by purchase id, booking status, ticket/QR, product details for confirmation" })`, then read the spec). Otherwise map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: booking itinerary by purchase id, booking status, ticket/QR, product details for confirmation.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map each feed below to your endpoints. Any feed you cannot fulfil → omit/disable its section.
 2. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the booking/summary card, status badge, and date card are reused by manage-booking and voucher — build them shared).
 3. **Assemble** in canonical order, wiring the **status state machine** and **live polling** exactly.
 
@@ -75,7 +81,7 @@ Apply unless the partner design system overrides:
 - ticket artifact absent (still preparing) → show the status/countdown, no ticket box yet.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feeds; any unfulfillable feed disables its section.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] Invalid/unresolved `purchaseId` → 404; loader until itinerary + product resolve; page emits no SEO body (not indexable).
 - [ ] Sections render in canonical order; single booking = one centered card, ≥2 = horizontal scroller with equal-height cards and desktop overflow arrows.
 - [ ] **Status state machine** correct: pending/ready tints cross-fade; countdown runs for preparing/delayed (and quick-fulfilment first view), persists per booking across reloads, and flips to ready on expiry; combo with ahead-of-date fulfilment suppresses the timer.

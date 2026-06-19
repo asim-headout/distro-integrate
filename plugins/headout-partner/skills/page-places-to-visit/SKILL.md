@@ -6,10 +6,16 @@ disable-model-invocation: true
 
 # Page Recipe: Places to Visit Page
 
+Before coding, inspect the partner repo, summarize the relevant route/data boundary and intended edit scope, and leave existing dummy/stub code, bugs, and refactor opportunities untouched unless the user explicitly asks for that specific change.
 Build the "Places to Visit in {city}" page — a lightweight directory of the curated collections for one city, reached from a city page or footer link. It is the **simplest listing page**: a header and a single grid of collection cards, with no filter, no sort, and no pagination. The **collection grid is the whole page**. This file is the **single source of truth**: page structure, the data it needs, how to order/cap the list, when to show/hide each part, the components to build, and the visual language. Render under **your own brand and content**. Build only what is listed here; emit no analytics/tracking.
 
 ## How to use this skill
-1. **Resolve the API contract.** If an API-docs MCP server is configured, confirm exact fields first (`search_headout_api_docs({ query: "collections by city, city detail, places to visit" })`, then `query_docs_filesystem_headout_api_docs({ command: "rg -il 'collection|city' /" })` and read the spec). Otherwise map the feed below to your endpoint.
+1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
+   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: collections by city, city detail, places to visit.
+   2. Read the linked spec sections to get exact response field paths.
+   3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
+   
+   **Do not write any mapper or field access code until step 1.3 is complete.** Map the feed below to your endpoint.
 2. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): normalize collection images and preserve server/editorial order; do not fill with random collections.
 3. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the collection card is shared with the home/city recipes — reuse it).
 4. **Assemble** in the canonical order, applying the ordering and conditional rules.
@@ -60,7 +66,7 @@ Apply unless the partner design system overrides:
 - **Loading:** a page-level loader sized to the grid.
 
 ## Acceptance checks
-- [ ] API contract confirmed (via MCP if available) and mapped to the partner's feed.
+- [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] City resolved first; unknown → 404.
 - [ ] Sections render in canonical order; header + single collection grid, no filter/sort/pagination.
 - [ ] List preserves server order (no client re-sort); capped at the fixed maximum.

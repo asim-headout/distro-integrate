@@ -1,0 +1,4 @@
+interface:
+  display_name: "Inventory Input Fields"
+  short_description: "Integrate inventory-specific checkout fields"
+  default_prompt: "Use the Headout inventory details API to replace variant-only checkout field sourcing safely."

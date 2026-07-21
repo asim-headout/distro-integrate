@@ -27,6 +27,7 @@ Core endpoint groups:
 
 - Discovery: `/api/public/v2/cities`, `/categories`, `/subcategories`, `/collections`, `/products`, `/products/{productId}`
 - Inventory: `/api/public/v2/inventory/list-by/tour`
+- Inventory details: `/api/public/v2/inventories/{inventoryId}/`
 - Booking: `/api/public/v2/bookings`, `/api/public/v2/bookings/{bookingId}`
 - Post-booking: cancellation and reschedule endpoints
 - Webhooks: `/api/public/v2/webhooks`

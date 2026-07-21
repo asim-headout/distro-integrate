@@ -58,7 +58,7 @@ identity, auth dependency, test commands, and rollout boundary.
 - `headout-00-plan`: classify stack, scope, architecture, map the journey, plan.
 - `headout-01-discovery`: home, city, collections, categories, product list/detail.
 - `headout-02-product-selection`: product page, variant/date/pax selection, inventory, pricing.
-- `headout-03-checkout-inputs`: customer/passenger + variant input fields, validation.
+- `headout-03-checkout-inputs`: customer/passenger + variant/inventory input fields, validation.
 - `headout-04-seatmap-validation`: iframe or custom seatmap selection + validation.
 - `headout-05-payment-booking`: partner payment handoff, create/capture/get booking, reconciliation.
 - `headout-06-booking-management`: webhooks, cancellation, reschedule, status updates.
@@ -127,7 +127,11 @@ the partner has no equivalent. They do not override the partner's tokens, dimens
 
 ## Support skills
 
-- `headout-90-test-plan`, `headout-91-review`, `headout-92-debug`, `headout-99-context-checkpoint`
+- `headout-90-test-plan`, `headout-91-review`, `headout-92-debug`, `headout-93-inventory-input-fields`, `headout-99-context-checkpoint`
+
+`headout-93-inventory-input-fields` is an explicit support workflow linked from checkout inputs.
+Invoke it when a selected inventory may override the product/variant `inputFields`; it does not
+replace or run in parallel with the checkout journey step.
 
 Every completed step ends with a compact-ready context checkpoint.
 

@@ -4,13 +4,18 @@ Server-side sourcing + validation of checkout fields. Keep `Headout-Auth` and ra
 
 ## Endpoints
 - Field requirements come from the product / inventory responses and the create-booking contract:
-  `/api/public/v2/products/{productId}`, `/api/public/v2/inventory/list-by/tour`,
+  `/api/public/v2/products/{productId}`, `/api/public/v2/inventory/list-by/tour`, and, when the
+  selected inventory requires an inventory-specific override, `/api/public/v2/inventories/{inventoryId}/`,
   `/api/public/v2/bookings` (create).
+
+For the inventory-specific workflow, use the explicit support skill [headout-93-inventory-input-fields](../../headout-93-inventory-input-fields/SKILL.md).
 
 ## Server-side rules
 - Source required fields **live** from current API responses — never hardcode one product's fields:
   - Customer fields: `NAME`, `EMAIL`, `PHONE`, and `CUSTOM_*`.
   - Booking-level `variantInputFields` (pickup, transportation, product-specific choices).
+- When inventory details are fetched successfully, use that inventory's `inputFields` for the selected
+  inventory while preserving the existing product-derived path for compatibility.
 - Preserve each field's metadata: `id`, label/name, `level` (`BOOKING`, `PRIMARY_CUSTOMER`,
   `ALL_CUSTOMER`, etc.), `dataType`, `required`, options/allowed values, helper/description text,
   validation constraints (`min`, `max`, length/range), and any location/pickup enum variants.

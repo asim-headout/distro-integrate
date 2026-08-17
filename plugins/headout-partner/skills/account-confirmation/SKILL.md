@@ -28,7 +28,7 @@ Build the **Confirmation** page the guest lands on straight after a successful b
 ## Data sources (map to your endpoints)
 - **Booking GET (per `bookingId`):** `status`, `bookingId`, `partnerReferenceId`, `variantId`, `startDateTime`, `customersDetails` (count + customers), `price`, `seatInfo`, **`tickets[]`** (`publicId`/`url`/`type`: QRCODE|BARCODE|PDF_URL), **`voucherUrl`** (PDF), `creationTimestamp`. The partner's order maps to one or more of these.
 - **Product GET:** product `name`, hero image, city/location (for the banner + card). (Variant name comes from the product's variant for `variantId`.)
-- **Not in the booking API** (so these rows are NOT built): meeting/pickup address, language, a `validUntil`/flexible-validity date, and any "tickets are being prepared" ETA/countdown. Map readiness from `status` + whether `tickets[]`/`voucherUrl` are populated — do not invent a timer.
+- **Not in the booking API** (so these rows are NOT built here): meeting/pickup address, language, a `validUntil`/flexible-validity date, and any "tickets are being prepared" ETA/countdown. Map readiness from `status` + whether `tickets[]`/`voucherUrl` are populated — do not invent a timer. These fields (`pickupDropoffLocation`, `tourProperties`, `voucherValidUntil`) are available via the Voucher API — see [account-voucher](../account-voucher/SKILL.md) if the partner needs them on this page too.
 
 ## Canonical section order (top → bottom)
 1. **Hero banner** — full-bleed product image with a dark overlay + a bottom gradient that fades the image into the page background.

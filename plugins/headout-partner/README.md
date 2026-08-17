@@ -112,7 +112,7 @@ behind a booking, so none are indexable.
 |---|---|---|
 | Confirmation — status, ticket/QR (`tickets[]`/`voucherUrl`), booking details | `account-confirmation` | `skills/account-confirmation/SKILL.md` |
 | Manage booking — review, cancel/reschedule | `account-manage-booking` | `skills/account-manage-booking/SKILL.md` |
-| Voucher / ticket — voucher PDF + QR/barcode, details, embed mode | `account-voucher` | `skills/account-voucher/SKILL.md` |
+| Voucher / ticket — Voucher API (`V2Voucher`) preferred, legacy `tickets[]`/`voucherUrl` fallback, details, embed mode | `account-voucher` | `skills/account-voucher/SKILL.md` |
 
 ### Shared UI components (`ui-*`)
 
@@ -127,11 +127,17 @@ the partner has no equivalent. They do not override the partner's tokens, dimens
 
 ## Support skills
 
-- `headout-90-test-plan`, `headout-91-review`, `headout-92-debug`, `headout-93-inventory-input-fields`, `headout-99-context-checkpoint`
+- `headout-90-test-plan`, `headout-91-review`, `headout-92-debug`, `headout-93-inventory-input-fields`, `headout-voucher-api`, `headout-99-context-checkpoint`
 
 `headout-93-inventory-input-fields` is an explicit support workflow linked from checkout inputs.
 Invoke it when a selected inventory may override the product/variant `inputFields`; it does not
 replace or run in parallel with the checkout journey step.
+
+`headout-voucher-api` is an explicit support workflow for adopting or migrating to the structured
+Voucher API. It inspects whatever voucher rendering the partner already has — their own model, no
+model, a scraped/screenshotted render, or a partial integration — and produces a field-mapping and
+migration plan for explicit partner approval before any code changes. It feeds into, but never
+replaces, `account-voucher` (the rendering recipe the plan converges on).
 
 Every completed step ends with a compact-ready context checkpoint.
 

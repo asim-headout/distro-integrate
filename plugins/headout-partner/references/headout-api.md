@@ -30,6 +30,9 @@ Core endpoint groups:
 - Inventory details: `/api/public/v2/inventories/{inventoryId}/`
 - Booking: `/api/public/v2/bookings`, `/api/public/v2/bookings/{bookingId}`
 - Post-booking: cancellation and reschedule endpoints
+- Voucher: `/api/public/v2/bookings/voucher/{voucherId}/` — structured voucher data (see
+  [account-voucher](../skills/account-voucher/SKILL.md) and
+  [headout-voucher-api](../skills/headout-voucher-api/SKILL.md))
 - Webhooks: `/api/public/v2/webhooks`
 - Seatmap: availability, inventory, validation, SVG, and iframe endpoints
 
@@ -44,6 +47,8 @@ Per-endpoint doc pages (api-partner v2):
 - Booking get: https://partner.headout.com/docs/api-partner/v2/bookings/get.md
 - Booking cancel: https://partner.headout.com/docs/api-partner/v2/bookings/cancel.md
 - Booking reschedule: https://partner.headout.com/docs/api-partner/v2/bookings/reschedule.md
+- Voucher get: https://partner.headout.com/docs/api-partner/v2/vouchers/get.md
+- Voucher response reference: https://partner.headout.com/docs/api-partner/v2/vouchers/understanding-the-response.md
 - Webhooks create: https://partner.headout.com/docs/api-partner/v2/webhooks/create.md
 - Seatmap inventory: https://partner.headout.com/docs/api-partner/v2/seatmap/inventory.md
 - Seatmap validate: https://partner.headout.com/docs/api-partner/v2/seatmap/validate.md

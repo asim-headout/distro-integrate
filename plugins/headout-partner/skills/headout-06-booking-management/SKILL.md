@@ -54,6 +54,7 @@ $ARGUMENTS
 
 ## References (load only what's needed)
 - **Frontend — look & structure:** *(booking-management UI page recipe — planned follow-up; until then reuse the partner design system and `ui-components/`)*
+- **Voucher/ticket rendering:** [account-voucher](../account-voucher/SKILL.md) is the rendering recipe for the redemption artifact. If the partner is adopting or migrating to the structured Voucher API, invoke the explicit support workflow [headout-voucher-api](../headout-voucher-api/SKILL.md) first.
 - **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
 - **Persistence and migrations:** [../../references/persistence-and-migrations.md](../../references/persistence-and-migrations.md)
 - **Advanced — edge cases:** [references/advanced.md](references/advanced.md)

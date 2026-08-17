@@ -55,9 +55,11 @@ code before the plan is approved.
    - A field-by-field table: `V2Voucher.<path>` → the partner's existing field/component, or "new"
      if there's no existing equivalent.
    - Fields the partner's current model **cannot** represent (e.g. no concept of `callouts[]`,
-     `MULTI_PAGE`/`addressGroups[][]` per-unit split, `disclaimer`, `checkinButton`,
+     `voucherTemplate` (`SINGLE_PAGE`/`MULTI_PAGE`), `disclaimer`, `checkinButton`,
      `pickupDropOffType` 3-way branch) — flag these explicitly; silently dropping them is a
-     compliance risk, especially the `MULTI_PAGE` per-unit rule (venue rejection risk).
+     compliance risk, especially `voucherTemplate` — venue staff check a voucher against the
+     template they expect for that experience, so the partner's rendering must always reflect the
+     exact template Headout returns, not reinterpret it (venue rejection risk).
    - Fields where the partner's model is **richer** than what Voucher API returns — note these are
      partner-only and won't be backed by Headout data.
    - The transform/adapter surface: one function/module boundary, not a rewrite of the partner's
@@ -65,7 +67,8 @@ code before the plan is approved.
      scrape") — in that case, point to [account-voucher](../account-voucher/SKILL.md) as the build
      target and let it own the from-scratch build.
    - For a visual/scrape-based current implementation: render a live preview of the target
-     Voucher-API-driven output (using a real sandbox response) so the partner can compare it
+     Voucher-API-driven output (using a real sandbox response, per
+     [references/sandbox-fixtures.md](references/sandbox-fixtures.md)) so the partner can compare it
      side-by-side against their current screenshot/HTML render before committing.
    - Open questions requiring partner input (e.g. `hasLateArrivalPolicy`'s true/false meaning,
      whether their BFF already has a slot for callouts/disclaimer, rollout sequencing).
@@ -83,17 +86,19 @@ code before the plan is approved.
 - Basic: every `V2Voucher` field the partner intends to use is mapped or explicitly marked
   unsupported; the transform is additive (existing legacy-path bookings still render) unless the
   partner approved a full cutover.
-- Contract: `bookingStatus`, `voucherTemplate`, `ticketSection.tickets[].ticketType`/`displayType`,
-  `pickupDropOffType`, and `instructions.structured` vs `.legacy` are all sourced from confirmed live
-  response paths, not assumed.
-- Compliance: the `MULTI_PAGE`/`addressGroups[][]` per-unit page split and the callouts-render-all
-  rule are explicitly called out in the plan if the partner's current model can't represent them —
-  these are the two rules most likely to cause venue rejection if dropped silently.
+- Contract: `bookingStatus`, `voucherTemplate`, `ticketSection.tickets[].displayType` (the render key,
+  not `ticketType`), `pickupDropOffType`, and `instructions.structured` vs `.legacy` are all sourced
+  from confirmed live response paths, not assumed. Tickets are not gated on `bookingStatus`.
+- Compliance: the "always render the exact `voucherTemplate` Headout returns, never override it" rule
+  and the callouts-render-all rule are explicitly called out in the plan if the partner's current
+  model can't represent them — these are the two rules most likely to cause venue rejection if
+  dropped silently.
 - Approval: no partner code was edited before the plan was presented and approved.
 
 ## References
 
 - Full `V2Voucher` field reference: [references/voucher-api.md](references/voucher-api.md)
+- Sandbox fixture matrix: [references/sandbox-fixtures.md](references/sandbox-fixtures.md)
 - Rendering target / state machine / template branching: [account-voucher](../account-voucher/SKILL.md)
 - Shared API facts: [headout-api.md](../../references/headout-api.md)
 - Testing contract: [existing-test-contract.md](../../references/existing-test-contract.md)

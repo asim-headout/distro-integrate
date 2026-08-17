@@ -50,8 +50,8 @@ Partners without Voucher API access yet fall back to the **legacy shape** off bo
 - `callouts[]`: `{ title, htmlDescription }` — pre-sanitized HTML, render every item, empty array when none.
 - `bookingDetails`: `customerName`, `paxSummary` (`summary` + `details[]` by `paxType`), `guestFields[]`, `schedule` (`experienceDate`/`experienceStartDateTime`/`experienceEndDateTime`, `voucherValidUntil`, `durationMinutes`, `openDated`), `seats`, `tourProperties[]` (e.g. language), `pickupDropoffLocation` (address, coordinates, `pickupDropOffType`, nested `dropoff`).
 - `checkinButton`: `{ checkinUrl }` or null.
-- `ticketSection`: `{ heading, subheading, tickets[] }`, null when no tickets attached or booking cancelled. Each ticket: `ticketType` (`QRCODE`/`BARCODE`/`PDF_URL`/`HTML_URL`/`TEXT`/`UNKNOWN`), `displayType` (`IMAGE`/`TICKET_NUMBER`/`PDF`/`NONE`), `url`, `ticketCode`, `ticketName`, `actionCta`.
-- `instructions`: exactly one of `legacy` (`htmlContent` + `location`) or `structured` (`generalInstructions`, `location` with `addressGroups[][]`, `additionalInfo`, `policies[]`) is populated — never both, prefer `structured` when present since it renders as first-class UI instead of an opaque HTML blob (see Conditional render rules).
+- `ticketSection`: `{ heading, subheading, tickets[] }`, null when no tickets attached or booking cancelled — **not gated on `bookingStatus`** otherwise (a `PENDING` booking can already have tickets). Each ticket: `ticketType` (`QRCODE`/`BARCODE`/`PDF_URL`/`HTML_URL`/`TEXT`/`UNKNOWN`, secondary metadata only), `displayType` (`IMAGE`/`TICKET_NUMBER`/`PDF`/`NONE`, the actual render key), `url`, `ticketCode`, `ticketName`, `actionCta` (present only for `displayType: PDF`).
+- `instructions`: exactly one of `legacy` (`htmlContent` + `location`) or `structured` (`generalInstructions`, `location` with `addressGroups[][]` — a location list, not a pax split — plus `addressSequenceType`/`voucherExchangeLocationType`, `additionalInfo`, `policies[]`) is populated — never both, prefer `structured` when present since it renders as first-class UI instead of an opaque HTML blob (see Conditional render rules).
 - `partnerDetails`: `vendorName`, `contactNumbers[]`, `referenceNumbers[]`.
 - `disclaimer`: string | null — generic field, not Disney-specific; render whenever non-null.
 
@@ -70,16 +70,21 @@ Partners without Voucher API access yet fall back to the **legacy shape** off bo
 
 ## Ordering & derivation of raw data
 - **`bookingStatus` state machine:**
-  - `CANCELLED` → a dedicated **Cancelled voucher** view (no ticket section; explain the booking is cancelled). `ticketSection` will already be null — do not additionally special-case it.
-  - `PENDING` → a **Pending voucher** view (booking confirmed but ticket not yet issued; show booking details, no scannable artifact yet).
+  - `CANCELLED` → a dedicated **Cancelled voucher** view (no ticket section; explain the booking is cancelled). `ticketSection` is expected to be null in this case, but still null-check it defensively rather than assuming the invariant always holds.
+  - `PENDING` ("payment captured and confirmed with the supplier") → status messaging only. **Do not gate the ticket section on this status** — a `PENDING` booking can already carry a populated `ticketSection`; render it whenever `ticketSection` is non-null, regardless of `bookingStatus`. Only show a "ticket not yet issued" placeholder when `ticketSection` is actually null and status is not `CANCELLED`.
   - `COMPLETED` → the full voucher body above.
   - Voucher GET `404` → a distinct **"not ready" / uncaptured booking** state, separate from the cancelled/pending renders (this is "no voucher exists yet," not "booking failed").
 - **`voucherTemplate` branch:**
-  - `SINGLE_PAGE` → one voucher body, as above.
-  - `MULTI_PAGE` → render **one page per unit** as defined by `instructions.structured.location.addressGroups` (one group per pax/unit, e.g. 3 adults = 3 pages), each carrying its own ticket from `ticketSection.tickets[]` and its own QR/artifact, separated by a page break, labeled "page {n}/{total}". Do not collapse multiple units onto one page even if the UI would technically fit them — venue rejection risk for templates like Disney is explicit in the contract.
-- **Ticket-artifact branch (by `ticketSection.tickets[].ticketType` / `displayType`):** `QRCODE` → render QR from `url`; `BARCODE` → render barcode from `url`; `PDF_URL`/`HTML_URL` → an "view/download" affordance using `actionCta` as the button label when present. `TEXT`/`TICKET_NUMBER` → render `ticketCode` as text. Do not invent redemption methods beyond what `ticketType`/`displayType` describe.
-- **Instructions branch:** if `instructions.structured` is non-null, render it (general instructions incl. `photoIdRequired`/`reportingTimes`, location `addressGroups`, `additionalInfo`, `policies[]`) — this is the preferred, richer path. Only when `structured` is null and `legacy` is non-null, render `legacy.htmlContent` as a single sanitized HTML block. Never render both.
-  - `hasLateArrivalPolicy` is a **flag whose true/false meaning is ambiguous from the doc alone** (unclear whether `true` means late arrival is *allowed* or *disallowed*). Do not guess copy for this — pull a live sandbox sample with a known late-arrival policy and confirm the boolean's meaning against it before wiring any conditional text; otherwise render the raw structured fields Headout already labeled (e.g. `reportingTimes`) and leave `hasLateArrivalPolicy`-driven copy out.
+  - `SINGLE_PAGE` → "display on a single screen": one voucher body, as above.
+  - `MULTI_PAGE` → "display as a longer multi-section layout." **This is not documented as one page per pax/unit, and `addressGroups` (a location list under `instructions.structured.location`, unrelated to pax count) must not be used to derive page count.** Render the sections above as a longer multi-section document per the template. Venue staff check the voucher against the template they expect for that experience — **always render exactly the template Headout returns; never override or reinterpret it**, since a voucher rendered in the wrong template risks the guest being turned away at entry. If a specific vendor genuinely needs one page per ticket/unit, derive that split from `ticketSection.tickets[]` length and confirm it against a live sample from that vendor before encoding it as a rule — do not assume it generally.
+- **Ticket-artifact branch (by `ticketSection.tickets[].displayType`, not `ticketType`):**
+  - `PDF` → download button; label from `actionCta` (always present for this `displayType`), link from `url`.
+  - `IMAGE` → render `url` as a QR/barcode image (use `ticketType` only to pick QR vs barcode alt text/styling).
+  - `TICKET_NUMBER` → display `ticketCode` as a text confirmation code; when `ticketType` is `HTML_URL`, `url` additionally links to an HTML view.
+  - `NONE` → **render nothing for this ticket** (unrecognized format) — no placeholder box, no broken-image state.
+  - Do not invent redemption methods beyond what `displayType` describes, and do not key the branch off `ticketType`.
+- **Instructions branch:** if `instructions.structured` is non-null, render it (general instructions incl. `photoIdRequired`/`reportingTimes`, location `addressGroups` per `addressSequenceType` — numbered steps for `ALL_ADDRESS_SPECIFIC_ORDER`, unordered list for `ALL_ADDRESS_ANY_ORDER`, chooser for `SINGLE_ADDRESS` — plus a "different exchange location" callout when `voucherExchangeLocationType: DIFF_LOCATION`, `additionalInfo`, `policies[]`) — this is the preferred, richer path. Only when `structured` is null and `legacy` is non-null, render **both** `legacy.htmlContent` (a sanitized HTML fragment) **and** `legacy.location` (using the same `V2VoucherLocation`/`pickupDropOffType` renderer as `pickupDropoffLocation`) — do not drop the location half. Never render both `structured` and `legacy`.
+  - `hasLateArrivalPolicy` is a **flag whose true/false meaning is only partially documented** — the endpoint spec glosses it as "late-arrival policy applies" (suggesting `true` means a policy exists, not that late arrival is permitted), but the guest-facing copy this should drive is not specified. Do not guess copy for this — pull a live sandbox sample with a known late-arrival policy and confirm the intended copy against it before wiring any conditional text; otherwise render the raw structured fields Headout already labeled (e.g. `reportingTimes`) and leave `hasLateArrivalPolicy`-driven copy out.
 
 ## Conditional render rules
 - **Cancelled / pending / 404-not-ready states** short-circuit the body (render their dedicated views).
@@ -87,6 +92,7 @@ Partners without Voucher API access yet fall back to the **legacy shape** off bo
 - **"Selected option" row:** only when `variant.name` exists.
 - **Seats vs guests:** show `seats` when present; otherwise `paxSummary`.
 - **Pickup/drop-off:** branch on `pickupDropOffType` — `PICKUP` (pickup fields only), `PICKUP_AND_DROPOFF` (render both `pickupDropoffLocation` and its nested `dropoff`), `PICKUP_SAME_AS_DROPOFF` (render once, labeled as both). Omit the section entirely when `pickupDropoffLocation` is null.
+- **Open-dated validity:** when `schedule.openDated` is `true` (no fixed `experienceDate`), show "Valid until {voucherValidUntil}" in place of a fixed date/time row. `voucherValidUntil` is already the earliest expiry across all tickets (computed server-side) — render it as-is, never recompute it from per-ticket data.
 - **Check-in button:** render only when `checkinButton` is non-null.
 - **Disclaimer:** render only when non-null; do not gate it behind any specific vendor/vertical.
 - **Embed mode:** render body-only and noindex only after the embed authorization, origin, and CSP
@@ -112,7 +118,7 @@ The partner's design system wins; the values below are only a fallback when none
 - `header.displayBookingId ?? header.voucherId` → "Booking ID {ref}" (never `bookingId` for the guest-facing label).
 - `bookingStatus` → active(`COMPLETED`)/pending/cancelled render branch; voucher-GET `404` → not-ready branch.
 - `voucherTemplate` → single vs multi-page render.
-- `ticketSection.tickets[].ticketType`/`displayType` → TicketArtifact variant; `ticketSection` null → show the cancelled/no-artifact-yet state, not an empty section.
+- `ticketSection.tickets[].displayType` → TicketArtifact variant (`ticketType` is secondary metadata only); `ticketSection` null → show the cancelled/no-artifact-yet state, not an empty section; never gated on `bookingStatus` beyond that.
 - `callouts[]` → CalloutBanner list, all rendered, none skipped.
 - `instructions.structured` preferred over `instructions.legacy`; render exactly one.
 - `disclaimer` → DisclaimerFooter, generic, last section.
@@ -123,18 +129,19 @@ The partner's design system wins; the values below are only a fallback when none
 - `bookingId` → "Booking ID {ref}" (no `displayBookingId` on this path).
 - `status` → active / pending / cancelled render branch (no distinct "not ready" — booking GET has no 404-for-voucher concept).
 - `tickets[].type` + `url` → TicketArtifact variant; `voucherUrl` → download-voucher-PDF action.
-- `tickets[]` length > 1 → one voucher body per ticket with page breaks (this is a booking-count split, not the real per-unit `addressGroups` split — do not label it "MULTI_PAGE template").
+- `tickets[]` length > 1 → one voucher body per ticket with page breaks (this is a booking-count split for the legacy fallback only — do not label it "MULTI_PAGE template", since that template's real semantics live on the Voucher API path above).
 - No callouts, structured instructions, disclaimer, or check-in button sections on this path.
 
 ## Acceptance checks
 - [ ] API contract confirmed: voucher GET (or, on the legacy fallback, booking GET) fields resolved and exact paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] If the partner already had any prior voucher page/model, [headout-voucher-api](../headout-voucher-api/SKILL.md) ran first and the partner explicitly approved the migration plan — this skill did not silently replace existing code.
 - [ ] Resolved by `bookingId` → `voucherId` → voucher GET, server-side through the BFF; `404` → not-ready state, `403` → auth-failure state; loader until resolved; page (and embed) emit no SEO body and are noindex.
-- [ ] **`bookingStatus` state machine** correct: cancelled → Cancelled view; pending → Pending view; not-ready(404) → distinct NotReady view; completed → full body.
-- [ ] **`voucherTemplate` branch** correct: `MULTI_PAGE` → one page per `addressGroups` unit (not per booking, not collapsed), each with page break and "page n/total"; `SINGLE_PAGE` → one body.
-- [ ] **Ticket-artifact branch** renders by `ticketSection.tickets[].ticketType`/`displayType`; `actionCta` only rendered for non-QR types; no invented redemption methods.
+- [ ] **`bookingStatus` state machine** correct: cancelled → Cancelled view; not-ready(404) → distinct NotReady view; completed → full body. Ticket section is rendered whenever `ticketSection` is non-null **regardless of status** (a `PENDING` booking can already carry tickets) — status is used only for messaging and the cancelled short-circuit.
+- [ ] **`voucherTemplate` branch** correct: the exact template Headout returns is always rendered as-is (never overridden/reinterpreted); `MULTI_PAGE`/`SINGLE_PAGE` page composition is not derived from `addressGroups` (a location list unrelated to pax count).
+- [ ] **Ticket-artifact branch** renders by `ticketSection.tickets[].displayType` (not `ticketType`); `actionCta` only rendered for `displayType: PDF`; `displayType: NONE` renders nothing; no invented redemption methods.
 - [ ] **Callouts** render as a full array, all items shown.
-- [ ] **Instructions** prefer `structured` over `legacy`; never render both; `hasLateArrivalPolicy` copy is not wired until its true/false meaning was confirmed against a live sample.
+- [ ] **Instructions** prefer `structured` over `legacy`; when `legacy`, both `htmlContent` and `location` render (location is not dropped); never render both `structured` and `legacy`; `hasLateArrivalPolicy` copy is not wired until confirmed against a live sample.
+- [ ] **`voucherValidUntil`** rendered as-is (never recomputed); open-dated bookings (`schedule.openDated`) show a "valid until" row instead of a fixed date.
 - [ ] Vendor logo right-aligned, distinct from the partner/Headout logo slot (top-left).
 - [ ] `disclaimer` renders last whenever present, with no vertical-specific gating.
 - [ ] Sections render in canonical order: header → callouts → ticket section → booking details → instructions → partner details → disclaimer.

@@ -11,7 +11,8 @@ Build a category listing page — a themed list of experiences for one top-level
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: products by city and category, subcategories, collections by city, categories.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      fetch `https://partner.headout.com/docs/llms.txt` and find the category/catalog sections.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
    

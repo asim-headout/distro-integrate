@@ -11,7 +11,8 @@ Build a collection landing page — a curated, themed list of experiences around
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: collections list, products by collection, categories by city.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      fetch `https://partner.headout.com/docs/llms.txt` and find the required collection sections.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
    
@@ -22,7 +23,8 @@ Build a collection landing page — a curated, themed list of experiences around
 
 ## Page-level guards
 - Resolve the collection by id/slug. Fetch **collection basic info first** (it drives the city context and which loader runs).
-- The collection object carries a `canonicalUrl`/`localeSpecificUrls`; if the requested slug doesn't match → 301 redirect to canonical.
+- If the requested slug is non-canonical, derive a same-origin partner route from validated ids/slugs
+  and redirect there. Never redirect directly to an API-provided absolute `canonicalUrl`.
 
 ## Data sources (map to your endpoints)
 - **Collection detail:** `name`, `content.subtext`/`content.description` (description), `heroImage`/`cardImage` (each `{ url, type }`), `cityCode`, `canonicalUrl`. Drives the header. **Note:** the collection object carries **no ratings** and **no POI content** (no about / fun facts / highlights / opening hours), so those sections are not built on this page.
@@ -79,7 +81,7 @@ The partner's design system wins; the values below are only a fallback when none
 
 ## Acceptance checks
 - [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
-- [ ] Collection basic info loaded first; non-canonical slug → 301 redirect.
+- [ ] Collection basic info loaded first; non-canonical slug → validated same-origin 301 redirect.
 - [ ] Sections render in canonical order; only the sections listed above are built.
 - [ ] Product list rendered in the API's default order (no client re-sort, no sort dropdown); initial limit ~9 with "Show more"; highlight pinned when a valid in-collection id is passed.
 - [ ] No reviews/rating badge in the header (collections carry no ratings); no POI / similar-collections / nearby / blog / long-form sections.

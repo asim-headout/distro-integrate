@@ -13,7 +13,8 @@ Build the **Checkout** step of the booking flow — `/book/{id}/checkout`. The g
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: pax/person types and pricing, booking create customersDetails inputFields, lead guest required fields, cancellation policy.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      fetch `https://partner.headout.com/docs/llms.txt` and find checkout/booking-input sections.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
    
@@ -28,10 +29,14 @@ Build the **Checkout** step of the booking flow — `/book/{id}/checkout`. The g
 - **Source of truth = URL query** (`date`, `time`, `tourId`/option, `variantId`, and `pax.{type}=N`); hydrate pax + selection from the URL on load and reflect every pax change back into the URL so the step is shareable/restorable.
 - This step is **not indexable** — it is behind a booking intent. Emit no SEO body.
 - Lead-guest PII is entered here; never log it, never put it in the URL.
+- Return `Cache-Control: private, no-store`; keep PII in the partner's protected server-side checkout
+  session, never browser storage readable by third-party scripts.
 
 ## Data sources (map to your endpoints)
 - **Product / tour-group + carried selection:** name, banner image, cancellation policy, the chosen date/variant/time (for the summary rows).
-- **Pax / person types + pricing:** the variant's `pax` / person types + the chosen inventory's per-person selling pricing (`persons`/`groups` `headoutSellingPrice` / mapped selling price + `originalPrice`). Each row has a label, an age descriptor, a per-unit selling price, and min/max constraints; recompute the total when counts change. Typical types: **Adult** (e.g. 16+), **Child** (e.g. 3–15), **Infant** (e.g. up to 2, often free). The total you compute here is the customer-facing `price` you pass to booking-create for validation.
+- **Pax / person types + pricing:** use per-person selling prices for the displayed/PSP total and
+  constraints. Keep inventory `netPrice` server-side; booking-create uses a separately calculated
+  API-required internal amount, never the customer-facing total.
 - **Required guest and booking fields:** the variant's `inputFields` (per booking and per guest) drive the form. Preserve `level`, `dataType`, `required`, labels, options, helper text, min/max constraints, and location/pickup enum variants.
 
 ## Canonical section order (top → bottom, left column)

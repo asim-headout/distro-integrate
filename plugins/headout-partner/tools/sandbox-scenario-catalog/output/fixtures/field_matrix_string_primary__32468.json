@@ -1,0 +1,16 @@
+{
+  "oldId": 101708,
+  "id": "NAME",
+  "name": "Full Name",
+  "dataType": "STRING",
+  "validation": {
+    "regex": "\\s*[^\\s]+\\s+[^\\s]+.*",
+    "minLength": 3,
+    "maxLength": 80,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

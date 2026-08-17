@@ -11,7 +11,8 @@ Build the **Manage booking** page — `/manage-booking/{bookingId}`. A guest rea
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Resolve the Headout API docs (the configured API-docs MCP server, or `https://partner.headout.com/docs/llms.txt`) and find the **booking GET**, **booking cancel**, **booking reschedule**, and **product GET** sections.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      resolve the configured docs source and find booking GET/cancel/reschedule + product GET.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `booking.status`, `product.cancellationPolicy.cancellableUpToInMinutes`).
 
@@ -25,6 +26,9 @@ Build the **Manage booking** page — `/manage-booking/{bookingId}`. A guest rea
 - This page is **behind a booking** — **not indexable**; emit no SEO body.
 - On a small viewport, show a back/title bar ("Booking details") that becomes opaque on scroll.
 - Do not expose `Headout-Auth` or raw booking JSON to the browser.
+- Return `Cache-Control: private, no-store`. Every cancel/reschedule request independently re-checks
+  session ownership, current booking status, and policy/window server-side; require CSRF or strict
+  Origin validation, an idempotency key, and rate limiting. UI eligibility is advisory only.
 
 ## Data sources (map to your endpoints)
 - **Booking GET (by `bookingId`):** `bookingId`, `partnerReferenceId`, `variantId`, `status`, `startDateTime`, `customersDetails` (count), `seatInfo`, `price`.
@@ -41,7 +45,8 @@ Build the **Manage booking** page — `/manage-booking/{bookingId}`. A guest rea
 
 ## Ordering & derivation of raw data
 - **Action gating:** compute eligibility from the product policy and `startDateTime` — **Cancel** active only when `cancellationPolicy.cancellable` and now is before (`startDateTime − cancellableUpToInMinutes`); **Reschedule** active only when `reschedulePolicy.reschedulable` and within its window. Otherwise present the button disabled with a short reason ("Cancellation window has passed") or omit it and surface **Contact support** as the fallback.
-- **Cancel / reschedule are async:** on action, show a pending state; do not assume success from the immediate response — confirm via booking GET/webhook.
+- **Cancel / reschedule are async:** submit only through the protected server mutation above; show a
+  pending state and confirm via booking GET/webhook.
 - **Status badge:** derive a single status label + treatment from the booking `status` (confirmed / pending / cancelled / failed).
 - **Cancellation-policy copy is DERIVED** (not a field) from `cancellationPolicy` + `reschedulePolicy` (convert `*UpToInMinutes` to hours/days), same logic as the product page.
 - **Seat vs variant:** show seats when `seatInfo` exists; else the variant name.
@@ -76,7 +81,8 @@ The partner's design system wins; the values below are only a fallback when none
 - [ ] API contract confirmed: booking GET + cancel/reschedule + product GET fields resolved and exact paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] **Access is server-side** via the partner's own session → `bookingId` (no guest-lookup-by-email); unauthorized/unresolved → help/support (no empty shell); loader until detail resolves; not indexable.
 - [ ] Sections render in canonical order: hero/experience card → visit summary → cancellation policy → manage actions. No plan-your-visit accordions, pickup editor, meeting-point row, or refund summary (not in the booking API).
-- [ ] **Action gating** correct: Cancel/Reschedule active only when the derived policy/window allows, else disabled-with-reason or replaced by Contact support; cancel/reschedule treated as async (confirm via GET/webhook).
+- [ ] Cancel/Reschedule re-authorize ownership and re-check current policy/status server-side with
+  CSRF/Origin, idempotency, and rate-limit protection; async outcome confirms via GET/webhook.
 - [ ] Cancellation-policy copy derived from the product policy (not read from the booking).
 - [ ] UI primitives map to the partner design system OR are built into `ui-components/`; ExperienceCard/StatusBadge reusable across confirmation and voucher.
 - [ ] No internal/operator branding; rendering uses the partner's brand and content.

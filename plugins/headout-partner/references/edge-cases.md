@@ -14,12 +14,14 @@ Use this when implementing, reviewing, or generating tests.
 - Sentinel high `remaining` values such as `1000` or `9999` should render as unlimited/no visible count.
 - Currency consistency from inventory fetch through booking.
 - Stale price rejection and price revalidation before checkout.
-- `headoutSellingPrice` for customer display, `originalPrice` for strike-through comparison, and `netPrice` only for internal reconciliation.
+- `headoutSellingPrice` for customer display/PSP charge, `originalPrice` for strike-through, and
+  `netPrice` server-side for Headout booking-create/reconciliation.
 - Protocol-relative image URLs (`//cdn...`) must be normalized before rendering.
 - Pagination via `nextUrl`, `prevUrl`, `nextOffset`, and `total`.
 - Local datetime values that may not include timezone offsets.
 - Booking statuses: `UNCAPTURED`, `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, `CAPTURE_TIMEDOUT`.
-- Create booking returns `UNCAPTURED`; capture/update to `PENDING` only after partner PSP success.
+- Create returns `UNCAPTURED` without locking inventory/price; capture/update to `PENDING` only after
+  partner PSP success, with void/refund compensation if settled payment precedes failed capture.
 - Webhooks do not send `UNCAPTURED`.
 - Cancellation and reschedule requests are async acknowledgements, not final states.
 - Seatmap validation can return HTTP 200 with business-level errors.

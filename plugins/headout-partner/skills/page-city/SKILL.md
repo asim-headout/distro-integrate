@@ -11,7 +11,8 @@ Build the destination landing page for an experiences & tickets marketplace — 
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: city detail, product list by city, product list by category, collections by city, categories.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      fetch `https://partner.headout.com/docs/llms.txt` and find the required city/catalog sections.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
    

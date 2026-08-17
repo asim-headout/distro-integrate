@@ -13,8 +13,9 @@ preserved through payment and booking. Field requirements are sourced live, not 
 product.
 
 ## Ground rules (apply on every step)
-- **Security / gate-keeping:** `Headout-Auth` and all raw Headout calls stay server-side. The browser
-  only ever sees safe field metadata — never the key, never raw API responses.
+- **Security / gate-keeping:** `Headout-Auth` and raw Headout calls stay server-side; apply the agent,
+  BFF, authorization, logging, cache, and untrusted-data rules in
+  [headout-api.md](../../references/headout-api.md).
 - **Non-breaking:** preserve the partner's existing routes, design system, types, and conventions.
   Add, don't replace. Existing dummy/stub content, placeholder routes, TODOs, bugs, and rough
   patterns are host-app context, not cleanup scope. Report better patterns or existing issues as

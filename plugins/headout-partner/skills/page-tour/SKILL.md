@@ -15,7 +15,8 @@ the experiences.
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: product get details highlights inclusions exclusions cancellation policy variants media start location operating schedules.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      fetch `https://partner.headout.com/docs/llms.txt` and find the required product sections.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
    
@@ -82,7 +83,9 @@ grid-template-areas: "top    sidebar"
 The canonical order is the **superset** of everything a product page *can* contain. Any individual product renders a **subset** — every section is gated by the conditional render rules, and an absent/empty field omits its section entirely (see the per-section presence table). A product with no operating-hours panel, no FAQ, or no additional-info block simply has those fields empty — that is correct behaviour, not a missing component.
 
 ## Ordering & derivation of raw data
-- **Highlights / inclusions / exclusions / faq / additionalInfo:** the API returns each as a **pre-formatted rich-text/HTML string** in its own field. Do NOT merge or re-split. Render `inclusions` and `exclusions` as **separate lists** (tick vs cross bullets are styling only).
+- **Rich-text fields:** preserve each field and its ordering, but sanitize every HTML string with the
+  partner's allowlist-based sanitizer before rendering, per `ui-data-contract.md`. Never render raw
+  API HTML. Keep inclusions/exclusions separate; tick/cross bullets are styling only.
 - **Cancellation-policy text is DERIVED** (not a field) from `cancellationPolicy` + `reschedulePolicy`:
   - `!cancellable && !reschedulable` → "non-cancellable, non-reschedulable".
   - `!cancellable && reschedulable` → "reschedulable up to X hours" (from `reschedulableUpToInMinutes`).
@@ -116,7 +119,7 @@ Every section is conditional. Render it **only** when its rule below holds; othe
 | `shortSummary` | field non-empty |
 | Variant/combo selector | multiple variants AND combo variants exist |
 | Highlights | `highlights` non-empty |
-| Inclusions / Exclusions | each field non-empty (rendered as separate lists; rich-text may include sub-headings — render as-is) |
+| Inclusions / Exclusions | each field non-empty (separate lists; sanitized rich text may include sub-headings) |
 | Summary | `summaryHtml` non-empty (position 9 if no highlights, else 11; suppressed for hop-on-hop-off) |
 | Cancellation policy | always derivable from `cancellationPolicy`/`reschedulePolicy` (text is derived, never blank) |
 | Operating hours | a point-of-interest has `operatingSchedules` |
@@ -176,6 +179,8 @@ The partner's design system wins; the values below are only a fallback when none
 ## Acceptance checks
 - [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; any unfulfillable feed disabled.
 - [ ] Protocol-relative media URLs normalized before rendering; no `netPrice` is displayed to customers.
+- [ ] Every rich-text field is allowlist-sanitized; scripts, handlers, unsafe links, iframes/forms,
+  and dangerous SVG/MathML are removed, with focused XSS tests.
 - [ ] Numeric-id guard; unknown → 404; geo-restricted → not-available state; missing core object → loader (no partial shell).
 - [ ] Sections render in canonical order, including the summary dual-position rule.
 - [ ] Cancellation-policy text derived from `cancellationPolicy`/`reschedulePolicy` (not read from a field); minutes converted to hours/days.

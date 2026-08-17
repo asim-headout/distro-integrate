@@ -1,0 +1,17 @@
+{
+  "oldId": 138848,
+  "id": "CUSTOM_138848",
+  "name": "Date of Birth",
+  "description": "YYYY-MM-DD",
+  "dataType": "STRING",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "ALL_CUSTOMER"
+}

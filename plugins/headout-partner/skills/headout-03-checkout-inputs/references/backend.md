@@ -29,6 +29,8 @@ For the inventory-specific workflow, use the explicit support skill [headout-93-
 - Return field **metadata** (key/id, type/dataType, level, required, options/label, min/max, and
   location/pickup variants) for the FE to render dynamically. Send only safe metadata to the browser;
   keep raw responses + auth server-side.
+- Render labels, helper text, and option values through normal framework escaping; field metadata
+  never authorizes HTML. Validate submitted ids/options against the current server-side metadata.
 - Persist entered values + variant input fields through payment into the booking step.
 
 ## Cross-check

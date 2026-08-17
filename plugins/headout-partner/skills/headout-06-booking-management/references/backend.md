@@ -9,6 +9,15 @@ server-side.
 - Cancel / reschedule: see per-endpoint doc pages in headout-api.md
 
 ## Webhook receiver
+- **Authenticity gate:** the current event contract documents no signature/header. Register a unique,
+  high-entropy HTTPS receiver path kept out of client code and logs; if Headout adds a signature,
+  verify it over the raw body with constant-time comparison before parsing. Do not rely on a user-agent
+  string, a guessable path, or IP allowlisting alone.
+- Enforce POST, HTTPS at the edge, expected content type, a small body limit, strict schema/status
+  allowlists, and rate limiting. Reject malformed/oversized requests before persistence.
+- Before applying an event, use server-side booking GET to confirm the booking belongs to this partner
+  and the reported current status. Treat the webhook as a reconciliation signal, not authoritative
+  proof. Authenticate/reconcile before deduplication so forged events cannot poison dedupe storage.
 - Accept booking-status events; expect `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`,
   `CAPTURE_TIMEDOUT`. **`UNCAPTURED` is not delivered via webhook.**
 - **Idempotent upsert:** key on a stable identifier (event id, or `bookingId` + status) so a duplicate
@@ -26,6 +35,9 @@ server-side.
 ## Cancellation / reschedule
 - Their immediate responses are **async acknowledgements, not final state**. Mark a pending state and
   let the subsequent booking GET / webhook confirm the final outcome.
+- On every mutation, re-authorize the local order/booking, require CSRF or strict Origin validation,
+  rate-limit, enforce an idempotency key, and re-check current status/policy server-side. Never trust
+  browser-calculated eligibility.
 
 ## Observability
 - Structured logs include `bookingId`, `partnerReferenceId` (when present), status, and a

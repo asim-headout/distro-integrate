@@ -32,6 +32,7 @@ Fetch and normalize the response on the server. The BFF may return only the fiel
 the form: `id`, `name`, safe description/helper text when present, `dataType`, `level`, `required`,
 validation constraints, and safe enum/location options. Never return the auth header or unrelated raw
 response data.
+Render all labels, descriptions, and option values as escaped text; metadata never authorizes HTML.
 
 Inventory metadata should be resolved after the selected inventory is known and before the checkout
 form renders. Cache only within the partner's existing request/session conventions; do not introduce

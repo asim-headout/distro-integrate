@@ -49,7 +49,10 @@ Persist enough to make create/capture/get, duplicate prevention, and reconciliat
 - Partner payment/PSP reference, payment status, capture status, and timestamps.
 - Selected product, variant, inventory, date/time, currency, language, pax summary, and seat ids when
   needed for reconciliation.
-- Idempotency/client request key for submit/double-click/retry protection.
+- Server-generated, order-scoped idempotency key for submit/retry protection; never rely on a client
+  key alone.
+- Payment compensation state (void/refund required, in progress, completed, failed) when the PSP may
+  settle before Headout capture.
 - Last successful Headout sync timestamp and last error/retry metadata if the repo has such patterns.
 
 Recommended constraints when the local DB supports them:
@@ -86,6 +89,7 @@ Use the existing test workflow. Add focused coverage for:
 - Migration/model shape when a migration is added.
 - Double submit uses the same idempotency key and does not create duplicate Headout bookings.
 - Create succeeds but capture/payment fails; state can reconcile safely.
+- PSP succeeds but Headout capture fails; compensation persists and retry cannot charge again.
 - Duplicate webhook is a no-op.
 - Out-of-order webhook cannot regress status.
 - Missing local booking is logged/reconciled without crashing the webhook handler.

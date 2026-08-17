@@ -18,9 +18,12 @@ Basic path:
 1. Identify which business-flow step is being reviewed.
 2. Check auth, base URL, API v2 usage, server/client boundaries, tests, error handling, and logging.
 3. Check pricing, pax, required input fields, seatmap when present, booking lifecycle, and booking management.
-4. Avoid broad refactors in review output unless a finding requires one; even then, recommend the
+4. Check untrusted HTML/URLs/docs, BFF input/ownership/rate limits, CSRF, webhook authenticity,
+   iframe origins, protected-response caching, payment callback verification, server idempotency,
+   selling-vs-booking amounts, and capture-failure compensation.
+5. Avoid broad refactors in review output unless a finding requires one; even then, recommend the
    refactor instead of applying it unless explicitly asked.
-5. End with a context checkpoint and next recommended skill.
+6. End with a context checkpoint and next recommended skill.
 
 User context:
 

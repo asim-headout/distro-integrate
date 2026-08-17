@@ -19,9 +19,12 @@ Basic path:
 3. Cover unit tests for request builders, mappers, validators, and error translation.
 4. Cover contract tests with mocked Headout v2 responses.
 5. Cover persistence tests when booking/payment/webhooks are in scope: migrations/model shape, idempotency keys, duplicate submit, duplicate webhook, out-of-order status, and reconciliation.
-6. Gate sandbox smoke tests behind env vars and explicit permission.
-7. Include launch-readiness, rollback, and reconciliation checks.
-8. End with a context checkpoint.
+6. Cover security regressions where relevant: rich-text XSS; URL/redirect allowlists; cross-account
+   IDOR; CSRF/Origin; forged webhooks; iframe origin/source/schema; no-store headers; payment callback,
+   server idempotency, distinct pricing totals, and void/refund compensation.
+7. Gate sandbox smoke tests behind env vars and explicit permission.
+8. Include launch-readiness, rollback, and reconciliation checks.
+9. End with a context checkpoint.
 
 User context:
 

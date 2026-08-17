@@ -19,6 +19,9 @@ Advanced cases:
 - Required customer fields and `variantInputFields` must match selected product/inventory.
 - Duplicate submission or network timeout must not create duplicate bookings.
 - Persist enough metadata to reconcile partner order status with Headout status.
+- `UNCAPTURED` does not lock inventory or price; cover capture rejection after PSP success.
+- Customer selling total and Headout booking-create amount are distinct server-side values.
+- A settled PSP payment with failed Headout capture must enter durable void/refund compensation.
 
 Test cases:
 
@@ -28,4 +31,6 @@ Test cases:
 - Duplicate submission.
 - Timeout during create/capture.
 - PSP success uncertain before capture.
+- PSP success followed by Headout capture failure and compensation.
+- Retry after PSP success does not charge again.
 - `UNCAPTURED`, `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, `CAPTURE_TIMEDOUT`.

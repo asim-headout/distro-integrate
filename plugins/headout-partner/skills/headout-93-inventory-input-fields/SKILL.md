@@ -14,7 +14,8 @@ product-derived path.
 
 ## Ground rules
 
-- Keep `Headout-Auth` and raw Headout calls server-side; expose only safe field metadata.
+- Keep `Headout-Auth` and raw calls server-side; apply the agent/BFF/untrusted-data rules in
+  [headout-api.md](../../references/headout-api.md) and expose only safe field metadata.
 - Preserve partner routes, conventions, types, and existing product/variant fallback behavior. Add,
   don't replace; leave unrelated bugs, stubs, and refactors untouched.
 - Use Headout API v2 and the sandbox by default. Never call production while building.

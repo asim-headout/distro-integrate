@@ -1,0 +1,17 @@
+{
+  "oldId": 272968,
+  "id": "CUSTOM_272968",
+  "name": "Pickup Location",
+  "description": "Where do you want to be picked up from?",
+  "dataType": "LOCATION",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

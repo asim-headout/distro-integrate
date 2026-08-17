@@ -13,5 +13,7 @@ Required behavior:
 7. Gate sandbox smoke tests behind credentials and user permission.
 8. If no test setup exists, do not install packages, scaffold a framework, or create test infrastructure unless the user approves.
 9. If no tests exist and the user does not approve setup, provide a concise manual verification plan and keep the implementation small.
+10. When the changed surface handles HTML, protected bookings, webhooks, iframes, or payment, reuse
+    existing tests for the corresponding security invariant; do not accept happy-path-only coverage.
 
 Coding production files before checking for an existing test workflow violates this plugin's implementation contract.

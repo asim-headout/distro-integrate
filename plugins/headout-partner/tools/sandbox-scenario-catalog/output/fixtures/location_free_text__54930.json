@@ -1,0 +1,17 @@
+{
+  "oldId": 178257,
+  "id": "CUSTOM_178257",
+  "name": "Pickup Location",
+  "description": "Please enter your pickup location",
+  "dataType": "LOCATION",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

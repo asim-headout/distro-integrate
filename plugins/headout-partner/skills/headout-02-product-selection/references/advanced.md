@@ -12,7 +12,8 @@ Advanced implementation cases:
 - Product detail page renders localized content and URLs.
 - Variant/tour/date selection changes inventory and price.
 - Pax ranges enforce min/max and supported person types.
-- `headoutSellingPrice` is the customer display price; `netPrice` is internal/reconciliation only;
+- `headoutSellingPrice` is the customer display/PSP price; `netPrice` stays server-side for Headout
+  booking-create and reconciliation;
   `originalPrice` is only a strike-through comparison when greater than selling price.
 - Sentinel high `remaining` values such as `1000` indicate unlimited availability in UI terms.
 - Price revalidation is required before checkout if selection can become stale.

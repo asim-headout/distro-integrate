@@ -11,7 +11,8 @@ Build the **Select** step of the booking flow — `/book/{id}/select`. The guest
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: booking calendar pricing inventory by date, variants/options, time slots, pax types, seatmap.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      fetch `https://partner.headout.com/docs/llms.txt` and find inventory/variant/seatmap sections.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
    
@@ -49,7 +50,9 @@ Build the **Select** step of the booking flow — `/book/{id}/select`. The guest
 - **Combo:** an option whose `tours.length > 1`; show a **"Combo deal"** badge + strike/discount. Selecting a combo routes into a **per-sub-tour** select sequence (each sub-tour gets its own date/time).
 - **Seatmap (seat-by-seat, e.g. theatre):** a slot-first flow. The guest picks date/show slot, then an interactive **seat map** (SVG) where the guest picks individual seats for that slot; breadcrumb step 2 reads **"Select seats"**; proceeds to a seatmap-specific checkout. Carry `variantId`, `inventoryId`, selected `seatCode`/`inventorySeatIds`, and validated prices.
 - **SVG zone / section-based:** a section or zone picker after date/show slot selection. The guest picks a section/zone; the backend validates and books selected/assigned seats from that section. Use this when a full seat-level UI is not required.
-- **External seatmap (iframe):** a Headout-hosted iframe embedded after the date/show slot is chosen; treat the iframe as the selection surface and resume the flow on its callback with `seatCode`, `inventoryId`, and price data. If exact Headout visual fidelity is required for custom mode, ask for the UI reference instead of inventing it.
+- **External seatmap (iframe):** use the allowlisted Headout origin; validate callback origin, source,
+  event type, and schema before resuming, then revalidate seats/prices server-side. If exact Headout
+  visual fidelity is required for custom mode, ask for the UI reference instead of inventing it.
 - **Open-dated:** no date strip; date is pre-resolved to the next available; jump straight toward checkout.
 - *(Transfer/point-to-point products use a bespoke form and are out of scope for this recipe.)*
 

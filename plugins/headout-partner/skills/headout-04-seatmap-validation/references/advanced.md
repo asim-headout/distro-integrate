@@ -23,3 +23,4 @@ Test cases:
 - Adjacency violations.
 - Mixed seat price types.
 - Validated prices used in booking payload.
+- Wrong-origin/source, malformed, oversized, and unknown-type iframe messages are ignored.

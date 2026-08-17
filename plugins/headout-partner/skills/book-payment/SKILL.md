@@ -13,12 +13,14 @@ Build the **Payment** step of the booking flow — `/book/{id}/payment`. The gue
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Fetch `https://partner.headout.com/docs/llms.txt` and find the relevant endpoint sections for: booking create uncaptured, booking capture update, booking get status.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      fetch `https://partner.headout.com/docs/llms.txt` and find create/capture/get sections.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `product.pricing.listingPrice.headoutSellingPrice`).
    
    **Do not write any mapper or field access code until step 1.3 is complete.** The payment-method/tokenization/3DS contracts come from the **partner's PSP docs**, not Headout. Any method/feed you cannot fulfil → omit/disable it.
-2. **Confirm the carried-over cart.** pax + lead-guest + total must hydrate from the booking session/URL; if the cart is missing/expired, route back to `/book/{id}/checkout` rather than rendering a payment shell.
+2. **Confirm the carried-over cart.** Pax, lead-guest details, and totals hydrate from the protected
+   server-side booking session, never the URL. Missing/expired cart → Checkout.
 3. **Decide the gateway model.** The list of methods **and the gateway** come from the **partner's** backend/PSP (see *Gateway abstraction*) — keep the UI gateway-agnostic.
 4. **Apply the shared UI data contract** ([../../references/ui-data-contract.md](../../references/ui-data-contract.md)): display the same selling-price total carried from checkout; never expose `netPrice` to the customer.
 5. **Decide UI primitives.** Reuse the partner design system if present; otherwise build into the shared `ui-components/` folder (the **OrderSummaryCard, Button, Breadcrumb, SkeletonLoader** are shared with Select/Checkout — reuse them).
@@ -28,14 +30,20 @@ Build the **Payment** step of the booking flow — `/book/{id}/payment`. The gue
 - Resolve the product + carried cart (pax/lead-guest/total) first. Missing/expired cart → redirect to Checkout (not a partial shell); render a loader until the (partner) methods + total resolve.
 - This step is **not indexable** — it is behind a booking intent. Emit no SEO body.
 - **PCI/PII:** card data must go straight to the partner PSP's tokenization (hosted fields / SDK / iframe). Never put PAN/CVV in app state, the URL, logs, or your own backend. Any saved card is referenced by **token only**.
-- The booking-creating submit must be **idempotent / double-submit-guarded** (disable the CTA + use a client request key) so a retry can't double-create or double-charge.
+- Return `Cache-Control: private, no-store` and use the partner's payment CSP. Verification/callback
+  routes validate the user/order binding, PSP signature or server-side status, state/nonce, expiry,
+  expected amount/currency, and allowlisted return origin before changing state.
+- Generate and persist one server-side, order-scoped idempotency key before side effects; enforce
+  uniqueness. CTA disabling is UX only and a client request key is not a security boundary.
 
 ## Data sources (map to your endpoints)
 - **Payment methods + gateway — PARTNER-SIDE (not Headout):** the partner's backend/PSP returns the **active gateway** and the ordered list of methods enabled for this market/currency, plus any per-method config (e.g. wallet merchant ids). Treat the **partner's** response as the source of truth — do **not** hardcode the method list and do **not** expect a Headout endpoint for this.
 - **Saved cards — PARTNER-SIDE, optional:** tokenized saved cards (brand, last4, expiry) require the **partner's own user accounts + PSP tokenization**. **Headout has no accounts or saved cards**, so render saved cards only if the partner supplies them; otherwise show only the new-card form.
-- **Total payable:** the cart total from Checkout (the `price` charged on the PSP and passed to Headout booking-create for validation). Re-confirm it at render. There is **no Headout FX endpoint** — show a converted "you'll pay {converted}" line only if the partner supplies conversion.
+- **Totals:** revalidate the customer selling total for display/PSP charge and separately calculate
+  Headout booking-create `price` from current inventory's API-required internal amount (currently
+  summed `netPrice`). Both are server-side; never expose `netPrice`. There is no Headout FX endpoint.
 - **Headout booking calls (the only Headout endpoints here):**
-  - **Create booking** → returns an **UNCAPTURED** booking (no charge), holding inventory (`productId`/`variantId`/`inventoryId`/`customersDetails`/`price`/`inventorySeatIds`).
+  - **Create booking** → returns an **UNCAPTURED** booking. It does not lock inventory or price.
   - **Capture booking (update)** → call after the partner PSP confirms payment, to capture and trigger fulfilment/ticketing.
   - **Get booking** → read booking status to confirm success before the confirmation page.
 
@@ -50,17 +58,25 @@ Build the **Payment** step of the booking flow — `/book/{id}/payment`. The gue
 
 ## Gateway abstraction & partner-handoff seam (STRICT)
 - The **method list and the gateway are resolved by the partner's backend/PSP** — the UI must render whatever methods that feed returns and route each to the gateway's SDK/hosted-fields/redirect. **Never** hardcode "Stripe" / "Adyen" / a fixed method set in the page.
-- Keep a thin **gateway adapter** boundary: `initPayment(method, cart) → { token | challenge | redirectUrl }`, `confirm() → status`. The page talks to the adapter, not to a specific PSP SDK — and **never to Headout for payment** (Headout only sees create/capture/get).
-- **Partner handoff:** because the gateway + credentials are the partner's, a partner can plug in **their own gateway/merchant credentials** without UI changes. If a partner instead wants to **own the entire payment step**, treat payment as a **handoff**: after Checkout, redirect to the partner's payment URL with the cart/booking handle, and resume on their success callback (which then captures the Headout booking). Do not bake any PSP specifics into shared components.
+- Keep a thin **gateway adapter** boundary: `initPayment(method, cart) → { token | challenge |
+  redirectUrl }`, `confirm() → status`, `voidOrRefund() → status`. Validate redirect URLs against the
+  configured PSP origin allowlist; never navigate to an arbitrary returned URL.
+- **Partner handoff:** redirect only to a configured partner payment origin with an opaque order handle
+  and signed state/nonce. The callback verifies server-side PSP status and the order/amount/currency;
+  never capture Headout because a browser query parameter says payment succeeded.
 
 ## Submit → partner-payment → capture flow (STRICT)
-1. On CTA submit: **disable the CTA**, attach a client request key, and **create the Headout booking (UNCAPTURED)** to hold inventory and validate `price`.
+1. On submit, disable the CTA and use the persisted server idempotency key. Revalidate both totals,
+   then create `UNCAPTURED` to obtain `bookingId`; do not claim inventory is held.
 2. **Confirm payment on the partner PSP:** tokenize/authorize/capture according to the PSP (hosted fields/SDK) — raw card data never touches app state. Branch on the PSP's next action:
    - **inline success** → proceed to capture;
    - **3DS challenge** → render the PSP's challenge (modal/iframe), then proceed;
-   - **redirect** → navigate to the PSP URL; on return land on the **verification** route.
+   - **redirect** → navigate only to an allowlisted PSP URL; the return route validates signed
+     state/nonce and confirms status server-to-server.
 3. **Capture + confirm:** only on confirmed PSP success, **capture the Headout booking (update status to `PENDING` with `partnerReferenceId`)**, then **get booking** (poll with a sane timeout/backoff) until status is confirmed → navigate to the confirmation page.
-4. **Retry page:** on PSP failure/timeout or a capture failure, show a clear reason (declined / expired / cancelled), preserve the cart (the UNCAPTURED booking is released/expires), and offer **"Try again"** — never silently re-charge; re-run the idempotent submit.
+4. **Failure/compensation:** reconcile uncertain PSP and Headout results. If funds settled but Headout
+   capture failed, persist and complete void/refund compensation. Retry resumes the existing payment,
+   Headout capture, or compensation state; it never charges a successful PSP reference again.
 
 ## CTA state machine (STRICT — the heart of this page)
 The sticky card's primary button (and any mirrored mobile bottom bar) is **state-driven**. Compute its label and on-click from the method + form state — match exactly:
@@ -110,12 +126,15 @@ The partner's design system wins; the values below are only a fallback when none
 
 ## Acceptance checks
 - [ ] API contract confirmed: llms.txt read, exact field paths listed before any mapper was written; Headout endpoints limited to create (UNCAPTURED) / capture (update) / get — no Headout payment/methods/saved-card/verify endpoints assumed.
-- [ ] Carried cart (pax/lead-guest/total) hydrates; missing/expired cart routes back to Checkout, not a partial shell; total re-confirmed at render.
+- [ ] Protected server-side cart hydrates; missing/expired cart routes to Checkout; selling and Headout
+  booking totals/currencies are independently revalidated and `netPrice` never reaches the browser.
 - [ ] Method list + gateway are **partner-side** (no hardcoded PSP/method set); the page routes each method through a thin gateway adapter (`initPayment`/`confirm`) and never calls Headout for payment.
-- [ ] **Partner-handoff seam** documented in code: methods/gateway/credentials come from the partner (partner can plug in their own), and a full payment handoff (redirect to partner URL + resume on callback → capture) is supported without UI rewrites.
+- [ ] Redirect/callback uses configured origins, signed state/nonce, order binding, expiry, and
+  server-verified PSP status/amount/currency before Headout capture.
 - [ ] Card data goes only to the PSP's tokenization (hosted fields/SDK); no PAN/CVV in app state, URL, or logs; saved cards (partner-accounts only) referenced by token; CVV prompted only when required.
 - [ ] **CTA state machine** matches exactly: "Select a payment method" → "Pay {total}" (validate first) → "Processing…"; wallets defer to their native button; submit is idempotent/double-submit-guarded; live total on the CTA.
-- [ ] Submit → create (UNCAPTURED) → PSP payment success (inline/3DS/redirect) → capture (update to PENDING) → get/confirm; failure/timeout → retry page that preserves the cart and offers "Try again". Never capture before PSP success.
+- [ ] `UNCAPTURED` is not treated as a lock. Submit is server-idempotent; uncertain results reconcile;
+  settled-payment/capture failure voids or refunds durably; retry never re-charges.
 - [ ] Wallets render only when their availability check passes; saved cards only when the partner supplies accounts; "You'll pay {converted}" only when the partner supplies conversion.
 - [ ] UI primitives map to the partner design system OR are built into `ui-components/` per the visual language; OrderSummaryCard/Button/Breadcrumb reusable across Select/Checkout; no self-built PAN/CVV inputs.
 - [ ] No operator/brand blocks (Promise, Trustpilot, "Supplied by", cashback, app-download), no hardcoded PSP, no invented Headout payment endpoints, no upsell/loyalty rails; rendering uses the partner's brand and content.

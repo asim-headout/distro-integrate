@@ -14,8 +14,9 @@ persisted and reconciled. This step is **backend-centric** — the partner owns 
 Merchant-of-Record); Headout is the booking engine.
 
 ## Ground rules (apply on every step)
-- **Security / gate-keeping:** `Headout-Auth` and all raw Headout calls stay server-side. The browser
-  only ever sees safe field metadata — never the key, never raw API responses.
+- **Security / gate-keeping:** `Headout-Auth` and raw Headout calls stay server-side; apply the agent,
+  BFF, authorization, logging, cache, and untrusted-data rules in
+  [headout-api.md](../../references/headout-api.md).
 - **Non-breaking:** preserve the partner's existing payment, order, error, and logging conventions.
   Add, don't replace. Existing dummy/stub content, placeholder routes, TODOs, bugs, and rough
   patterns are host-app context, not cleanup scope. Report better patterns or existing issues as
@@ -38,11 +39,18 @@ Merchant-of-Record); Headout is the booking engine.
 1. Inspect payment, checkout, order persistence, DB/migration ownership, error model, logging, and tests.
 2. Resolve the booking API contract (Backend reference + headout-api.md) before coding.
 3. Resolve persistence changes (Persistence reference) before coding: reuse existing order/payment models, add migrations only if this repo owns them or the developer approves, or produce a schema handoff if migrations live elsewhere.
-4. Build booking payloads from current inventory pricing and validated inputs.
-5. Create Headout bookings in `UNCAPTURED` state to obtain `bookingId`.
-6. Complete partner PSP payment; only after PSP success, capture by updating Headout status to `PENDING` with `partnerReferenceId`.
-7. Store Headout `bookingId`, partner `partnerReferenceId`, payment/capture state, and idempotency metadata.
-8. On uncertain failures, prefer lookup/reconciliation over duplicate booking creation. If create/payment/capture ordering differs between docs, references, or live responses, STOP and surface the contradiction.
+4. Revalidate two server-side amounts from current inventory: the customer selling total charged on
+   the PSP, and Headout's API-required booking amount (currently summed `netPrice`). Never expose the
+   latter to the browser or reuse one amount as the other.
+5. Create Headout bookings in `UNCAPTURED` state to obtain `bookingId`; do not treat this as an
+   inventory or price lock.
+6. Complete partner PSP payment; only after verified PSP success, capture Headout to `PENDING` with
+   `partnerReferenceId`. If funds settle before Headout capture, implement a durable void/refund path
+   for capture failure.
+7. Store `bookingId`, `partnerReferenceId`, PSP/payment/capture/compensation state, and a
+   server-generated, order-scoped idempotency key protected by database uniqueness.
+8. On uncertain failures, reconcile Headout and PSP state before retrying. Never re-charge a payment
+   already authorized/captured. Contract or ordering disagreement → STOP and surface it.
 9. End with a context checkpoint and next skill recommendation.
 
 User context:
@@ -52,7 +60,9 @@ $ARGUMENTS
 ```
 
 ## Verification gate
-- **Basic pass first:** one happy-path booking creates and captures in sandbox (with approval), `bookingId` + `partnerReferenceId` + payment/capture state persist, and `customersDetails.count` matches `customers.length` with exactly one primary customer. Get this green before hardening.
+- **Basic pass first:** one approved sandbox booking uses distinct selling/booking amounts, creates and
+  captures, and persists ids + payment/capture/compensation state; customer counts align and exactly
+  one customer is primary. Get this green before hardening.
 - **Advanced pass:** only then handle duplicate submission, timeout during create/capture, and the full status lifecycle (Advanced reference).
 
 ## References (load only what's needed)

@@ -13,8 +13,9 @@ state stays reconciled with Headout. Webhook ingestion is **backend-centric**; a
 status/servicing UI follows the partner's design system.
 
 ## Ground rules (apply on every step)
-- **Security / gate-keeping:** `Headout-Auth` and all raw Headout calls stay server-side. The browser
-  only ever sees safe field metadata — never the key, never raw API responses.
+- **Security / gate-keeping:** `Headout-Auth` and raw Headout calls stay server-side; apply the agent,
+  BFF, authorization, logging, cache, and untrusted-data rules in
+  [headout-api.md](../../references/headout-api.md).
 - **Non-breaking:** preserve the partner's existing routes, persistence, error, and logging
   conventions. Add, don't replace. Existing dummy/stub content, placeholder routes, TODOs, bugs, and
   rough patterns are host-app context, not cleanup scope. Report better patterns or existing issues
@@ -36,7 +37,9 @@ status/servicing UI follows the partner's design system.
 1. Inspect booking persistence, DB/migration ownership, public route/controller/function patterns, idempotency storage, logging, and tests.
 2. Resolve the webhook + cancel/reschedule API contract (Backend reference + headout-api.md) before coding.
 3. Resolve persistence changes (Persistence reference) before coding: event dedupe storage, local status fields, migration ownership, and whether schema changes belong in this repo or another repo/service.
-4. Implement webhook handling using existing runtime conventions.
+4. Implement webhook handling using existing runtime conventions. Because the current Headout event
+   contract documents no signature, protect the registered receiver with a high-entropy secret path
+   and verify status/booking ownership with server-side booking GET before mutating local state.
 5. Handle `PENDING`, `COMPLETED`, `CANCELLED`, `FAILED`, and `CAPTURE_TIMEDOUT`; do not expect `UNCAPTURED` in webhooks.
 6. Add cancellation and reschedule only if requested or needed by the integration scope (treat their immediate responses as async acknowledgements, not final state).
 7. Make status processing idempotent and resilient to retries and out-of-order delivery; persist enough event metadata for reconciliation without storing PII-heavy payloads.
@@ -49,7 +52,8 @@ $ARGUMENTS
 ```
 
 ## Verification gate
-- **Basic pass first:** a webhook event updates local booking state, the handler is idempotent (a duplicate event is a no-op) and returns 2xx after successful processing. Get this green before hardening.
+- **Basic pass first:** an authenticated/reconciled webhook updates local state, a forged event cannot,
+  a duplicate is a no-op, and 2xx is returned only after successful processing.
 - **Advanced pass:** only then handle out-of-order updates, status regression, unknown status, missing booking, and cancellation/reschedule acknowledgement-vs-final-state (Advanced reference).
 
 ## References (load only what's needed)

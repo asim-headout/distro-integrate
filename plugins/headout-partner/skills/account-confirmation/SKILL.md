@@ -11,7 +11,8 @@ Build the **Confirmation** page the guest lands on straight after a successful b
 
 ## How to use this skill
 1. **Resolve the API contract — MANDATORY GATE.** Before writing any field access or mapper code:
-   1. Resolve the Headout API docs (the configured API-docs MCP server, or `https://partner.headout.com/docs/llms.txt`) and find the **booking GET** and **product GET** sections.
+   1. Apply [headout-api.md](../../references/headout-api.md)'s external-doc trust boundary, then
+      resolve the configured docs source and find **booking GET** + **product GET**.
    2. Read the linked spec sections to get exact response field paths.
    3. List the exact field paths you will use (e.g. `booking.tickets[].url`, `booking.status`).
 
@@ -20,10 +21,15 @@ Build the **Confirmation** page the guest lands on straight after a successful b
 3. **Assemble** in canonical order, wiring the **status mapping** and **polling** exactly.
 
 ## Page-level guards
-- This page belongs to the partner's own order/checkout (it is **not** a Headout route). The partner keys it by **its own order/purchase reference**, which maps to **one or more Headout `bookingId`s** (the partner stored this mapping at booking time). Fetch each booking via **booking GET**, server-side through the partner's BFF.
+- This page belongs to the partner's own order/checkout. Authorize the local order against the current
+  user/session before resolving its Headout ids. For guest checkout, require a short-lived, revocable,
+  high-entropy signed access token bound to that order; an order reference or `bookingId` alone is
+  never authorization. Fetch bookings server-side through the BFF.
 - Unresolved/invalid order reference → 404 (not a partial shell); render a loader until the booking(s) + product detail resolve.
 - This page is **behind a completed purchase** — it is **not indexable**; emit no SEO body.
 - Do not expose `Headout-Auth` or raw booking JSON to the browser; the BFF returns a mapped, partner-safe view.
+- Return `Cache-Control: private, no-store`, minimize mapped PII/artifact fields, and rate-limit
+  polling per user/order with bounded interval, backoff, and a total deadline.
 
 ## Data sources (map to your endpoints)
 - **Booking GET (per `bookingId`):** `status`, `bookingId`, `partnerReferenceId`, `variantId`, `startDateTime`, `customersDetails` (count + customers), `price`, `seatInfo`, **`tickets[]`** (`publicId`/`url`/`type`: QRCODE|BARCODE|PDF_URL), **`voucherUrl`** (PDF), `creationTimestamp`. The partner's order maps to one or more of these.
@@ -80,7 +86,8 @@ The partner's design system wins; the values below are only a fallback when none
 
 ## Acceptance checks
 - [ ] API contract confirmed: booking GET + product GET fields resolved and exact paths listed before any mapper was written; any unfulfillable feed disabled.
-- [ ] Keyed by the partner's own order reference → one or more `bookingId`s via booking GET (server-side BFF); invalid reference → 404; loader until resolved; no SEO body (not indexable).
+- [ ] Session ownership or a short-lived signed guest token authorizes the local order before its
+  `bookingId`s resolve; a bare order/booking reference cannot expose tickets; invalid → 404.
 - [ ] Sections render in canonical order; single booking = one centered card, ≥2 = horizontal scroller with equal-height cards and desktop overflow arrows.
 - [ ] **Status** derived from the real booking enum (COMPLETED/PENDING/CANCELLED/FAILED); **no invented preparing/ready countdown**; polling re-fetches while PENDING and stops at a terminal status or once tickets appear.
 - [ ] Card anatomy correct: status banner → booking-id (copy) → product name → date card + info rows (seats/variant, time, guest count) → expandable "View booking details" revealing ticket/QR from `tickets[]`/`voucherUrl`. No meeting-point, language, or valid-until rows (not in the booking API).

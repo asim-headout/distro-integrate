@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "name": "Tickets",
+    "localeSpecificUrls": {
+      "EN": "/tickets-abu_dhabi-ca-1~14/",
+      "ES": "/es/entradas-abu_dhabi-ca-1~14/",
+      "FR": "/fr/billets-abu_dhabi-ca-1~14/",
+      "IT": "/it/biglietti-abu_dhabi-ca-1~14/",
+      "DE": "/de/tickets-abu_dhabi-ca-1~14/",
+      "PT": "/pt/ingressos-abu_dhabi-ca-1~14/",
+      "NL": "/nl/tickets-abu_dhabi-ca-1~14/",
+      "PL": "/pl/tickets-abu_dhabi-ca-1~14/",
+      "KO": "/ko/tickets-abu_dhabi-ca-1~14/",
+      "JA": "/ja/tickets-abu_dhabi-ca-1~14/",
+      "ZH_HANS": "/zh-hans/tickets-abu_dhabi-ca-1~14/",
+      "DA": "/da/billetter-abu_dhabi-ca-1~14/",
+      "NO": "/no/billetter-abu_dhabi-ca-1~14/",
+      "RO": "/ro/bilete-abu_dhabi-ca-1~14/",
+      "RU": "/ru/tickets-abu_dhabi-ca-1~14/",
+      "SV": "/sv/biljetter-abu_dhabi-ca-1~14/",
+      "TR": "/tr/tickets-abu_dhabi-ca-1~14/"
+    },
+    "canonicalUrl": "https://www.sandbox-headout.com/tickets-abu_dhabi-ca-1~14/"
+  }
+]

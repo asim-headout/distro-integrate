@@ -48,7 +48,7 @@ Per-endpoint doc pages (api-partner v2):
 - Booking cancel: https://partner.headout.com/docs/api-partner/v2/bookings/cancel.md
 - Booking reschedule: https://partner.headout.com/docs/api-partner/v2/bookings/reschedule.md
 - Voucher get: https://partner.headout.com/docs/api-partner/v2/vouchers/get.md
-- Voucher response reference: https://partner.headout.com/docs/api-partner/v2/vouchers/understanding-the-response
+- Voucher response reference: https://partner.headout.com/docs/api-partner/v2/vouchers/understanding-the-response.md
 - Webhooks create: https://partner.headout.com/docs/api-partner/v2/webhooks/create.md
 - Seatmap inventory: https://partner.headout.com/docs/api-partner/v2/seatmap/inventory.md
 - Seatmap validate: https://partner.headout.com/docs/api-partner/v2/seatmap/validate.md

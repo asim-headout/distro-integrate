@@ -50,8 +50,12 @@ code before the plan is approved.
    [references/voucher-api.md](references/voucher-api.md) for the full `V2Voucher` field list and the
    [account-voucher](../account-voucher/SKILL.md) rendering rules it feeds (state machine, template
    branch, structured-vs-legacy instructions, callouts, disclaimer). Confirm exact field paths against
-   a live sandbox response before mapping — do not map from memory or from stale docs.
-3. **Produce the mapping/migration plan** as a concrete artifact (not just prose in chat), covering:
+   a live sandbox response before mapping — ask the partner for a sandbox `bookingId`/`voucherId` per
+   [references/sandbox-fixtures.md](references/sandbox-fixtures.md) (default path) rather than mapping
+   from memory or from stale docs.
+3. **Produce the mapping/migration plan as a file in the partner repo** (not just prose in chat) —
+   e.g. `voucher-api-migration-plan.md` at the repo root or alongside the voucher rendering code being
+   analyzed; ask the partner where they'd like it if unclear. Covering:
    - A field-by-field table: `V2Voucher.<path>` → the partner's existing field/component, or "new"
      if there's no existing equivalent.
    - Fields the partner's current model **cannot** represent (e.g. no concept of `callouts[]`,
@@ -93,7 +97,8 @@ code before the plan is approved.
   and the callouts-render-all rule are explicitly called out in the plan if the partner's current
   model can't represent them — these are the two rules most likely to cause venue rejection if
   dropped silently.
-- Approval: no partner code was edited before the plan was presented and approved.
+- Approval: the mapping/migration plan exists as a committed-or-committable file in the partner repo
+  (not only chat prose) and no partner code was edited before that file was presented and approved.
 
 ## References
 

@@ -1,12 +1,33 @@
-# Sandbox Fixture Matrix
+# Sandbox Testing
 
-This skill's acceptance checks ("confirm against a live sample") are only executable against real
-sandbox `voucherId`s covering each branch. IDs are intentionally not invented or copied from
-production — Headout must populate the table below before distributing a fixture-dependent handoff.
+The acceptance checks in this skill and in [account-voucher](../account-voucher/SKILL.md)
+("confirm against a live sample") are only executable against a real voucher GET response. A voucher
+is bound to a specific booking in **the partner's own sandbox account** — Headout cannot hand out a
+universal `voucherId` the way it can for stateless catalog endpoints.
+
+## Default: ask the partner for a sandbox `bookingId` / `voucherId`
+
+**This is the default path for every engagement.** Ask the partner to supply a `bookingId` (or
+`voucherId` directly) for a booking they have already created — or can create — in their own sandbox
+account, ideally one close to `COMPLETED` with tickets issued. Resolve `voucherId` from that
+`bookingId` via booking GET if only the booking id is given. Call voucher GET against it server-side
+and use the real response to validate the mapping plan.
+
+If the partner has no sandbox booking yet, walk them through creating one via their own checkout flow
+against the sandbox base URL — do not fabricate a response or guess field values in its place. A
+partner's first sandbox booking will usually be `SINGLE_PAGE` + `COMPLETED`; that's enough to validate
+the mapping's common path even before broader coverage is available.
+
+## Optional: Headout-supplied coverage matrix
+
+The single partner-supplied booking above will not exercise every branch (multi-page templates,
+cancelled/pending states, every `displayType`, structured-vs-legacy instructions, etc.). When broader
+coverage is needed — e.g. validating `account-voucher`'s full acceptance checklist, not just one
+partner's common case — request the fixtures below from Headout. IDs are intentionally not invented
+or copied from production.
 
 | Fixture | `voucherId` | Expected coverage | Status |
 |---|---|---|---|
-| Single-page, completed | Headout supplied | `voucherTemplate: SINGLE_PAGE`, `bookingStatus: COMPLETED` | Pending ID |
 | Multi-page | Headout supplied | `voucherTemplate: MULTI_PAGE` — confirm what actually repeats across sections | Pending ID |
 | Pending with tickets already issued | Headout supplied | `bookingStatus: PENDING` + non-null `ticketSection` (tickets are not gated on status) | Pending ID |
 | Cancelled | Headout supplied | `bookingStatus: CANCELLED`, `ticketSection: null` | Pending ID |
@@ -22,15 +43,13 @@ production — Headout must populate the table below before distributing a fixtu
 | Callouts present (multiple) | Headout supplied | full `callouts[]` array rendered, none skipped | Pending ID |
 | `pickupDropOffType: PICKUP_AND_DROPOFF` | Headout supplied | both `pickupDropoffLocation` and nested `dropoff` render | Pending ID |
 
-## How the skill uses the matrix
+## How the skill uses either source
 
 1. Configure the partner's sandbox base URL and server-side sandbox `Headout-Auth`.
-2. Resolve each fixture's `bookingId` → `voucherId` and call voucher GET.
+2. Resolve each fixture's (or the partner's own) `bookingId` → `voucherId` and call voucher GET.
 3. Record only redacted metadata: HTTP status, `bookingStatus`, `voucherTemplate`, `displayType`
    values present, and which optional sections are populated.
 4. Compare against this skill's mapping and `account-voucher`'s conditional-render rules.
 5. If an ID returns `404` unexpectedly, no longer exercises the expected shape, or is production-only,
-   stop and request a replacement from Headout. Do not substitute a guessed ID.
-
-For partners without the matrix, use their own sandbox `voucherId`s and compare the response against
-[references/voucher-api.md](voucher-api.md); the same no-guessing and redaction rules apply.
+   stop and request a replacement — from the partner for their own booking, from Headout for a matrix
+   fixture. Do not substitute a guessed ID or invent a response in either case.

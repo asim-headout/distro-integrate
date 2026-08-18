@@ -53,10 +53,11 @@ in order; never truncate to the first item.
   confirming the intended zone against a live sample, since this is a document a guest presents at a
   specific time)
 - `paxSummary: { summary, details: [{ paxType, displayName, count, totalPrice: { amount, currencyCode } | null }] } | null`
-- `guestFields: [{ guestNumber, name, email, phone, customFields }] | null`
+- `guestFields: [{ guestNumber, name, email, phone, customFields: [{ label, value }] | null }] | null`
 - `schedule: { openDated, experienceDate, voucherValidUntil, experienceStartDateTime, experienceEndDateTime, durationMinutes, inventoryType }`
-  - `voucherValidUntil` is already the **earliest expiry across all tickets** (backend computes the
-    conservative value) — render it as-is, do not recompute from per-ticket data.
+  - `voucherValidUntil` is the voucher's redemption deadline — the relevant expiry for open-dated
+    bookings, `null` when the voucher has no deadline. Render it as-is, do not recompute from
+    per-ticket data or any other derivation.
 - `seats: { summary, details: [{ sectionName, seats: [{ row, seatNumber, seatCode, description }] }] } | null`
 - `tourProperties: [{ type, values: string[] }] | null` — e.g. `type: "Language"`.
 - `pickupDropoffLocation: V2VoucherLocation | null` — see `pickupDropOffType` below.
@@ -104,22 +105,24 @@ Exactly one of `legacy` / `structured` is non-null.
   the older, unstructured shape — do not drop the location half.
 - `structured` (preferred when present):
   - `generalInstructions: { title, hasLateArrivalPolicy: boolean, photoIdRequired: boolean, reportingTimes: [{label, value}] | null } | null`
-    - **`hasLateArrivalPolicy` naming is ambiguous in the reference table** — the endpoint spec
-      glosses it as "late-arrival policy applies," which suggests `true` means a policy exists (not
-      that late arrival is allowed), but this is only a partial resolution. Confirm the exact
-      guest-facing copy against a live sample with a known policy before wiring conditional text;
-      until confirmed, render only the labeled fields (`reportingTimes`, `photoIdRequired`) and skip
-      flag-driven copy.
+    - `hasLateArrivalPolicy: true` → a late-arrival policy applies: latecomers may be refused entry
+      and are not eligible for a refund. **Surface this as a warning banner.** `false`/absent → no
+      banner. (This was previously flagged as ambiguous; it is not — render it.)
   - `location: { title, heading, addressSequenceType, voucherExchangeLocationType, addressGroups: AddressGroup[][] }`
     - `addressGroups` is a **location list, not a per-unit/per-pax split** — it has no relationship
-      to pax count or ticket count. `addressSequenceType` controls how to render it:
-      - `SINGLE_ADDRESS` → flat list of independent address *options* the guest chooses one of
-        (badges "Option 1", "Option 2", …).
-      - `ALL_ADDRESS_ANY_ORDER` → multiple addresses visitable in any order (badges "Location 1",
-        "Location 2", …).
+      to pax count or ticket count. `addressSequenceType` controls the outer/inner shape, not just
+      the badge wording — get this dimension right before rendering:
+      - `SINGLE_ADDRESS` / `ALL_ADDRESS_ANY_ORDER` → normally **one flat outer group** holding all
+        the addresses; the "Option 1/2/…" (`SINGLE_ADDRESS`) or "Location 1/2/…" (`ANY_ORDER`)
+        numbering runs over the **inner** array (the addresses within that one group), not over
+        `addressGroups`'s outer index. Do not badge by outer-group position for these two types.
       - `ALL_ADDRESS_SPECIFIC_ORDER` (also the default when `addressSequenceType` is `null`) →
-        a numbered step sequence, each group one leg of a route (badges "Start Location",
-        "Location N", "End Location"; when `null`, all groups instead carry badge "Address details").
+        **one outer group per route/leg** — this is the case where outer-group position is
+        meaningful ("Start Location", "Location N", "End Location"; when `null`, all groups instead
+        carry badge "Address details").
+    - `badgeLabel` on each address is a **required, always-populated string** — render it as
+      returned. Do not re-derive a position-based badge from array index; the numbering rules above
+      describe what Headout already put in `badgeLabel`, not a computation the client should repeat.
     - `voucherExchangeLocationType: "VENUE_LOCATION" | "DIFF_LOCATION" | null` — when
       `DIFF_LOCATION`, surface an explicit "exchange your voucher at a different location" callout;
       this is a real guest-facing signal, not decorative metadata.

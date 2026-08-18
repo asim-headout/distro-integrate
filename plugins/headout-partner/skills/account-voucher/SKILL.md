@@ -84,7 +84,7 @@ Partners without Voucher API access yet fall back to the **legacy shape** off bo
   - `NONE` → **render nothing for this ticket** (unrecognized format) — no placeholder box, no broken-image state.
   - Do not invent redemption methods beyond what `displayType` describes, and do not key the branch off `ticketType`.
 - **Instructions branch:** if `instructions.structured` is non-null, render it (general instructions incl. `photoIdRequired`/`reportingTimes`, location `addressGroups` per `addressSequenceType` — numbered steps for `ALL_ADDRESS_SPECIFIC_ORDER`, unordered list for `ALL_ADDRESS_ANY_ORDER`, chooser for `SINGLE_ADDRESS` — plus a "different exchange location" callout when `voucherExchangeLocationType: DIFF_LOCATION`, `additionalInfo`, `policies[]`) — this is the preferred, richer path. Only when `structured` is null and `legacy` is non-null, render **both** `legacy.htmlContent` (a sanitized HTML fragment) **and** `legacy.location` (using the same `V2VoucherLocation`/`pickupDropOffType` renderer as `pickupDropoffLocation`) — do not drop the location half. Never render both `structured` and `legacy`.
-  - `hasLateArrivalPolicy` is a **flag whose true/false meaning is only partially documented** — the endpoint spec glosses it as "late-arrival policy applies" (suggesting `true` means a policy exists, not that late arrival is permitted), but the guest-facing copy this should drive is not specified. Do not guess copy for this — pull a live sandbox sample with a known late-arrival policy and confirm the intended copy against it before wiring any conditional text; otherwise render the raw structured fields Headout already labeled (e.g. `reportingTimes`) and leave `hasLateArrivalPolicy`-driven copy out.
+  - `hasLateArrivalPolicy: true` → render a warning banner: latecomers may be refused entry and are not eligible for a refund (this is the documented meaning and rendering instruction — surface it, don't leave it unwired). `false`/absent → no banner.
 
 ## Conditional render rules
 - **Cancelled / pending / 404-not-ready states** short-circuit the body (render their dedicated views).
@@ -92,7 +92,7 @@ Partners without Voucher API access yet fall back to the **legacy shape** off bo
 - **"Selected option" row:** only when `variant.name` exists.
 - **Seats vs guests:** show `seats` when present; otherwise `paxSummary`.
 - **Pickup/drop-off:** branch on `pickupDropOffType` — `PICKUP` (pickup fields only), `PICKUP_AND_DROPOFF` (render both `pickupDropoffLocation` and its nested `dropoff`), `PICKUP_SAME_AS_DROPOFF` (render once, labeled as both). Omit the section entirely when `pickupDropoffLocation` is null.
-- **Open-dated validity:** when `schedule.openDated` is `true` (no fixed `experienceDate`), show "Valid until {voucherValidUntil}" in place of a fixed date/time row. `voucherValidUntil` is already the earliest expiry across all tickets (computed server-side) — render it as-is, never recompute it from per-ticket data.
+- **Open-dated validity:** when `schedule.openDated` is `true` (no fixed `experienceDate`), show "Valid until {voucherValidUntil}" in place of a fixed date/time row — this is the relevant expiry for open-dated bookings, and it's `null` when the voucher has no deadline (omit the row in that case). Render it as-is, never recompute it from per-ticket data.
 - **Check-in button:** render only when `checkinButton` is non-null.
 - **Disclaimer:** render only when non-null; do not gate it behind any specific vendor/vertical.
 - **Embed mode:** render body-only and noindex only after the embed authorization, origin, and CSP
@@ -140,7 +140,7 @@ The partner's design system wins; the values below are only a fallback when none
 - [ ] **`voucherTemplate` branch** correct: the exact template Headout returns is always rendered as-is (never overridden/reinterpreted); `MULTI_PAGE`/`SINGLE_PAGE` page composition is not derived from `addressGroups` (a location list unrelated to pax count).
 - [ ] **Ticket-artifact branch** renders by `ticketSection.tickets[].displayType` (not `ticketType`); `actionCta` only rendered for `displayType: PDF`; `displayType: NONE` renders nothing; no invented redemption methods.
 - [ ] **Callouts** render as a full array, all items shown.
-- [ ] **Instructions** prefer `structured` over `legacy`; when `legacy`, both `htmlContent` and `location` render (location is not dropped); never render both `structured` and `legacy`; `hasLateArrivalPolicy` copy is not wired until confirmed against a live sample.
+- [ ] **Instructions** prefer `structured` over `legacy`; when `legacy`, both `htmlContent` and `location` render (location is not dropped); never render both `structured` and `legacy`; `hasLateArrivalPolicy: true` renders the late-arrival warning banner.
 - [ ] **`voucherValidUntil`** rendered as-is (never recomputed); open-dated bookings (`schedule.openDated`) show a "valid until" row instead of a fixed date.
 - [ ] Vendor logo right-aligned, distinct from the partner/Headout logo slot (top-left).
 - [ ] `disclaimer` renders last whenever present, with no vertical-specific gating.

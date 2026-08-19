@@ -15,7 +15,9 @@ Three independent pax/pricing variations to handle, each optional per product:
 
 ## Where
 
-- `variant.properties` / `variant.propertiesV2` — nationality/region gating.
+- `variant.properties` / `variant.propertiesV2` — general-purpose key/value bag on a variant; here
+  used for nationality/region gating. Other keys (e.g. `VALIDITY`) gate other things — see
+  [product-and-catalog-structure.md](product-and-catalog-structure.md).
 - `variant.pricing.profileType` — `PER_PERSON` | `PER_GROUP`.
 - `variant.pax.{min,max}` — booking-level pax bounds (Products API).
 - Inventory pricing response `persons[].paxRange.{min,max}` — per-pax-type bounds (Inventory list-by-tour).

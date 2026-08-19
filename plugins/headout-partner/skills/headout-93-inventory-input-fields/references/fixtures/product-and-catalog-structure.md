@@ -10,8 +10,9 @@ this skill's output:
 - `hasInstantConfirmation: false` means ticket generation is delayed — booking UI must not assume
   immediate ticket availability.
 - `cancellationPolicy.{cancellable, cancellableUpTo}` varies per variant.
-- `variant.properties` (single string-valued) is separate from `propertiesV2` (array-valued) — see
-  [pax-and-pricing.md](pax-and-pricing.md) for the nationality-gating use case.
+- `variant.properties` (single string-valued) is separate from `propertiesV2` (array-valued) — a
+  general-purpose key/value bag, not tied to one meaning. See the `VALIDITY` sample below, and
+  [pax-and-pricing.md](pax-and-pricing.md) for the nationality-gating key.
 - `secondaryCategories` — a product can belong to more than one catalog category.
 
 ## Where

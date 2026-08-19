@@ -6,7 +6,10 @@
 
 - `PRIMARY_CUSTOMER` — collected once, from the primary/lead traveler only.
 - `ALL_CUSTOMER` — collected once per traveler in the booking.
-- `BOOKING` — collected once per booking, independent of traveler count.
+
+A third level, `BOOKING`, exists in Headout's general enum documentation but is not served in this
+integration — Headout confirmed no product returns a `BOOKING`-level field, so don't build a
+submission path for it.
 
 Not every `dataType` × `level` combination has been observed in sandbox — see the matrix below.
 
@@ -24,19 +27,14 @@ hardcode which fields are per-traveler vs per-booking.
 
 ## Matrix (confirmed in sandbox, as of 2026-08-18)
 
-| dataType | PRIMARY_CUSTOMER | ALL_CUSTOMER | BOOKING |
-|---|---|---|---|
-| STRING | ✅ found | ✅ found | ❌ confirmed absent |
-| ENUM | ✅ found | ✅ found | ❌ confirmed absent |
-| BOOL | ❌ confirmed absent | ❌ confirmed absent | ❌ confirmed absent |
-| INT | ✅ found | ✅ found | not scanned |
-| FLOAT | not found in scan | ❌ confirmed absent | not scanned |
-| LOCATION | ✅ found | ✅ found | ❌ confirmed absent |
-
-**No `BOOKING`-level field of any dataType was found anywhere in sandbox** across ~120 cities and
-thousands of products. Booking-level fields (pickup/transportation/product-specific choices per
-[backend.md](../backend.md)) are a documented, real part of the contract — implement the `BOOKING`
-submission path regardless of this gap; it cannot currently be exercised against live sandbox data.
+| dataType | PRIMARY_CUSTOMER | ALL_CUSTOMER |
+|---|---|---|
+| STRING | ✅ found | ✅ found |
+| ENUM | ✅ found | ✅ found |
+| BOOL | ❌ confirmed absent | ❌ confirmed absent |
+| INT | ✅ found | ✅ found |
+| FLOAT | not found in scan | ❌ confirmed absent |
+| LOCATION | ✅ found | ✅ found |
 
 ## Samples
 

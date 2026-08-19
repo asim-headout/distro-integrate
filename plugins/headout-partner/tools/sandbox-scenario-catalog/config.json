@@ -12,7 +12,6 @@
     { "id": "field.type.location.free_text", "category": "Location Fields", "name": "Free-text LOCATION field", "checker": "hasLocationField", "params": { "predefined": false } },
     { "id": "field.type.location.predefined", "category": "Location Fields", "name": "Predefined/dropdown LOCATION field", "checker": "hasLocationField", "params": { "predefined": true } },
     { "id": "field.type.location.predefined_timed", "category": "Location Fields", "name": "Predefined location with timingConfig window", "checker": "hasLocationField", "params": { "predefined": true, "requireTimingConfig": true } },
-    { "id": "field.level.booking", "category": "Checkout Input Fields", "name": "Booking-level (not per-customer) input field", "checker": "hasInputFieldLevel", "params": { "level": "BOOKING" } },
     { "id": "field.level.all_customer", "category": "Checkout Input Fields", "name": "Per-traveler (ALL_CUSTOMER) input field", "checker": "hasInputFieldLevel", "params": { "level": "ALL_CUSTOMER" } },
     { "id": "inventory.field_override", "category": "Inventory Overrides", "name": "Inventory-level input fields differ from variant-level default", "checker": "inventoryFieldsDifferFromVariant", "params": {} },
     { "id": "variant.pax.nationality_gated", "category": "Pax/Pack Types", "name": "Nationality-gated pack (e.g. resident/local pricing)", "checker": "hasVariantProperty", "params": { "keyIncludes": ["NATIONALITY"] } },
@@ -40,18 +39,14 @@
 
     { "id": "field.matrix.string.primary_customer", "category": "Field Level x Type Matrix", "name": "STRING field at PRIMARY_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "STRING", "level": "PRIMARY_CUSTOMER" } },
     { "id": "field.matrix.string.all_customer", "category": "Field Level x Type Matrix", "name": "STRING field at ALL_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "STRING", "level": "ALL_CUSTOMER" } },
-    { "id": "field.matrix.string.booking", "category": "Field Level x Type Matrix", "name": "STRING field at BOOKING level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "STRING", "level": "BOOKING" } },
     { "id": "field.matrix.enum.primary_customer", "category": "Field Level x Type Matrix", "name": "ENUM field at PRIMARY_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "ENUM", "level": "PRIMARY_CUSTOMER" } },
     { "id": "field.matrix.enum.all_customer", "category": "Field Level x Type Matrix", "name": "ENUM field at ALL_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "ENUM", "level": "ALL_CUSTOMER" } },
-    { "id": "field.matrix.enum.booking", "category": "Field Level x Type Matrix", "name": "ENUM field at BOOKING level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "ENUM", "level": "BOOKING" } },
     { "id": "field.matrix.bool.primary_customer", "category": "Field Level x Type Matrix", "name": "BOOL field at PRIMARY_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "BOOL", "level": "PRIMARY_CUSTOMER" } },
     { "id": "field.matrix.bool.all_customer", "category": "Field Level x Type Matrix", "name": "BOOL field at ALL_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "BOOL", "level": "ALL_CUSTOMER" } },
-    { "id": "field.matrix.bool.booking", "category": "Field Level x Type Matrix", "name": "BOOL field at BOOKING level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "BOOL", "level": "BOOKING" } },
     { "id": "field.matrix.int.primary_customer", "category": "Field Level x Type Matrix", "name": "INT field at PRIMARY_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "INT", "level": "PRIMARY_CUSTOMER" } },
     { "id": "field.matrix.int.all_customer", "category": "Field Level x Type Matrix", "name": "INT field at ALL_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "INT", "level": "ALL_CUSTOMER" } },
     { "id": "field.matrix.float.all_customer", "category": "Field Level x Type Matrix", "name": "FLOAT field at ALL_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "FLOAT", "level": "ALL_CUSTOMER" } },
     { "id": "field.matrix.location.primary_customer", "category": "Field Level x Type Matrix", "name": "LOCATION field at PRIMARY_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "LOCATION", "level": "PRIMARY_CUSTOMER" } },
-    { "id": "field.matrix.location.all_customer", "category": "Field Level x Type Matrix", "name": "LOCATION field at ALL_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "LOCATION", "level": "ALL_CUSTOMER" } },
-    { "id": "field.matrix.location.booking", "category": "Field Level x Type Matrix", "name": "LOCATION field at BOOKING level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "LOCATION", "level": "BOOKING" } }
+    { "id": "field.matrix.location.all_customer", "category": "Field Level x Type Matrix", "name": "LOCATION field at ALL_CUSTOMER level", "checker": "hasInputFieldDataTypeAndLevel", "params": { "dataType": "LOCATION", "level": "ALL_CUSTOMER" } }
   ]
 }

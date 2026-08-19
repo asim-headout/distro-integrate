@@ -14,12 +14,11 @@ For the inventory-specific workflow, use the explicit support skill [headout-93-
 - Source required fields **live** from current API responses — never hardcode one product's fields:
   - Customer fields: `NAME`/`EMAIL`/`PHONE` (semantic ids) plus `CUSTOM_*` fields (opaque routing
     keys — see below, do not treat `CUSTOM_*` as a semantic category).
-  - Booking-level `variantInputFields` (pickup, transportation, product-specific choices).
 - When inventory details are fetched successfully, use that inventory's `inputFields` for the selected
   inventory while preserving the existing product-derived path for compatibility.
-- Preserve each field's metadata: `id`, label/name, `level` (`BOOKING`, `PRIMARY_CUSTOMER`,
-  `ALL_CUSTOMER`, etc.), `dataType`, `required`, options/allowed values, helper/description text,
-  validation constraints (`min`, `max`, length/range), and any location/pickup enum variants.
+- Preserve each field's metadata: `id`, label/name, `level` (`PRIMARY_CUSTOMER`, `ALL_CUSTOMER`),
+  `dataType`, `required`, options/allowed values, helper/description text, validation constraints
+  (`min`, `max`, length/range), and any location/pickup enum variants.
 - Unknown future `dataType`, `level`, or location enum values are stale-fact call-outs: stop and ask
   instead of rendering a generic text input or dropping the field.
 - Every custom field's `id` is an opaque `CUSTOM_<numericId>` — it never encodes the field's purpose

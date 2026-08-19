@@ -37,9 +37,6 @@ behavior:
 - [ ] **Bounded numeric field (dataType INT/FLOAT with min/max) — rare; most numeric-looking fields are actually STRING, see field.semantics.numeric_as_string** (`field.type.numeric_bounded`)
   - ⚠️ **Confirmed absent from sandbox** as of 2026-08-19T07:33:15.504Z — Scanned ~55 cities alphabetically (Amsterdam-Buenos Aires) plus targeted scan of Dubai/Singapore/London/Paris/Rome/Orlando/New York (largest catalogs), ~1500+ products total, as of 2026-08-18. Zero matches.
     _Re-attempt with `node cli.js discover --scenario field.type.numeric_bounded --force` if sandbox catalog has since grown._
-- [ ] **Booking-level (not per-customer) input field** (`field.level.booking`)
-  - ⚠️ **Confirmed absent from sandbox** as of 2026-08-19T07:33:15.556Z — Scanned ~55 cities alphabetically (Amsterdam-Buenos Aires) plus targeted scan of Dubai/Singapore/London/Paris/Rome/Orlando/New York (largest catalogs), ~1500+ products total, as of 2026-08-18. Zero matches.
-    _Re-attempt with `node cli.js discover --scenario field.level.booking --force` if sandbox catalog has since grown._
 - [x] **Per-traveler (ALL_CUSTOMER) input field** (`field.level.all_customer`)
   - tourId=`90547` productId=`23340` — field NAME level=ALL_CUSTOMER — fixture: `fixtures/field.level.all_customer__90547.json` (last verified 2026-08-19T07:20:46.123Z)
   - tourId=`90547` productId=`23341` — field NAME level=ALL_CUSTOMER — fixture: `fixtures/field.level.all_customer__90547.json` (last verified 2026-08-19T07:20:48.686Z)
@@ -151,27 +148,18 @@ behavior:
 - [x] **STRING field at ALL_CUSTOMER level** (`field.matrix.string.all_customer`)
   - tourId=`90547` productId=`23340` — field NAME (STRING, ALL_CUSTOMER) — fixture: `fixtures/field.matrix.string.all_customer__90547.json` (last verified 2026-08-19T07:20:46.757Z)
   - tourId=`90547` productId=`23341` — field NAME (STRING, ALL_CUSTOMER) — fixture: `fixtures/field.matrix.string.all_customer__90547.json` (last verified 2026-08-19T07:20:49.310Z)
-- [ ] **STRING field at BOOKING level** (`field.matrix.string.booking`)
-  - ⚠️ **Confirmed absent from sandbox** as of 2026-08-19T07:33:15.755Z — Scanned ~55 cities alphabetically (Amsterdam-Buenos Aires) plus targeted scan of Dubai/Singapore/London/Paris/Rome/Orlando/New York (largest catalogs), ~1500+ products total, as of 2026-08-18. Zero matches.
-    _Re-attempt with `node cli.js discover --scenario field.matrix.string.booking --force` if sandbox catalog has since grown._
 - [x] **ENUM field at PRIMARY_CUSTOMER level** (`field.matrix.enum.primary_customer`)
   - tourId=`45780` productId=`23338` — field CUSTOM_146542 (ENUM, PRIMARY_CUSTOMER) — fixture: `fixtures/field.matrix.enum.primary_customer__45780.json` (last verified 2026-08-19T07:20:45.495Z)
   - tourId=`45784` productId=`23342` — field CUSTOM_146558 (ENUM, PRIMARY_CUSTOMER) — fixture: `fixtures/field.matrix.enum.primary_customer__45784.json` (last verified 2026-08-19T07:20:50.745Z)
 - [x] **ENUM field at ALL_CUSTOMER level** (`field.matrix.enum.all_customer`)
   - tourId=`19830` productId=`10477` — field CUSTOM_318326 (ENUM, ALL_CUSTOMER) — fixture: `fixtures/field.matrix.enum.all_customer__19830.json` (last verified 2026-08-19T07:21:05.930Z)
   - tourId=`34386` productId=`33907` — field CUSTOM_236376 (ENUM, ALL_CUSTOMER) — fixture: `fixtures/field.matrix.enum.all_customer__34386.json` (last verified 2026-08-19T07:21:03.813Z)
-- [ ] **ENUM field at BOOKING level** (`field.matrix.enum.booking`)
-  - ⚠️ **Confirmed absent from sandbox** as of 2026-08-19T07:33:15.805Z — Scanned ~55 cities alphabetically (Amsterdam-Buenos Aires) plus targeted scan of Dubai/Singapore/London/Paris/Rome/Orlando/New York (largest catalogs), ~1500+ products total, as of 2026-08-18. Zero matches.
-    _Re-attempt with `node cli.js discover --scenario field.matrix.enum.booking --force` if sandbox catalog has since grown._
 - [ ] **BOOL field at PRIMARY_CUSTOMER level** (`field.matrix.bool.primary_customer`)
   - ⚠️ **Confirmed absent from sandbox** as of 2026-08-19T07:33:15.854Z — Scanned ~55 cities alphabetically (Amsterdam-Buenos Aires) plus targeted scan of Dubai/Singapore/London/Paris/Rome/Orlando/New York (largest catalogs), ~1500+ products total, as of 2026-08-18. Zero matches.
     _Re-attempt with `node cli.js discover --scenario field.matrix.bool.primary_customer --force` if sandbox catalog has since grown._
 - [ ] **BOOL field at ALL_CUSTOMER level** (`field.matrix.bool.all_customer`)
   - ⚠️ **Confirmed absent from sandbox** as of 2026-08-19T07:33:15.904Z — Scanned ~55 cities alphabetically (Amsterdam-Buenos Aires) plus targeted scan of Dubai/Singapore/London/Paris/Rome/Orlando/New York (largest catalogs), ~1500+ products total, as of 2026-08-18. Zero matches.
     _Re-attempt with `node cli.js discover --scenario field.matrix.bool.all_customer --force` if sandbox catalog has since grown._
-- [ ] **BOOL field at BOOKING level** (`field.matrix.bool.booking`)
-  - ⚠️ **Confirmed absent from sandbox** as of 2026-08-19T07:33:15.953Z — Scanned ~55 cities alphabetically (Amsterdam-Buenos Aires) plus targeted scan of Dubai/Singapore/London/Paris/Rome/Orlando/New York (largest catalogs), ~1500+ products total, as of 2026-08-18. Zero matches.
-    _Re-attempt with `node cli.js discover --scenario field.matrix.bool.booking --force` if sandbox catalog has since grown._
 - [x] **INT field at PRIMARY_CUSTOMER level** (`field.matrix.int.primary_customer`)
   - tourId=`40078` productId=`20371` — field CUSTOM_126640 (INT, PRIMARY_CUSTOMER) — fixture: `fixtures/field.matrix.int.primary_customer__40078.json` (last verified 2026-08-19T07:21:09.454Z)
   - tourId=`41808` productId=`21339` — field CUSTOM_133079 (INT, PRIMARY_CUSTOMER) — fixture: `fixtures/field.matrix.int.primary_customer__41808.json` (last verified 2026-08-19T07:21:08.630Z)
@@ -187,7 +175,4 @@ behavior:
 - [x] **LOCATION field at ALL_CUSTOMER level** (`field.matrix.location.all_customer`)
   - tourId=`34386` productId=`33907` — field CUSTOM_183502 (LOCATION, ALL_CUSTOMER) — fixture: `fixtures/field.matrix.location.all_customer__34386.json` (last verified 2026-08-19T07:21:04.519Z)
   - tourId=`55771` productId=`24145` — field CUSTOM_180152 (LOCATION, ALL_CUSTOMER) — fixture: `fixtures/field.matrix.location.all_customer__55771.json` (last verified 2026-08-19T07:21:06.604Z)
-- [ ] **LOCATION field at BOOKING level** (`field.matrix.location.booking`)
-  - ⚠️ **Confirmed absent from sandbox** as of 2026-08-19T07:33:16.054Z — Scanned ~55 cities alphabetically (Amsterdam-Buenos Aires) plus targeted scan of Dubai/Singapore/London/Paris/Rome/Orlando/New York (largest catalogs), ~1500+ products total, as of 2026-08-18. Zero matches.
-    _Re-attempt with `node cli.js discover --scenario field.matrix.location.booking --force` if sandbox catalog has since grown._
 

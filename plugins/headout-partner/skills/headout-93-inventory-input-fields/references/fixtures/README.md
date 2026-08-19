@@ -7,7 +7,7 @@ covers one topic — open only the one relevant to the current task, not all of 
 | File | Covers |
 |---|---|
 | [field-types-and-semantics.md](field-types-and-semantics.md) | `dataType` values, and why field `id` never identifies a field's purpose |
-| [field-levels-and-matrix.md](field-levels-and-matrix.md) | `PRIMARY_CUSTOMER` / `ALL_CUSTOMER` / `BOOKING` placement, and which dataType×level combinations exist in sandbox |
+| [field-levels-and-matrix.md](field-levels-and-matrix.md) | `PRIMARY_CUSTOMER` / `ALL_CUSTOMER` placement, and which dataType×level combinations exist in sandbox |
 | [validation-values-shapes.md](validation-values-shapes.md) | The `validation.values` shape, and why it differs between the Products API and Inventory Details API |
 | [inventory-overrides.md](inventory-overrides.md) | Inventory-level `inputFields` overriding the variant-level default |
 | [pax-and-pricing.md](pax-and-pricing.md) | Pax types, per-group vs per-person pricing, pax-range bounds |

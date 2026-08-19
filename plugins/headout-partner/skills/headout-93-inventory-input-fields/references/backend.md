@@ -24,7 +24,7 @@ The response is an `InventorySlotDetails` object:
   location objects; render a selector and submit the selected location `id` or `displayName`.
 
 Supported `dataType` values are `STRING`, `ENUM`, `BOOL`, `INT`, `FLOAT`, and `LOCATION`. Supported
-levels are `PRIMARY_CUSTOMER`, `ALL_CUSTOMER`, and `BOOKING`.
+levels are `PRIMARY_CUSTOMER` and `ALL_CUSTOMER`.
 
 **`values` shape is endpoint-specific.** The `{type, value}` wrapper above is this endpoint's shape
 only. The Products API (`GET /v2/products/{id}`, used by
@@ -56,7 +56,6 @@ a new cache or SDK abstraction solely for this feature.
 
 - `PRIMARY_CUSTOMER`: place once in the `isPrimary: true` customer's `inputFields`.
 - `ALL_CUSTOMER`: place in every customer's `inputFields`.
-- `BOOKING`: place in the booking-level `variantInputFields` array.
 - Preserve field values and their IDs through payment. Validate again on the server before creating
   the booking; client validation is not authoritative.
 

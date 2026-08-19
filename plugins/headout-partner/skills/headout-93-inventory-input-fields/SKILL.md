@@ -35,9 +35,9 @@ product-derived path.
 4. Add the server-side inventory-details request before checkout fields render. Return a minimal safe
    metadata DTO containing labels, descriptions when present, `level`, `dataType`, `required`,
    constraints, enum values, and predefined locations.
-5. Render controls from metadata. Route fields by `PRIMARY_CUSTOMER`, `ALL_CUSTOMER`, or `BOOKING`;
-   validate string, enum, bool, integer, float, and location values. Unknown types or shapes block
-   the change and require partner clarification.
+5. Render controls from metadata. Route fields by `PRIMARY_CUSTOMER` or `ALL_CUSTOMER`; validate
+   string, enum, bool, integer, float, and location values. Unknown types or shapes block the change
+   and require partner clarification.
 6. Preserve values through payment and booking. Use each returned field's `id` as the booking
    `inputFields` key and revalidate server-side immediately before booking creation.
 7. Run existing focused tests, then broader relevant tests. Do not add test infrastructure. Run the

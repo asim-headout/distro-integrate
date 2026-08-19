@@ -1,0 +1,19 @@
+{
+  "oldId": 318326,
+  "id": "CUSTOM_318326",
+  "name": "Meal Preference",
+  "description": "Please select your meal preference ",
+  "dataType": "ENUM",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": [
+      "International Buffet"
+    ]
+  },
+  "level": "ALL_CUSTOMER"
+}

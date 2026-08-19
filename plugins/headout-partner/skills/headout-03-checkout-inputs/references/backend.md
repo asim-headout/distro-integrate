@@ -12,7 +12,8 @@ For the inventory-specific workflow, use the explicit support skill [headout-93-
 
 ## Server-side rules
 - Source required fields **live** from current API responses — never hardcode one product's fields:
-  - Customer fields: `NAME`, `EMAIL`, `PHONE`, and `CUSTOM_*`.
+  - Customer fields: `NAME`/`EMAIL`/`PHONE` (semantic ids) plus `CUSTOM_*` fields (opaque routing
+    keys — see below, do not treat `CUSTOM_*` as a semantic category).
   - Booking-level `variantInputFields` (pickup, transportation, product-specific choices).
 - When inventory details are fetched successfully, use that inventory's `inputFields` for the selected
   inventory while preserving the existing product-derived path for compatibility.
@@ -21,6 +22,17 @@ For the inventory-specific workflow, use the explicit support skill [headout-93-
   validation constraints (`min`, `max`, length/range), and any location/pickup enum variants.
 - Unknown future `dataType`, `level`, or location enum values are stale-fact call-outs: stop and ask
   instead of rendering a generic text input or dropping the field.
+- Every custom field's `id` is an opaque `CUSTOM_<numericId>` — it never encodes the field's purpose
+  (passport, weight, DOB, pickup location, ...). Only `name`/`description` carry that meaning; never
+  pattern-match on `id` to detect field semantics. See
+  [headout-93-inventory-input-fields/references/fixtures/field-types-and-semantics.md](../../headout-93-inventory-input-fields/references/fixtures/field-types-and-semantics.md).
+- `validation.values` shape depends on which endpoint returned the field. From `/products/{id}`
+  (this skill's default path) it's a plain array or `null`. From
+  `/inventories/{inventoryId}/` (see [headout-93-inventory-input-fields](../../headout-93-inventory-input-fields/SKILL.md))
+  the same field is wrapped as `{type, value}` instead. Don't reuse one `values` parser across both
+  endpoints. See
+  [headout-93-inventory-input-fields/references/fixtures/validation-values-shapes.md](../../headout-93-inventory-input-fields/references/fixtures/validation-values-shapes.md)
+  for a live before/after example.
 - Enforce: `customersDetails.count` aligns with selected pax and the `customers` array length;
   exactly one primary customer when required.
 - Validate server-side before constructing the booking payload — do not trust client validation alone.

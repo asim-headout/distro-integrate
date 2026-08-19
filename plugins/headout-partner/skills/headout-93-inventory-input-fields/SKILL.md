@@ -53,13 +53,15 @@ product-derived path.
   match the live response.
 - Failure: `401`, `403`, `404`, timeout, malformed metadata, and unknown future fields fail visibly
   without exposing secrets or silently flattening fields into text inputs.
-- Sandbox: execute every available fixture in [sandbox-fixtures.md](references/sandbox-fixtures.md)
-  and record unavailable fixtures for replacement.
+- Sandbox: execute the relevant fixtures from [references/fixtures/](references/fixtures/README.md)
+  and record unavailable fixtures for replacement. If a required fixture is confirmed absent in
+  sandbox (see the relevant `fixtures/*.md` file), do not block the integration on it — implement per
+  the documented contract and flag it to the partner as untestable pending Headout sandbox data.
 
 ## References
 
 - API and BFF mapping: [references/backend.md](references/backend.md)
-- POC sandbox matrix: [references/sandbox-fixtures.md](references/sandbox-fixtures.md)
+- Sandbox fixtures (split by topic): [references/fixtures/README.md](references/fixtures/README.md)
 - Journey owner: [headout-03-checkout-inputs](../headout-03-checkout-inputs/SKILL.md)
 - Shared API facts: [headout-api.md](../../references/headout-api.md)
 - Testing contract: [existing-test-contract.md](../../references/existing-test-contract.md)

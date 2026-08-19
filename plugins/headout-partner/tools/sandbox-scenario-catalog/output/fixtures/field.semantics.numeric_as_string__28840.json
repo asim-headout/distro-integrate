@@ -1,0 +1,17 @@
+{
+  "oldId": 177565,
+  "id": "CUSTOM_177565",
+  "name": "Weight",
+  "description": "KGs",
+  "dataType": "STRING",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "ALL_CUSTOMER"
+}

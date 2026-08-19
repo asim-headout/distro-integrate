@@ -1,7 +1,7 @@
 {
   "name": "headout-partner",
   "description": "Headout partner integration skills ordered by business flow, including inventory-specific checkout input fields and Voucher API integration.",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "author": {
     "name": "Headout"
   },

@@ -1,0 +1,16 @@
+{
+  "oldId": 126640,
+  "id": "CUSTOM_126640",
+  "name": "Postal Code/Zip",
+  "dataType": "INT",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

@@ -1,7 +1,7 @@
 {
   "variantInputFields": [
     {
-      "oldId": 325392,
+      "oldId": 300904,
       "id": "NAME",
       "name": "Full Name",
       "dataType": "STRING",
@@ -17,7 +17,7 @@
       "level": "PRIMARY_CUSTOMER"
     },
     {
-      "oldId": 325393,
+      "oldId": 300905,
       "id": "EMAIL",
       "name": "Email",
       "dataType": "STRING",
@@ -33,7 +33,7 @@
       "level": "PRIMARY_CUSTOMER"
     },
     {
-      "oldId": 325394,
+      "oldId": 300906,
       "id": "PHONE",
       "name": "Phone",
       "dataType": "STRING",
@@ -51,7 +51,7 @@
   ],
   "inventoryInputFields": [
     {
-      "id": "325389",
+      "id": "304005",
       "type": "Full Name",
       "name": "Full Name",
       "description": null,
@@ -67,7 +67,7 @@
       "level": "PRIMARY_CUSTOMER"
     },
     {
-      "id": "325390",
+      "id": "304006",
       "type": "Email",
       "name": "Email",
       "description": null,
@@ -83,7 +83,7 @@
       "level": "PRIMARY_CUSTOMER"
     },
     {
-      "id": "325391",
+      "id": "304007",
       "type": "Phone",
       "name": "Phone",
       "description": null,
@@ -92,6 +92,22 @@
         "regex": null,
         "minLength": null,
         "maxLength": 40,
+        "minValue": null,
+        "maxValue": null,
+        "required": true
+      },
+      "level": "PRIMARY_CUSTOMER"
+    },
+    {
+      "id": "304008",
+      "type": "Custom",
+      "name": "Pickup Location",
+      "description": "Where do you want to be picked up from?",
+      "dataType": "LOCATION",
+      "validation": {
+        "regex": null,
+        "minLength": null,
+        "maxLength": null,
         "minValue": null,
         "maxValue": null,
         "required": true

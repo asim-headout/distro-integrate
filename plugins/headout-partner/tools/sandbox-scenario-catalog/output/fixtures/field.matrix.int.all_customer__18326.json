@@ -1,0 +1,16 @@
+{
+  "oldId": 151728,
+  "id": "CUSTOM_151728",
+  "name": "Age",
+  "dataType": "INT",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "ALL_CUSTOMER"
+}

@@ -9,7 +9,7 @@ Relevant docs:
 
 Advanced cases:
 
-- `inventorySelectionType: SEATMAP` vs `NORMAL`.
+- `inventorySelectionType: SEATMAP` vs `NORMAL` vs `SVG` — confirmed by Headout as a real, supported third value (found on live sandbox products; public docs update pending). Don't assume the enum is exhaustive at two values. Until the doc update lands, verify per-product via the seatmap endpoints (`/v2/seatmap/svg`, `/v2/seatmap/iframe`) rather than hardcoding a two-way branch.
 - Validation can return HTTP 200 with business-level errors.
 - Hard ceiling of 20 seats per validation request.
 - `SEAT_UNAVAILABLE`, `SEAT_NOT_FOUND`, and `ADJACENCY_RULE_VIOLATION`.

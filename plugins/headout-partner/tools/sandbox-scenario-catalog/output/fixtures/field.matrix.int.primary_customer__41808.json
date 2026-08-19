@@ -1,0 +1,17 @@
+{
+  "oldId": 133079,
+  "id": "CUSTOM_133079",
+  "name": "Postal Code/Zip",
+  "description": "Please enter your Postal Code",
+  "dataType": "INT",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

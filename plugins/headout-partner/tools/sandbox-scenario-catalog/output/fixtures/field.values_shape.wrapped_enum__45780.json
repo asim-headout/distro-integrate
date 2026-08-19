@@ -1,0 +1,22 @@
+{
+  "id": "146542",
+  "type": "Custom",
+  "name": "Pick-up details",
+  "description": "Hotel Pickup",
+  "dataType": "ENUM",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": {
+      "type": "TEXT",
+      "value": [
+        "Pick-up service is available from all hotels in Abu Dhabi as well as major shopping malls."
+      ]
+    }
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

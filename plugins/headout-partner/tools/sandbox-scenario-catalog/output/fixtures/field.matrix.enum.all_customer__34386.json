@@ -1,0 +1,20 @@
+{
+  "oldId": 236376,
+  "id": "CUSTOM_236376",
+  "name": "Additional Information",
+  "description": "Please choose your pickup time",
+  "dataType": "ENUM",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": [
+      "08.00 AM",
+      "11.00 AM"
+    ]
+  },
+  "level": "ALL_CUSTOMER"
+}

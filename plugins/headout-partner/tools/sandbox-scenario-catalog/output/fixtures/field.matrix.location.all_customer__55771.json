@@ -1,0 +1,17 @@
+{
+  "oldId": 180152,
+  "id": "CUSTOM_180152",
+  "name": "Pickup Location",
+  "description": "Hotel Name and Address",
+  "dataType": "LOCATION",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "ALL_CUSTOMER"
+}

@@ -1,0 +1,17 @@
+{
+  "oldId": 235812,
+  "id": "CUSTOM_235812",
+  "name": "Passport Details",
+  "description": "Please enter passport ID",
+  "dataType": "STRING",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": null
+  },
+  "level": "ALL_CUSTOMER"
+}

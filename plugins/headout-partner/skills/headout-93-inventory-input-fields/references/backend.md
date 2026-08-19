@@ -26,6 +26,20 @@ The response is an `InventorySlotDetails` object:
 Supported `dataType` values are `STRING`, `ENUM`, `BOOL`, `INT`, `FLOAT`, and `LOCATION`. Supported
 levels are `PRIMARY_CUSTOMER`, `ALL_CUSTOMER`, and `BOOKING`.
 
+**`values` shape is endpoint-specific.** The `{type, value}` wrapper above is this endpoint's shape
+only. The Products API (`GET /v2/products/{id}`, used by
+[headout-03-checkout-inputs](../../headout-03-checkout-inputs/SKILL.md)) returns the same underlying
+field's `validation.values` as a plain array (or `null`) instead — no wrapper. If a partner's code
+reuses one `values` parser against both endpoints, it will break on whichever one it wasn't written
+for. See [fixtures/validation-values-shapes.md](fixtures/validation-values-shapes.md) for a live
+before/after example of the same field returning both shapes.
+
+**Field `id` never identifies a field's purpose.** Custom fields always carry an opaque
+`CUSTOM_<numericId>` id — only `NAME`/`EMAIL`/`PHONE` have semantic ids. A field's real-world purpose
+(passport, weight, date of birth, pickup location, ...) lives only in `name`/`description`. Do not
+pattern-match on `id` to detect field semantics; see
+[fixtures/field-types-and-semantics.md](fixtures/field-types-and-semantics.md).
+
 ## Server and browser boundary
 
 Fetch and normalize the response on the server. The BFF may return only the field metadata needed by

@@ -1,0 +1,174 @@
+{
+  "id": "353237",
+  "type": "Custom",
+  "name": "Pickup Same As Drop Off Location",
+  "description": "Where do you want to be picked up from and dropped off?",
+  "dataType": "LOCATION",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": {
+      "type": "PREDEFINED_LOCATION",
+      "value": [
+        {
+          "id": 487584,
+          "latitude": 30.428041,
+          "longitude": -9.592544,
+          "address": "ZEPHYR Agadir, Ajikol Pizza � Sonaba Agadir, Agadir 80010, Morocco, Agadir, Morocco",
+          "displayName": "Zephyr Agadir",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        },
+        {
+          "id": 487585,
+          "latitude": 30.428041,
+          "longitude": -9.592544,
+          "address": "Agadir, Morocco",
+          "displayName": "Hotel Petite Suede",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        },
+        {
+          "id": 487586,
+          "latitude": 30.424677,
+          "longitude": -9.592904,
+          "address": "Sindibad Hotel, PLACE LAHCEN OU BRAHIM TAMRI, Agadir 80000, Morocco, Agadir, Morocco",
+          "displayName": "Hotel Sindibad",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        },
+        {
+          "id": 487587,
+          "latitude": 30.422859,
+          "longitude": -9.591703,
+          "address": "Hotel Lynx, 9 Rue Al Mahdi Ibn Toumart, Agadir 80000, Morocco, Agadir, Morocco",
+          "displayName": "Hotel Lynx",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        },
+        {
+          "id": 487588,
+          "latitude": 30.424182,
+          "longitude": -9.599288,
+          "address": "Hotel Residence Nejma,CCF2+M7G, Agadir 80000, Morocco, Agadir, Morocco",
+          "displayName": "Hotel Residence Nejma",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        },
+        {
+          "id": 487589,
+          "latitude": 30.424277,
+          "longitude": -9.593333,
+          "address": "Hotel El Bahia,Rue el mehdi ibn toumert, Agadir 80000, Morocco, Agadir, Morocco",
+          "displayName": "Hotel El Bahia",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        },
+        {
+          "id": 487590,
+          "latitude": 30.422856,
+          "longitude": -9.594768,
+          "address": "Agadir Gardens Center Hotel, CCC3+VQH, Rue Allal Ben Abdallah, Agadir 80000, Morocco, Agadir, Morocco",
+          "displayName": "Agadir Gardens Center Hotel",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        },
+        {
+          "id": 487591,
+          "latitude": 30.419762,
+          "longitude": -9.600625,
+          "address": "R�sidence Tislit, Devant la Place Al-Amal Avenue du Prince Sidi Mohammed, Agadir 80000, Morocco, Agadir, Morocco",
+          "displayName": "Residence Tislit",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        },
+        {
+          "id": 487592,
+          "latitude": 30.426166,
+          "longitude": -9.59966,
+          "address": "Petit Palace Suites Hotel, Residence Petit Place, Rue Des Nations Unies, Agadir 80000, Morocco, Agadir, Morocco",
+          "displayName": "Petit Palace Suites Hotel",
+          "timingConfig": {
+            "startTime": "05:00:00",
+            "endTime": "06:00:00",
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": {
+            "content": "",
+            "language": "EN"
+          }
+        }
+      ]
+    }
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

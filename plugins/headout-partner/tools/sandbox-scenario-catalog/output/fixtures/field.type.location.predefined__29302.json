@@ -1,0 +1,74 @@
+{
+  "oldId": 235892,
+  "id": "CUSTOM_235892",
+  "name": "Pickup Location",
+  "description": "Please enter the pick-up details",
+  "dataType": "LOCATION",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": [
+      {
+        "id": 283726,
+        "latitude": 37.985628,
+        "longitude": 23.721155,
+        "address": "Pl. Karaiskaki, Athina 104 37, Greece",
+        "displayName": "Pl Karaiskaki",
+        "timingConfig": {
+          "startTime": null,
+          "endTime": null,
+          "minPeriod": null,
+          "maxPeriod": null
+        },
+        "note": null
+      },
+      {
+        "id": 283727,
+        "latitude": 37.973338,
+        "longitude": 23.728599,
+        "address": "Lisiou 22, Athina 105 56, Greece",
+        "displayName": "Melina",
+        "timingConfig": {
+          "startTime": null,
+          "endTime": null,
+          "minPeriod": null,
+          "maxPeriod": null
+        },
+        "note": null
+      },
+      {
+        "id": 283728,
+        "latitude": 37.975341,
+        "longitude": 23.736917,
+        "address": "Μέγαρο, Βουλής, Αθήνα 100 21, Greece",
+        "displayName": "Parliament",
+        "timingConfig": {
+          "startTime": null,
+          "endTime": null,
+          "minPeriod": null,
+          "maxPeriod": null
+        },
+        "note": null
+      },
+      {
+        "id": 283729,
+        "latitude": 37.984041,
+        "longitude": 23.728032,
+        "address": "Omonoia, Athens, Athens 104 31, Greece",
+        "displayName": "Omonoia",
+        "timingConfig": {
+          "startTime": null,
+          "endTime": null,
+          "minPeriod": null,
+          "maxPeriod": null
+        },
+        "note": null
+      }
+    ]
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

@@ -57,4 +57,6 @@ $ARGUMENTS
 - **Backend — API & server mapping:** [references/backend.md](references/backend.md), [../../references/headout-api.md](../../references/headout-api.md)
 - **Inventory-specific upgrade:** invoke [headout-93-inventory-input-fields](../headout-93-inventory-input-fields/SKILL.md) explicitly when fields must be fetched for the selected inventory.
 - **Advanced — edge cases:** [references/advanced.md](references/advanced.md), [../../references/edge-cases.md](../../references/edge-cases.md)
+- **Live re-verification (optional):** to re-check a contract detail against sandbox rather than trust
+  this reference snapshot, see [tools/sandbox-scenario-catalog/output/CHECKLIST.md](../../tools/sandbox-scenario-catalog/output/CHECKLIST.md).
 - **Context checkpoint:** [../../references/context-checkpoint.md](../../references/context-checkpoint.md)

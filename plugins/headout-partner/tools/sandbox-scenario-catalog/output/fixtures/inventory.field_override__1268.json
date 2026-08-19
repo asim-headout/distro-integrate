@@ -1,0 +1,1800 @@
+{
+  "variantInputFields": [
+    {
+      "oldId": 513,
+      "id": "NAME",
+      "name": "Full Name",
+      "dataType": "STRING",
+      "validation": {
+        "regex": "\\s*[^\\s]+\\s+[^\\s]+.*",
+        "minLength": 3,
+        "maxLength": 80,
+        "minValue": null,
+        "maxValue": null,
+        "required": true,
+        "values": null
+      },
+      "level": "ALL_CUSTOMER"
+    },
+    {
+      "oldId": 4608,
+      "id": "EMAIL",
+      "name": "Email",
+      "dataType": "STRING",
+      "validation": {
+        "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        "minLength": 5,
+        "maxLength": null,
+        "minValue": null,
+        "maxValue": null,
+        "required": true,
+        "values": null
+      },
+      "level": "PRIMARY_CUSTOMER"
+    },
+    {
+      "oldId": 8703,
+      "id": "PHONE",
+      "name": "Phone",
+      "dataType": "STRING",
+      "validation": {
+        "regex": null,
+        "minLength": null,
+        "maxLength": 40,
+        "minValue": null,
+        "maxValue": null,
+        "required": true,
+        "values": null
+      },
+      "level": "PRIMARY_CUSTOMER"
+    },
+    {
+      "oldId": 13945,
+      "id": "CUSTOM_13945",
+      "name": "Pickup Location",
+      "description": "Hotel Pickup",
+      "dataType": "LOCATION",
+      "validation": {
+        "regex": null,
+        "minLength": null,
+        "maxLength": null,
+        "minValue": null,
+        "maxValue": null,
+        "required": true,
+        "values": [
+          {
+            "id": 24698,
+            "latitude": 36.112946,
+            "longitude": -115.176507,
+            "address": "3600 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Bellagio",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24699,
+            "latitude": 36.117261,
+            "longitude": -115.176141,
+            "address": "3570 S Las Vegas Blvd, Paradise, NV 89109, USA",
+            "displayName": "Caesars Palace",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24700,
+            "latitude": 36.10996,
+            "longitude": -115.175416,
+            "address": "3708 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Cosmopolitan of Las Vegas",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24701,
+            "latitude": 36.171563,
+            "longitude": -115.139101,
+            "address": "Las Vegas, NV, USA",
+            "displayName": "Clarion Hotel & Suites",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24702,
+            "latitude": 36.125497,
+            "longitude": -115.15704,
+            "address": "4RGV+55 Paradise, NV, USA",
+            "displayName": "Best Western Mardi Gras Hotel",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24703,
+            "latitude": 36.12944,
+            "longitude": -115.164314,
+            "address": "3121 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Encore",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24704,
+            "latitude": 36.113714,
+            "longitude": -115.167789,
+            "address": "3645 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Ballys",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24705,
+            "latitude": 36.171563,
+            "longitude": -115.139101,
+            "address": "Las Vegas, NV, USA",
+            "displayName": "Golden Nugget",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24706,
+            "latitude": 36.10737,
+            "longitude": -115.176753,
+            "address": "3730 S Las Vegas Blvd, Las Vegas, NV 89158, USA",
+            "displayName": "Aria Resort and Casino",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24707,
+            "latitude": 36.14373,
+            "longitude": -115.169875,
+            "address": "1501 W Sahara Ave, Las Vegas, NV 89102, USA",
+            "displayName": "Artisan Hotel",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24708,
+            "latitude": 36.182814,
+            "longitude": -115.26957,
+            "address": "Allure Dr, Las Vegas, NV 89128, USA",
+            "displayName": "Allure",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24709,
+            "latitude": 36.146075,
+            "longitude": -115.156111,
+            "address": "2200 S Las Vegas Blvd, Las Vegas, NV 89104, USA",
+            "displayName": "Aztec Inn",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24710,
+            "latitude": 36.103122,
+            "longitude": -115.156733,
+            "address": "598 NV-593, Las Vegas, NV 89169, USA",
+            "displayName": "Bluegreen Club 36",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24711,
+            "latitude": 36.171198,
+            "longitude": -115.146243,
+            "address": "1 Fremont St, Las Vegas, NV 89101, USA",
+            "displayName": "Golden Gate Hotel & Casino",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24712,
+            "latitude": 36.111797,
+            "longitude": -115.154138,
+            "address": "4255 Paradise Rd, Las Vegas, NV 89169, USA",
+            "displayName": "Atrium Suites Hotel",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24713,
+            "latitude": 36.136657,
+            "longitude": -115.162854,
+            "address": "2880 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Circus Circus",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24714,
+            "latitude": 36.171328,
+            "longitude": -115.143964,
+            "address": "128 Fremont St, Las Vegas, NV 89101, USA",
+            "displayName": "Binions",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24715,
+            "latitude": 36.083824,
+            "longitude": -115.183035,
+            "address": "5845 Dean Martin Dr, Las Vegas, NV 89118, USA",
+            "displayName": "Courtyard Las Vegas South",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24716,
+            "latitude": 36.047342,
+            "longitude": -115.170831,
+            "address": "7830 S Las Vegas Blvd, Las Vegas, NV 89123, USA",
+            "displayName": "Hilton Garden Inn",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24717,
+            "latitude": 36.107346,
+            "longitude": -115.168044,
+            "address": "105 E Harmon Ave, Las Vegas, NV 89109, USA",
+            "displayName": "Carriage House",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24718,
+            "latitude": 36.258186,
+            "longitude": -115.218099,
+            "address": "Desert Paradise Dr, Las Vegas, NV 89130, USA",
+            "displayName": "Desert Paradise Resort",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24719,
+            "latitude": 36.020248,
+            "longitude": -115.089968,
+            "address": "2300 Paseo Verde Pkwy, Henderson, NV 89052, USA",
+            "displayName": "Green Valley Ranch",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24720,
+            "latitude": 36.172981,
+            "longitude": -115.144836,
+            "address": "12 E Ogden Ave, Las Vegas, NV 89101, USA",
+            "displayName": "California Hotel and Casino",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24721,
+            "latitude": 36.11542,
+            "longitude": -115.116382,
+            "address": "2530 E Flamingo Rd, Las Vegas, NV 89121, USA",
+            "displayName": "Crestwood Suites Las Vegas",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24722,
+            "latitude": 36.008995,
+            "longitude": -115.176039,
+            "address": "9940 S Las Vegas Blvd, Las Vegas, NV 89183, USA",
+            "displayName": "Grand View Resort",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24723,
+            "latitude": 36.110253,
+            "longitude": -115.155433,
+            "address": "4455 Paradise Rd, Las Vegas, NV 89169, USA",
+            "displayName": "Hard Rock Hotel",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24724,
+            "latitude": 36.056509,
+            "longitude": -115.156585,
+            "address": "355 E Warm Springs Rd, Las Vegas, NV 89119, USA",
+            "displayName": "Fairfield Inn and Suites Las Vegas South",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24725,
+            "latitude": 36.123964,
+            "longitude": -115.153859,
+            "address": "3600 Paradise Rd, Las Vegas, NV 89169, USA",
+            "displayName": "Embassy Suites Convention Center",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24726,
+            "latitude": 36.110886,
+            "longitude": -115.151228,
+            "address": "4315 University Center Dr, Las Vegas, NV 89119, USA",
+            "displayName": "Embassy Suites Las Vegas",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24727,
+            "latitude": 36.139879,
+            "longitude": -115.160899,
+            "address": "2650 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Hilton Grand Vacation Club at the Flamingo",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24728,
+            "latitude": 36.139879,
+            "longitude": -115.160899,
+            "address": "2650 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Hilton Grand Vacation Club on the Las Vegas Strip",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24729,
+            "latitude": 36.091037,
+            "longitude": -115.174309,
+            "address": "3960 S Las Vegas Blvd, Las Vegas, NV 89119, USA",
+            "displayName": "Four Seasons",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24730,
+            "latitude": 36.116638,
+            "longitude": -115.170391,
+            "address": "3555 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Flamingo",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24731,
+            "latitude": 36.056509,
+            "longitude": -115.156585,
+            "address": "355 E Warm Springs Rd, Las Vegas, NV 89119, USA",
+            "displayName": "Fairfield Inn Las Vegas Airport",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24732,
+            "latitude": 36.037967,
+            "longitude": -115.173476,
+            "address": "8335 Las Vegas Blvd S, Las Vegas, NV 89123, USA",
+            "displayName": "Cancun Resort",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24733,
+            "latitude": 36.09983,
+            "longitude": -115.14868,
+            "address": "4970 Paradise Rd, Las Vegas, NV 89119, USA",
+            "displayName": "Best Western McCarran Inn",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24734,
+            "latitude": 36.099668,
+            "longitude": -115.183377,
+            "address": "4975 Dean Martin Dr, Las Vegas, NV 89118, USA",
+            "displayName": "Hampton Inn Tropicana",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24735,
+            "latitude": 36.16987,
+            "longitude": -115.143706,
+            "address": "202 Fremont St, Las Vegas, NV 89101, USA",
+            "displayName": "Four Queens",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24736,
+            "latitude": 36.119465,
+            "longitude": -115.171639,
+            "address": "3475 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Harrah's Hotel & Casino",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24737,
+            "latitude": 36.116549,
+            "longitude": -115.192807,
+            "address": "4000 W Flamingo Rd, Las Vegas, NV 89103, USA",
+            "displayName": "Gold Coast",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24738,
+            "latitude": 36.10881,
+            "longitude": -115.168321,
+            "address": "80 E Harmon Ave, Las Vegas, NV 89109, USA",
+            "displayName": "Elara (formally the PH Towers by Westgate)",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24739,
+            "latitude": 36.107577,
+            "longitude": -115.156252,
+            "address": "375 E Harmon Ave, Las Vegas, NV 89169, USA",
+            "displayName": "Alexis Park Resort Hotel",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24740,
+            "latitude": 36.099845,
+            "longitude": -115.218521,
+            "address": "5625 W Tropicana Ave, Las Vegas, NV 89103, USA",
+            "displayName": "Club De Soleil",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24741,
+            "latitude": 36.098797,
+            "longitude": -115.175431,
+            "address": "3850 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Excalibur",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24742,
+            "latitude": 36.098075,
+            "longitude": -115.166912,
+            "address": "5051 Duke Ellington Way, Las Vegas, NV 89119, USA",
+            "displayName": "Desert Rose Resort",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24743,
+            "latitude": 36.170893,
+            "longitude": -115.140601,
+            "address": "217 Las Vegas Blvd N, Las Vegas, NV 89101, USA",
+            "displayName": "Gold Spike",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24744,
+            "latitude": 36.181626,
+            "longitude": -115.139559,
+            "address": "1000 N Main St, Las Vegas, NV 89101, USA",
+            "displayName": "Americas Best Value Inn",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24745,
+            "latitude": 36.159234,
+            "longitude": -115.117549,
+            "address": "E Fremont St, Las Vegas, NV, USA",
+            "displayName": "Fremont",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24746,
+            "latitude": 36.098025,
+            "longitude": -115.165215,
+            "address": "185 E Tropicana Ave, Las Vegas, NV 89103, USA",
+            "displayName": "Candlewood Suites",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24747,
+            "latitude": 36.169397,
+            "longitude": -115.13874,
+            "address": "600 E Fremont St, Las Vegas, NV 89101, USA",
+            "displayName": "El Cortez",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24748,
+            "latitude": 36.171563,
+            "longitude": -115.139101,
+            "address": "Las Vegas, NV, USA",
+            "displayName": "Holiday Inn Express - LV South",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24749,
+            "latitude": 36.099723,
+            "longitude": -115.167432,
+            "address": "115 E Tropicana Ave, Las Vegas, NV 89109, USA",
+            "displayName": "Hooters",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24750,
+            "latitude": 36.106237,
+            "longitude": -115.182132,
+            "address": "4625 Dean Martin Dr, Las Vegas, NV 89103, USA",
+            "displayName": "Homewood Suites",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24751,
+            "latitude": 36.124746,
+            "longitude": -115.172083,
+            "address": "3300 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Treasure Island",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24752,
+            "latitude": 36.09551,
+            "longitude": -115.176067,
+            "address": "3900 S Las Vegas Blvd, Las Vegas, NV 89119, USA",
+            "displayName": "Luxor",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24753,
+            "latitude": 36.139879,
+            "longitude": -115.160899,
+            "address": "2650 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Hilton Grand Vacations Club on the Las Vegas Strip",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24754,
+            "latitude": 36.092185,
+            "longitude": -115.174858,
+            "address": "3950 S Las Vegas Blvd, Las Vegas, NV 89119, USA",
+            "displayName": "Mandalay Bay",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24755,
+            "latitude": 36.110132,
+            "longitude": -115.175128,
+            "address": "3700 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Jockey Club",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24756,
+            "latitude": 36.107094,
+            "longitude": -115.151004,
+            "address": "4520 Paradise Rd, Las Vegas, NV 89169, USA",
+            "displayName": "Hyatt Place",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24757,
+            "latitude": 36.173727,
+            "longitude": -115.145445,
+            "address": "200 N Main St, Las Vegas, NV 89101, USA",
+            "displayName": "Main Street Station",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24758,
+            "latitude": 36.099485,
+            "longitude": -115.165802,
+            "address": "165 E Tropicana Ave, Las Vegas, NV 89109, USA",
+            "displayName": "Howard Johnson Las Vegas",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24759,
+            "latitude": 36.100341,
+            "longitude": -115.210438,
+            "address": "5101 W Tropicana Ave, Las Vegas, NV 89103, USA",
+            "displayName": "Tahiti",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24760,
+            "latitude": 36.041262,
+            "longitude": -115.183327,
+            "address": "3333 Blue Diamond Rd, Las Vegas, NV 89139, USA",
+            "displayName": "Silverton",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24761,
+            "latitude": 36.156064,
+            "longitude": -115.148313,
+            "address": "1213 S Las Vegas Blvd, Las Vegas, NV 89104, USA",
+            "displayName": "Super 8",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24762,
+            "latitude": 36.147512,
+            "longitude": -115.156554,
+            "address": "2000 Las Vegas Blvd S, Las Vegas, NV 89104, USA",
+            "displayName": "Stratosphere",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24763,
+            "latitude": 36.113808,
+            "longitude": -115.162931,
+            "address": "211 E Flamingo Rd, Las Vegas, NV 89169, USA",
+            "displayName": "Platinum Hotel",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24764,
+            "latitude": 36.10963,
+            "longitude": -115.172658,
+            "address": "Planet Hollywood, Paradise, NV 89109, USA",
+            "displayName": "Planet Hollywood Hotel & Casino",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24765,
+            "latitude": 36.114707,
+            "longitude": -115.172848,
+            "address": "Las Vegas Strip, NV, USA",
+            "displayName": "On the Vegas Boulevard Hotel (formally the Econolodge)",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24766,
+            "latitude": 36.171563,
+            "longitude": -115.139101,
+            "address": "Las Vegas, NV, USA",
+            "displayName": "Travelodge South Strip",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24767,
+            "latitude": 36.130862,
+            "longitude": -115.155282,
+            "address": "3225 Paradise Rd, Las Vegas, NV 89109, USA",
+            "displayName": "Residence Inn Las Vegas Convention Center",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24768,
+            "latitude": 36.171633,
+            "longitude": -115.144263,
+            "address": "128 Fremont St, Las Vegas, NV 89101, USA",
+            "displayName": "Las Vegas Club",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24769,
+            "latitude": 36.058283,
+            "longitude": -115.171431,
+            "address": "7230 S Las Vegas Blvd, Las Vegas, NV 89119, USA",
+            "displayName": "Manor Suites",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24770,
+            "latitude": 36.01153,
+            "longitude": -115.174551,
+            "address": "9777 S Las Vegas Blvd, Las Vegas, NV 89183, USA",
+            "displayName": "South Point",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24771,
+            "latitude": 36.103622,
+            "longitude": -115.167574,
+            "address": "3799 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "MGM Grand",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24772,
+            "latitude": 36.113434,
+            "longitude": -115.16024,
+            "address": "255 E Flamingo Rd, Las Vegas, NV 89169, USA",
+            "displayName": "Tuscany Suites",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24773,
+            "latitude": 36.127596,
+            "longitude": -115.154213,
+            "address": "3400 Paradise Rd, Las Vegas, NV 89169, USA",
+            "displayName": "Renaissance Las Vegas Hotel",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24774,
+            "latitude": 36.114047,
+            "longitude": -115.218636,
+            "address": "5625 W Flamingo Rd, Las Vegas, NV 89103, USA",
+            "displayName": "Westgate Flamingo Bay",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24775,
+            "latitude": 36.171563,
+            "longitude": -115.139101,
+            "address": "Las Vegas, NV, USA",
+            "displayName": "Travelodge Ambassador Strip Inn Las Vegas",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24776,
+            "latitude": 36.059718,
+            "longitude": -115.171768,
+            "address": "7200 S Las Vegas Blvd, Las Vegas, NV 89119, USA",
+            "displayName": "Tahiti Village",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24777,
+            "latitude": 36.106566,
+            "longitude": -115.170837,
+            "address": "3745 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Polo Towers",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24778,
+            "latitude": 36.169349,
+            "longitude": -115.143,
+            "address": "301 Fremont St, Las Vegas, NV 89101, USA",
+            "displayName": "The D (formally the Fitzgerald Casino & Hotel)",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24779,
+            "latitude": 36.102627,
+            "longitude": -115.200939,
+            "address": "4500 W Tropicana Ave, Las Vegas, NV 89103, USA",
+            "displayName": "Orleans",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24780,
+            "latitude": 36.10683,
+            "longitude": -115.181806,
+            "address": "4525 Dean Martin Dr, Las Vegas, NV 89103, USA",
+            "displayName": "Panarama Towers",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24781,
+            "latitude": 36.171563,
+            "longitude": -115.139101,
+            "address": "Las Vegas, NV, USA",
+            "displayName": "Meridian Hotel Suites",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24782,
+            "latitude": 35.965225,
+            "longitude": -115.169666,
+            "address": "12300 Las Vegas Blvd S, Henderson, NV 89044, USA",
+            "displayName": "M Resort Spa Casino",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24783,
+            "latitude": 36.157835,
+            "longitude": -115.115897,
+            "address": "2512 E Fremont St, Las Vegas, NV 89104, USA",
+            "displayName": "Motel 6 Downtown",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24784,
+            "latitude": 36.121634,
+            "longitude": -115.176335,
+            "address": "3400 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Mirage",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24785,
+            "latitude": 36.13291,
+            "longitude": -115.159493,
+            "address": "294 Convention Center Dr, Las Vegas, NV 89109, USA",
+            "displayName": "Somerset House Motel",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24786,
+            "latitude": 36.098812,
+            "longitude": -115.170389,
+            "address": "3801 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Tropicana",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24787,
+            "latitude": 36.106028,
+            "longitude": -115.166753,
+            "address": "145 E Harmon Ave, Las Vegas, NV 89109, USA",
+            "displayName": "Signature at the MGM Grand",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24788,
+            "latitude": 36.132085,
+            "longitude": -115.162677,
+            "address": "99 Convention Center Dr, Las Vegas, NV 89109, USA",
+            "displayName": "Royal Resort",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24789,
+            "latitude": 36.109282,
+            "longitude": -115.177533,
+            "address": "2600 W Harmon Ave, Las Vegas, NV 89158, USA",
+            "displayName": "Vdara Hotel and Spa At Citycenter",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24790,
+            "latitude": 36.135582,
+            "longitude": -115.152194,
+            "address": "3000 Paradise Rd, Las Vegas, NV 89109, USA",
+            "displayName": "Westgate (Formerly LVH)",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24791,
+            "latitude": 36.129628,
+            "longitude": -115.17266,
+            "address": "2000 Fashion Show Dr, Las Vegas, NV 89109, USA",
+            "displayName": "Trump Tower",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24792,
+            "latitude": 36.142355,
+            "longitude": -115.156724,
+            "address": "2535 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "SLS Las Vegas Hotel & Casino",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24793,
+            "latitude": 36.121174,
+            "longitude": -115.169653,
+            "address": "3355 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Venetian",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24794,
+            "latitude": 36.118228,
+            "longitude": -115.171351,
+            "address": "3535 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "LINQ Hotel and Casino",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24795,
+            "latitude": 36.171563,
+            "longitude": -115.139101,
+            "address": "Las Vegas, NV, USA",
+            "displayName": "La Quinta Inn & Suites",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24796,
+            "latitude": 36.104405,
+            "longitude": -115.176669,
+            "address": "3770 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Park MGM (formerly Monte Carlo)",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24797,
+            "latitude": 36.106433,
+            "longitude": -115.173732,
+            "address": "3752 Las Vegas Blvd S, Las Vegas, NV 89158, USA",
+            "displayName": "Waldorf Astoria (formerly Mandarin Oriental)",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24798,
+            "latitude": 36.107338,
+            "longitude": -115.169327,
+            "address": "75 E Harmon Ave, Las Vegas, NV 89109, USA",
+            "displayName": "Marriott Grand Chateau",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24799,
+            "latitude": 36.116218,
+            "longitude": -115.159236,
+            "address": "1 Hughes Center Dr, Las Vegas, NV 89169, USA",
+            "displayName": "Park Towers Hughes Ctr",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24800,
+            "latitude": 36.114436,
+            "longitude": -115.194816,
+            "address": "4321 W Flamingo Rd, Las Vegas, NV 89103, USA",
+            "displayName": "Palms",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24801,
+            "latitude": 36.102132,
+            "longitude": -115.174423,
+            "address": "3790 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "New York New York",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24802,
+            "latitude": 36.112462,
+            "longitude": -115.170708,
+            "address": "3655 S Las Vegas Blvd, Las Vegas, NV 89109, USA",
+            "displayName": "Paris",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24803,
+            "latitude": 36.142946,
+            "longitude": -115.174936,
+            "address": "2411 W Sahara Ave, Las Vegas, NV 89102, USA",
+            "displayName": "Palace Station",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24804,
+            "latitude": 36.11432,
+            "longitude": -115.198784,
+            "address": "4381 W Flamingo Rd, Las Vegas, NV 89103, USA",
+            "displayName": "Palms Place",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24805,
+            "latitude": 36.11873,
+            "longitude": -115.186668,
+            "address": "3700 W Flamingo Rd, Las Vegas, NV 89103, USA",
+            "displayName": "Rio",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24806,
+            "latitude": 36.11517,
+            "longitude": -115.165808,
+            "address": "160 E Flamingo Rd, Las Vegas, NV 89109, USA",
+            "displayName": "Westin Casuarina",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24807,
+            "latitude": 36.126119,
+            "longitude": -115.161958,
+            "address": "3131 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "Wynn Resort",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24808,
+            "latitude": 36.098812,
+            "longitude": -115.170389,
+            "address": "3801 Las Vegas Blvd S, Las Vegas, NV 89109, USA",
+            "displayName": "WorldMark Las Vegas Tropicana",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24809,
+            "latitude": 36.112475,
+            "longitude": -115.129037,
+            "address": "4225 Spencer St, Las Vegas, NV 89119, USA",
+            "displayName": "WorldMark Las Vegas",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24810,
+            "latitude": 36.112475,
+            "longitude": -115.129037,
+            "address": "4225 Spencer St, Las Vegas, NV 89119, USA",
+            "displayName": "WorldMark Las Vegas Spencer Street",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24811,
+            "latitude": 36.107184,
+            "longitude": -115.16143,
+            "address": "265 E Harmon Ave, Las Vegas, NV 89169, USA",
+            "displayName": "Wyndham WVR Grand Desert",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          },
+          {
+            "id": 24812,
+            "latitude": 36.167904,
+            "longitude": -115.138142,
+            "address": "707 E Fremont St, Las Vegas, NV 89101, USA",
+            "displayName": "Motel 6",
+            "timingConfig": {
+              "startTime": "10:30:00",
+              "endTime": "11:00:00",
+              "minPeriod": null,
+              "maxPeriod": null
+            },
+            "note": null
+          }
+        ]
+      },
+      "level": "PRIMARY_CUSTOMER"
+    },
+    {
+      "oldId": 87530,
+      "id": "CUSTOM_87530",
+      "name": "Additional Information",
+      "description": "Number of Infants (Under 2)",
+      "dataType": "STRING",
+      "validation": {
+        "regex": null,
+        "minLength": null,
+        "maxLength": null,
+        "minValue": null,
+        "maxValue": null,
+        "required": true,
+        "values": null
+      },
+      "level": "PRIMARY_CUSTOMER"
+    },
+    {
+      "oldId": 89630,
+      "id": "CUSTOM_89630",
+      "name": "Weight",
+      "description": "in kilograms",
+      "dataType": "FLOAT",
+      "validation": {
+        "regex": null,
+        "minLength": null,
+        "maxLength": null,
+        "minValue": null,
+        "maxValue": null,
+        "required": true,
+        "values": [
+          "Lbs",
+          "Kg",
+          "St"
+        ]
+      },
+      "level": "ALL_CUSTOMER"
+    }
+  ],
+  "inventoryInputFields": [
+    {
+      "id": "234232",
+      "type": "Full Name",
+      "name": "Full Name",
+      "description": null,
+      "dataType": "STRING",
+      "validation": {
+        "regex": "\\s*[^\\s]+\\s+[^\\s]+.*",
+        "minLength": 3,
+        "maxLength": 80,
+        "minValue": null,
+        "maxValue": null,
+        "required": true
+      },
+      "level": "ALL_CUSTOMER"
+    },
+    {
+      "id": "234233",
+      "type": "Email",
+      "name": "Email",
+      "description": null,
+      "dataType": "STRING",
+      "validation": {
+        "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        "minLength": 5,
+        "maxLength": null,
+        "minValue": null,
+        "maxValue": null,
+        "required": true
+      },
+      "level": "PRIMARY_CUSTOMER"
+    },
+    {
+      "id": "234234",
+      "type": "Phone",
+      "name": "Phone",
+      "description": null,
+      "dataType": "STRING",
+      "validation": {
+        "regex": null,
+        "minLength": null,
+        "maxLength": 40,
+        "minValue": null,
+        "maxValue": null,
+        "required": true
+      },
+      "level": "PRIMARY_CUSTOMER"
+    },
+    {
+      "id": "246009",
+      "type": "Custom",
+      "name": "Additional Information",
+      "description": "Number of Infants (Under 2)",
+      "dataType": "STRING",
+      "validation": {
+        "regex": null,
+        "minLength": null,
+        "maxLength": null,
+        "minValue": null,
+        "maxValue": null,
+        "required": true
+      },
+      "level": "PRIMARY_CUSTOMER"
+    },
+    {
+      "id": "246010",
+      "type": "Custom",
+      "name": "Weight",
+      "description": "in kilograms",
+      "dataType": "INT",
+      "validation": {
+        "regex": null,
+        "minLength": null,
+        "maxLength": null,
+        "minValue": null,
+        "maxValue": null,
+        "required": true
+      },
+      "level": "ALL_CUSTOMER"
+    }
+  ]
+}

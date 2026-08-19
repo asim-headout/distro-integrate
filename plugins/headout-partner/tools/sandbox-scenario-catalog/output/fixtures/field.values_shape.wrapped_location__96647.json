@@ -1,0 +1,35 @@
+{
+  "id": "331986",
+  "type": "Custom",
+  "name": "Pickup Location",
+  "description": "Where do you want to be picked up from?",
+  "dataType": "LOCATION",
+  "validation": {
+    "regex": null,
+    "minLength": null,
+    "maxLength": null,
+    "minValue": null,
+    "maxValue": null,
+    "required": true,
+    "values": {
+      "type": "PREDEFINED_LOCATION",
+      "value": [
+        {
+          "id": 586420,
+          "latitude": -34.929431,
+          "longitude": 138.599331,
+          "address": "Stop T1 Victoria Sq - South West side, Adelaide SA 5000, Australia",
+          "displayName": "Bus stop T1 Victoria Square (near Hilton Hotel) 12.30pm",
+          "timingConfig": {
+            "startTime": null,
+            "endTime": null,
+            "minPeriod": null,
+            "maxPeriod": null
+          },
+          "note": null
+        }
+      ]
+    }
+  },
+  "level": "PRIMARY_CUSTOMER"
+}

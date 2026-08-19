@@ -1,0 +1,17 @@
+{
+  "type": "GENERAL",
+  "name": "Guest",
+  "description": null,
+  "ageFrom": 3,
+  "ageTo": 100,
+  "price": 133.09,
+  "originalPrice": 281.82,
+  "netPrice": 133.09,
+  "headoutSellingPrice": 156.57,
+  "remaining": 9999,
+  "availability": "LIMITED",
+  "paxRange": {
+    "min": 0,
+    "max": 4
+  }
+}

@@ -70,7 +70,32 @@ A `values` object that isn't a plain array (from Inventory Details) and isn't `n
 }
 ```
 
-**LOCATION at Inventory Details level** (tourId `100059`, productId `46899`, field `353237`) — 9 predefined locations total, first 2 shown:
+**LOCATION at Products API level** (tourId `39975`, productId `20321`, field `CUSTOM_272990`) — plain
+array, no wrapper, 700+ predefined locations total, first 2 shown:
+
+```json
+{
+  "id": "CUSTOM_272990",
+  "name": "Pickup Location",
+  "dataType": "LOCATION",
+  "validation": {
+    "required": true,
+    "values": [
+      { "id": 462715, "displayName": "AG Hotels", "latitude": 36.887432, "longitude": 30.732705,
+        "address": "Kızıltoprak, Aspendos Blv. No: 27/A, 07300 Muratpaşa/Antalya, Türkiye",
+        "timingConfig": { "startTime": null, "endTime": null, "minPeriod": null, "maxPeriod": null },
+        "note": null },
+      { "id": 462716, "displayName": "APA Boutique Hotel", "latitude": 36.865879, "longitude": 30.4557,
+        "address": "Çağlarca, 07070 Konyaaltı/Antalya, Türkiye",
+        "timingConfig": { "startTime": null, "endTime": null, "minPeriod": null, "maxPeriod": null },
+        "note": null }
+    ]
+  }
+}
+```
+
+**LOCATION at Inventory Details level** (tourId `100059`, productId `46899`, field `353237`) — the
+`{type, value}` wrapper, 9 predefined locations total, first 2 shown:
 
 ```json
 {
@@ -100,5 +125,5 @@ A `values` object that isn't a plain array (from Inventory Details) and isn't `n
 
 ## Full data
 
-- Full fixture JSON: `../../../../tools/sandbox-scenario-catalog/output/fixtures/field.values_shape.wrapped_enum__45780.json`, `field.values_shape.wrapped_location__100059.json`, `field.values_shape.null__26838.json`
+- Full fixture JSON: `../../../../tools/sandbox-scenario-catalog/output/fixtures/field.values_shape.wrapped_enum__45780.json`, `field.type.location.predefined__39975.json`, `field.values_shape.wrapped_location__100059.json`, `field.values_shape.null__26838.json`
 - Live status: [CHECKLIST.md](../../../../tools/sandbox-scenario-catalog/output/CHECKLIST.md)

@@ -8,14 +8,20 @@ after a `discover`/`verify` run.
 ## Inventory-field retrieval fallback (read before the checklist below)
 
 `GET /v2/inventories/{id}` (per-slot field overrides) can fail or be slow for a
-given inventory even when the product/variant fetch succeeded. Expected client
-behavior:
-- **Non-2xx / timeout on inventory details** — fall back to the variant-level
-  `inputFields` from the Product API response; do not block checkout on this call.
-- **Fields differ between the two** — the Inventory Details response is
-  authoritative for that specific date/slot; always prefer it when both succeeded.
+given inventory even when the product/variant fetch succeeded. This is the
+authoritative behavior per
+`skills/headout-93-inventory-input-fields/references/backend.md` — do not implement
+a looser policy than this:
+- **The inventory-details call is blocking** once this workflow is enabled for a
+  checkout — do not render or submit fields until it succeeds.
+- **On failure**, show a safe recoverable error and preserve the existing
+  product-derived implementation as an explicit rollback path. Do not merge
+  conflicting field definitions or silently fall back to the Product API's
+  `inputFields` within the same request.
+- **Fields differ between the two** — when the inventory-details call succeeds,
+  its response is authoritative for that specific date/slot over the Product API's.
 - **Never cache** either response across bookings — availability/fields can change
-  per request (see `scratch/edge-case-taxonomy.md` §6).
+  per request.
 
 ## Checkout Input Fields
 

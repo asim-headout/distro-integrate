@@ -59,6 +59,10 @@ function satisfiedCounts(rows) {
   return counts;
 }
 
+function notFoundScenarioIds(rows) {
+  return new Set(rows.filter((r) => r.status === "NOT_FOUND").map((r) => r.scenarioId));
+}
+
 async function fetchProductList({ cityCode, offset, limit }) {
   const qs = new URLSearchParams({ offset: String(offset), limit: String(limit) });
   if (cityCode) qs.set("cityCode", cityCode);
@@ -95,24 +99,36 @@ async function fetchInventoryDetails(inventoryId) {
 }
 
 function needsInventoryDetails(scenario) {
-  return scenario.checker === "inventoryFieldsDifferFromVariant";
+  return scenario.checker === "inventoryFieldsDifferFromVariant" || (scenario.params && scenario.params.source === "inventory");
+}
+
+// Distinct from needsInventoryDetails: checkers reading per-pax-type pricing
+// (e.g. paxRange.max) only need the /inventory/list-by/tour list response,
+// not the extra /inventories/{id} details call.
+function needsInventoryList(scenario) {
+  return needsInventoryDetails(scenario) || scenario.checker === "hasNonNullPersonPaxRangeMax";
 }
 
 async function evaluateProductForScenarios(product, scenarios) {
   const matches = []; // { scenarioId, variantId, tourId, inventoryId, evidence }
-  const anyNeedsInventory = scenarios.some(needsInventoryDetails);
+  const anyNeedsList = scenarios.some(needsInventoryList);
+  const anyNeedsDetails = scenarios.some(needsInventoryDetails);
 
   for (const variant of product.variants || []) {
     let inventoryDetails = null;
+    let inventoryListItem = null;
     let sampleInventoryId = null;
 
-    if (anyNeedsInventory) {
+    if (anyNeedsList) {
       try {
         const invResp = await fetchInventoriesByTour(variant.id, { limit: 1 });
         const first = (invResp.items || [])[0];
         if (first) {
           sampleInventoryId = first.id;
-          inventoryDetails = await fetchInventoryDetails(first.id);
+          inventoryListItem = first;
+          if (anyNeedsDetails) {
+            inventoryDetails = await fetchInventoryDetails(first.id);
+          }
         }
       } catch (e) {
         // sandbox slots can be closed/empty for a given variant; skip inventory-level checks for it
@@ -123,7 +139,8 @@ async function evaluateProductForScenarios(product, scenarios) {
       const fn = checkers[scenario.checker];
       if (!fn) throw new Error(`Unknown checker: ${scenario.checker} (scenario ${scenario.id})`);
       if (needsInventoryDetails(scenario) && !inventoryDetails) continue;
-      const result = fn({ product, variant, inventoryDetails }, scenario.params || {});
+      if (scenario.checker === "hasNonNullPersonPaxRangeMax" && !inventoryListItem) continue;
+      const result = fn({ product, variant, inventoryDetails, inventoryListItem }, scenario.params || {});
       if (result) {
         matches.push({
           scenarioId: scenario.id,
@@ -185,11 +202,20 @@ async function cmdDiscover(args) {
 
   const existingRows = readCsv(OUTPUT_PATH);
   const counts = satisfiedCounts(existingRows);
+  const notFound = notFoundScenarioIds(existingRows);
   let scenarios = loadScenarios(args.scenario);
   scenarios = scenarios.filter((s) => (counts[s.id] || 0) < (s.earlyExitMatches || config.defaultEarlyExitMatches));
 
+  if (!args.force) {
+    const skipped = scenarios.filter((s) => notFound.has(s.id));
+    if (skipped.length) {
+      console.log(`Skipping ${skipped.length} scenario(s) already confirmed NOT_FOUND in a prior scan (use --force to re-attempt): ${skipped.map((s) => s.id).join(", ")}`);
+    }
+    scenarios = scenarios.filter((s) => !notFound.has(s.id));
+  }
+
   if (scenarios.length === 0) {
-    console.log("All requested scenarios already satisfied in output CSV. Nothing to discover. Use --force to re-run anyway.");
+    console.log("All requested scenarios already satisfied (or confirmed NOT_FOUND) in output CSV. Nothing to discover. Use --force to re-run anyway.");
     if (!args.force) return;
     scenarios = loadScenarios(args.scenario);
   }
@@ -199,6 +225,9 @@ async function cmdDiscover(args) {
   const newRows = [];
   const localCounts = { ...counts };
 
+  // Long --all-cities runs can take a very long time; a crash or manual kill
+  // mid-run must not lose already-found matches. Persist the CSV after every
+  // single match rather than only once at the very end.
   const recordMatch = (m) => {
     const target = scenarios.find((s) => s.id === m.scenarioId);
     const limit = target.earlyExitMatches || config.defaultEarlyExitMatches;
@@ -208,6 +237,7 @@ async function cmdDiscover(args) {
     const fixtureFile = writeFixture(m.scenarioId, m.tourId, m.fixture);
     const { fixture, ...row } = m;
     newRows.push({ ...row, fixtureFile, firstVerifiedAt: ts, lastVerifiedAt: ts, status: "OK" });
+    writeCsv(OUTPUT_PATH, [...existingRows, ...newRows]);
     console.log(`  MATCH [${m.scenarioId}] tourId=${m.tourId} productId=${m.productId} :: ${m.evidence}`);
   };
 
@@ -228,16 +258,21 @@ async function cmdDiscover(args) {
         console.error(`  [error] candidate ${tourId}: ${e.message}`);
       }
     }
-  } else if (args["all-cities"]) {
+  } else if (args["all-cities"] || args.cities) {
     const maxProductsPerCity = args["max-products-per-city"] ? Number(args["max-products-per-city"]) : 150;
     let cities;
-    try {
-      cities = await fetchAllCityCodes();
-    } catch (e) {
-      console.error(`  [error] fetching city list: ${e.message}`);
-      return;
+    if (args.cities) {
+      cities = String(args.cities).split(",").map((c) => c.trim().toUpperCase());
+      console.log(`Scanning ${cities.length} specified cities: ${cities.join(", ")}. Up to ${maxProductsPerCity} products/city, stopping early once every requested scenario is satisfied.`);
+    } else {
+      try {
+        cities = await fetchAllCityCodes();
+      } catch (e) {
+        console.error(`  [error] fetching city list: ${e.message}`);
+        return;
+      }
+      console.log(`Fetched ${cities.length} sandbox cities. Scanning up to ${maxProductsPerCity} products/city, stopping early once every requested scenario is satisfied.`);
     }
-    console.log(`Fetched ${cities.length} sandbox cities. Scanning up to ${maxProductsPerCity} products/city, stopping early once every requested scenario is satisfied.`);
 
     let totalScanned = 0;
     for (const cityCode of cities) {
@@ -291,12 +326,22 @@ async function cmdVerify(args) {
       if (!variant) throw new Error("variant no longer present on product");
 
       let inventoryDetails = null;
-      if (needsInventoryDetails(scenario) && row.inventoryId) {
-        inventoryDetails = await fetchInventoryDetails(row.inventoryId);
+      let inventoryListItem = null;
+      if (needsInventoryList(scenario) && row.inventoryId) {
+        // inventoryId in the CSV is a specific past inventory slot, not
+        // necessarily still returned by a fresh list-by-tour call, so fetch
+        // its details directly rather than re-querying the list endpoint.
+        if (needsInventoryDetails(scenario)) {
+          inventoryDetails = await fetchInventoryDetails(row.inventoryId);
+        }
+        if (scenario.checker === "hasNonNullPersonPaxRangeMax") {
+          const invResp = await fetchInventoriesByTour(row.tourId, { limit: 1 });
+          inventoryListItem = (invResp.items || [])[0] || null;
+        }
       }
 
       const fn = checkers[scenario.checker];
-      const result = fn({ product, variant, inventoryDetails }, scenario.params || {});
+      const result = fn({ product, variant, inventoryDetails, inventoryListItem }, scenario.params || {});
       row.lastVerifiedAt = nowIso();
       if (result) {
         row.status = "OK";
@@ -365,14 +410,18 @@ function cmdGenerateChecklist() {
     for (const s of scenarios) {
       const rowsForScenario = byScenario[s.id] || [];
       const ok = rowsForScenario.filter((r) => r.status === "OK");
+      const notFoundRow = rowsForScenario.find((r) => r.status === "NOT_FOUND");
       const box = ok.length > 0 ? "x" : " ";
       lines.push(`- [${box}] **${s.name}** (\`${s.id}\`)`);
-      if (ok.length === 0) {
-        lines.push(`  - _No verified sandbox example yet — run \`node cli.js discover --scenario ${s.id}\`._`);
-      } else {
+      if (ok.length > 0) {
         for (const r of ok) {
           lines.push(`  - tourId=\`${r.tourId}\` productId=\`${r.productId}\` — ${r.evidence}${r.fixtureFile ? ` — fixture: \`${r.fixtureFile}\`` : ""} (last verified ${r.lastVerifiedAt})`);
         }
+      } else if (notFoundRow) {
+        lines.push(`  - ⚠️ **Confirmed absent from sandbox** as of ${notFoundRow.lastVerifiedAt} — ${notFoundRow.evidence}`);
+        lines.push(`    _Re-attempt with \`node cli.js discover --scenario ${s.id} --force\` if sandbox catalog has since grown._`);
+      } else {
+        lines.push(`  - _No verified sandbox example yet — run \`node cli.js discover --scenario ${s.id}\`._`);
       }
     }
     lines.push("");
@@ -389,6 +438,48 @@ function cmdListScenarios() {
   }
 }
 
+function cmdMarkNotFound(args) {
+  if (!args.scenario || args.scenario === "all") {
+    console.error("--scenario <id> is required (a single scenario id, not a list) for mark-not-found.");
+    process.exit(1);
+  }
+  const scenario = config.scenarios.find((s) => s.id === args.scenario);
+  if (!scenario) {
+    console.error(`Unknown scenario id: ${args.scenario}`);
+    process.exit(1);
+  }
+  if (!args.note) {
+    console.error("--note \"<what was scanned and found nothing>\" is required — this becomes the durable evidence in the CSV/checklist.");
+    process.exit(1);
+  }
+
+  const rows = readCsv(OUTPUT_PATH);
+  const alreadyOk = rows.some((r) => r.scenarioId === scenario.id && r.status === "OK");
+  if (alreadyOk) {
+    console.error(`${scenario.id} already has a verified OK example in the CSV — refusing to mark it NOT_FOUND. Remove the OK row(s) first if that's really intended.`);
+    process.exit(1);
+  }
+
+  const others = rows.filter((r) => r.scenarioId !== scenario.id);
+  const ts = nowIso();
+  others.push({
+    scenarioId: scenario.id,
+    category: scenario.category,
+    scenarioName: scenario.name,
+    productId: "",
+    variantId: "",
+    tourId: "",
+    inventoryId: "",
+    evidence: args.note,
+    fixtureFile: "",
+    firstVerifiedAt: ts,
+    lastVerifiedAt: ts,
+    status: "NOT_FOUND",
+  });
+  writeCsv(OUTPUT_PATH, others);
+  console.log(`Marked ${scenario.id} as NOT_FOUND: ${args.note}`);
+}
+
 async function main() {
   const [, , cmd, ...rest] = process.argv;
   const args = parseArgs(rest);
@@ -397,6 +488,7 @@ async function main() {
   if (cmd === "verify") return cmdVerify(args);
   if (cmd === "list-scenarios") return cmdListScenarios(args);
   if (cmd === "generate-checklist") return cmdGenerateChecklist(args);
+  if (cmd === "mark-not-found") return cmdMarkNotFound(args);
 
   console.log(`Usage:
   node cli.js discover [--scenario id1,id2|all] [--candidates file.csv]
@@ -406,9 +498,13 @@ async function main() {
   node cli.js verify   [--scenario id1,id2] [--refill] [--concurrency N] [--delay-ms N] [--max-per-minute N]
   node cli.js list-scenarios
   node cli.js generate-checklist
+  node cli.js mark-not-found --scenario <id> --note "<scan scope + what was found>"
 
   Rate limiting: all API calls are hard-capped at --max-per-minute (default 90,
-  independent of --concurrency/--delay-ms) so a run never exceeds ~100 req/min.`);
+  independent of --concurrency/--delay-ms) so a run never exceeds ~100 req/min.
+
+  discover skips any scenario already marked NOT_FOUND unless --force is passed
+  (sandbox catalog may grow over the tool's 6-12mo intended lifetime).`);
 }
 
 main().catch((e) => {

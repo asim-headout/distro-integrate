@@ -75,8 +75,13 @@ function shapeOfValidationValues(values) {
   return "unknown_shape";
 }
 
-function hasValidationValuesShape({ variant }, params) {
-  for (const f of allInputFields(variant)) {
+function hasValidationValuesShape({ variant, inventoryDetails }, params) {
+  // The {type, value} wrapper shape only ever appears in the per-inventory
+  // details response (confirmed by payload diffing) — it never shows up on
+  // the variant-level fields from the Product API. Scenarios targeting a
+  // "wrapped(...)" shape must read from inventoryDetails, not variant.
+  const fields = params.source === "inventory" ? (inventoryDetails ? inventoryDetails.inputFields || [] : []) : allInputFields(variant);
+  for (const f of fields) {
     if (params.dataType && f.dataType !== params.dataType) continue;
     const shape = shapeOfValidationValues(f.validation && f.validation.values);
     if (shape === params.shape) {
@@ -87,23 +92,32 @@ function hasValidationValuesShape({ variant }, params) {
 }
 
 function normalizedFieldKey(f) {
-  // Variant-level fields expose a string `id` (e.g. "NAME") plus a legacy
-  // numeric `oldId`; inventory-level fields expose only the numeric id
-  // (matching `oldId`). Compare on oldId when present so we flag genuine
-  // field additions/removals, not the string-vs-numeric id-scheme quirk.
-  return String(f.oldId ?? f.id);
+  // Both `id` and `oldId` are per-request-generated numeric sequences for
+  // standard fields (NAME/EMAIL/PHONE etc.) — the same three fields on the
+  // same variant get DIFFERENT numeric ids between the Product API and the
+  // Inventory Details API call, even with nothing actually different about
+  // them (confirmed by inspecting a real fixture: variant oldIds
+  // 325380-382 vs inventory ids 325377-379 for the identical Full
+  // Name/Email/Phone trio). `name` is the one field that's stable across
+  // both endpoints, so key on that instead.
+  return `${(f.name || "").trim().toUpperCase()}::${f.dataType}`;
 }
 
 function inventoryFieldsDifferFromVariant({ variant, inventoryDetails }) {
   if (!inventoryDetails || !Array.isArray(inventoryDetails.inputFields)) return null;
-  const variantKeys = new Set(allInputFields(variant).map(normalizedFieldKey));
-  const invKeys = new Set(inventoryDetails.inputFields.map(normalizedFieldKey));
-  const added = [...invKeys].filter((k) => !variantKeys.has(k));
-  const removed = [...variantKeys].filter((k) => !invKeys.has(k));
+  const variantFields = allInputFields(variant);
+  const invFields = inventoryDetails.inputFields;
+  const variantKeys = new Set(variantFields.map(normalizedFieldKey));
+  const invKeys = new Set(invFields.map(normalizedFieldKey));
+  const added = invFields.filter((f) => !variantKeys.has(normalizedFieldKey(f))).map((f) => f.name);
+  const removed = variantFields.filter((f) => !invKeys.has(normalizedFieldKey(f))).map((f) => f.name);
+  // A pure count mismatch with identical names (shouldn't happen given the
+  // Set-based diff above, but guard explicitly) doesn't count as a genuine
+  // override — require an actual named field to appear or disappear.
   if (added.length || removed.length) {
     return {
       evidence: `inventory ${inventoryDetails.inventoryId}: +[${added}] -[${removed}]`,
-      fixture: { variantInputFields: allInputFields(variant), inventoryInputFields: inventoryDetails.inputFields },
+      fixture: { variantInputFields: variantFields, inventoryInputFields: invFields },
     };
   }
   return null;
@@ -143,6 +157,19 @@ function hasNonDefaultPaxRange({ variant }) {
     return { evidence: `pax min=${pax.min} max=${pax.max}`, fixture: pax };
   }
   return null;
+}
+
+// Distinct from hasNonDefaultPaxRange: that checks the overall booking-level
+// variant.pax{min,max}. This checks the PER-PAX-TYPE bound
+// (inventory.pricing.persons[].paxRange.max), which docs describe (e.g. "max
+// 1 infant per booking") but is null on almost every sandbox product —
+// confirmed by sampling many products at both near-term and 90-days-out
+// dates with identical (null) results, so it's genuinely rare, not a
+// date-staleness artifact.
+function hasNonNullPersonPaxRangeMax({ inventoryListItem }) {
+  const persons = (inventoryListItem.pricing && inventoryListItem.pricing.persons) || [];
+  const p = persons.find((p) => p.paxRange && p.paxRange.max !== null && p.paxRange.max !== undefined);
+  return p ? { evidence: `personType=${p.type} paxRange.max=${p.paxRange.max}`, fixture: p } : null;
 }
 
 function hasInventorySelectionType({ product }, params) {
@@ -192,6 +219,7 @@ module.exports = {
   hasMultiValuePropertiesV2,
   hasPriceProfileType,
   hasNonDefaultPaxRange,
+  hasNonNullPersonPaxRangeMax,
   hasInventorySelectionType,
   hasProductType,
   hasSecondaryCategories,

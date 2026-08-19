@@ -46,11 +46,25 @@ function readCsv(filePath) {
 
 function writeCsv(filePath, rows) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  // Stable-sort by scenarioId (then tourId) so the N examples for each
+  // scenario land on adjacent rows — reads as visually grouped in any
+  // spreadsheet viewer without needing real merged cells.
+  const sorted = [...rows].sort((a, b) => {
+    if (a.scenarioId !== b.scenarioId) return a.scenarioId < b.scenarioId ? -1 : 1;
+    return String(a.tourId).localeCompare(String(b.tourId));
+  });
   const lines = [COLUMNS.join(",")];
-  for (const row of rows) {
+  for (const row of sorted) {
     lines.push(COLUMNS.map((c) => esc(row[c])).join(","));
   }
-  fs.writeFileSync(filePath, lines.join("\n") + "\n");
+  // Write to a temp file then rename, so a process kill mid-write (this tool
+  // calls writeCsv after every single match during long discover runs) can
+  // never leave scenarios.csv truncated/corrupted — rename is atomic, a raw
+  // writeFileSync is not. Confirmed root cause of a real incident: several
+  // rows lost their `status` value after a background run was killed.
+  const tmpPath = `${filePath}.tmp-${process.pid}`;
+  fs.writeFileSync(tmpPath, lines.join("\n") + "\n");
+  fs.renameSync(tmpPath, filePath);
 }
 
 module.exports = { readCsv, writeCsv, COLUMNS };

@@ -107,6 +107,15 @@ claude --plugin-dir ./plugins/headout-partner
 Inside Claude Code, run `/reload-plugins` after editing plugin files, then test with an explicit
 invocation, e.g. `/headout-partner:headout-02-product-selection` or `/headout-partner:page-tour`.
 
+## Tools
+
+- [`plugins/headout-partner/tools/sandbox-scenario-catalog`](plugins/headout-partner/tools/sandbox-scenario-catalog) —
+  a standalone CLI that scans the sandbox Partner API to find and re-verify real product/tour
+  examples for every input-field, pax-type, seatmap, pricing, and cancellation edge case a partner
+  integration needs to handle. Produces `output/scenarios.csv` (shareable catalog), `output/CHECKLIST.md`
+  (partner-facing verification checklist), and `output/fixtures/*.json` (canonical request/response
+  examples per scenario). Not a skill — run it directly with Node, independent of the plugin.
+
 ## Headout docs
 
 - LLM docs index: https://partner.headout.com/docs/llms.txt

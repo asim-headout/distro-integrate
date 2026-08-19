@@ -2,7 +2,9 @@
 
 This repo is a single Claude Code plugin at `plugins/headout-partner/` — the AI-Assisted Builder Kit
 for partner-built (Tier-3) Headout integrations. There is no server/MCP surface; the plugin is the
-product.
+product. `plugins/headout-partner/tools/` holds standalone Node scripts that support the plugin's
+content (not skills themselves) — see `tools/sandbox-scenario-catalog/README.md` for the sandbox
+scenario/fixture catalog generator.
 
 ## Plugin Direction
 

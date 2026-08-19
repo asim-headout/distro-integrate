@@ -83,22 +83,22 @@ fixture link. Also documents expected fallback behavior when
 partners alongside `scenarios.csv` — it doubles as a lightweight contract
 test list even without generated code.
 
-## Origin of this scenario set — partner feedback
+## Scope
 
-This tool exists to close a specific gap a partner reported after trying our
-plugin: the docs lacked (1) complete sandbox fixtures per field level/type,
-(2) canonical request/response examples for location/enum validation shapes,
-(3) an explicit verification checklist, and (4) defined fallback behavior
-when inventory-field retrieval fails. Each is addressed directly:
+This tool covers:
 
-| Feedback | Where it's addressed |
-|---|---|
-| Complete fixtures per field level/type | `Field Level x Type Matrix` scenarios (`config.json`) + `output/fixtures/*.json` — one raw field object per (dataType, level) combination |
-| Canonical location/enum validation structures | `Validation Values Shape` scenarios — capture the exact `validation.values` shape (`null` / raw array / `{type, value}` wrapper) per dataType, with real fixture JSON |
-| Verification checklist / contract tests | `node cli.js generate-checklist` → `output/CHECKLIST.md` |
-| Fallback behavior when inventory-field retrieval fails | Documented in `CHECKLIST.md`'s "Inventory-field retrieval fallback" section, and implemented in `cli.js`'s `evaluateProductForScenarios` (inventory-details fetch failures are caught and inventory-level checks are skipped for that variant rather than failing the whole run) |
-
-Additional scenario categories added on top of the original set:
+- **Field Level x Type Matrix** — one raw field object per (dataType, level)
+  combination (`config.json` + `output/fixtures/*.json`).
+- **Validation Values Shape** — the exact `validation.values` shape (`null` /
+  raw array / `{type, value}` wrapper) per dataType, backed by real fixture
+  JSON.
+- **Verification checklist / contract tests** — `node cli.js
+  generate-checklist` → `output/CHECKLIST.md`.
+- **Inventory-field retrieval fallback** — documented in `CHECKLIST.md`'s
+  "Inventory-field retrieval fallback" section, and implemented in
+  `cli.js`'s `evaluateProductForScenarios` (inventory-details fetch failures
+  are caught and inventory-level checks are skipped for that variant rather
+  than failing the whole run).
 - **Variant Properties** — `properties` (single string-valued) vs
   `propertiesV2` (multi-value) populated on a variant.
 - **Forward Compatibility** — a field whose `dataType` falls outside the

@@ -65,9 +65,8 @@ function hasInputFieldLevel({ variant }, params) {
   return f ? { evidence: `field ${f.id} level=${f.level}`, fixture: f } : null;
 }
 
-// Captures how validation.values is actually shaped at the variant level
-// (raw array vs {type, value} wrapper vs null) — partner feedback flagged
-// this as under-documented and a source of parsing bugs.
+// Captures how validation.values is actually shaped at the variant level:
+// raw array vs {type, value} wrapper vs null.
 function shapeOfValidationValues(values) {
   if (values === null || values === undefined) return "null";
   if (Array.isArray(values)) return "raw_array";
